@@ -12,9 +12,9 @@ def set_brightness(image, factor):
             r, g, b = new_image.getpixel((x, y))
 
             # Adjust brightness of the pixel
-            r = min(int(r * factor), 255)
-            g = min(int(g * factor), 255)
-            b = min(int(b * factor), 255)
+            r = clamp(int(r * factor))
+            g = clamp(int(g * factor))
+            b = clamp(int(b * factor))
 
             # Put adjusted pixel in image
             new_image.putpixel((x, y), (r, g, b))
@@ -42,3 +42,15 @@ def binarize(image, threshold = 127):
             gray_image.putpixel((x, y), pixel_value)
 
     return gray_image
+
+
+# --------------------
+# Helper Functions
+def clamp(number, min = 0, max = 255):
+    if number > max: return max
+    if number < min: return min
+
+    return number
+
+
+
