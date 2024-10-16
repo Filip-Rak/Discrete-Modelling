@@ -183,6 +183,7 @@ def apply_convolusion(image, mask, border_handling = BorderHandling.ZERO_PADDING
 
     # Use mask's sum for normalization
     mask_sum = numpy.sum(mask)
+    if mask_sum == 0: mask_sum = 1
 
     # Declare the output matrix and fill it with zeros
     output_matrix = numpy.zeros((rows, cols, channels), dtype=numpy.float32)
@@ -191,19 +192,30 @@ def apply_convolusion(image, mask, border_handling = BorderHandling.ZERO_PADDING
     for x in range(rows):
         for y in range(cols):
             # Save the total sum
-            pixel_values = [0, 0 ,0]
+            pixel_values = [0] * channels
             for lx in range(-pad_size, pad_size + 1):
                 for ly in range(-pad_size, pad_size + 1):
                     # Get the pixel value with respect to boundary condition
                     tx, ty = handle_border(img_matrix, x, y, lx, ly, border_handling)
 
                     # Multiply each channel with cresponding channel from handle border
-                    for i in range(0, channels):
+                    for i in range(channels):
                         pixel_values[i] += img_matrix[tx, ty, i] * mask[lx + pad_size, ly + pad_size]
 
             # Put the pixel in the matrix
-            for i in range(0, channels):
+            for i in range(channels):
                 output_matrix[x, y, i] = pixel_values[i] / mask_sum
+
+    # Normalize the result
+    org_max = numpy.max(img_matrix)
+    org_min = numpy.min(img_matrix)
+    out_max = numpy.max(output_matrix)
+    out_min = numpy.min(output_matrix)
+
+    if out_max - out_min > 0:
+        output_matrix = (output_matrix - out_min) / (out_max - out_min) * (org_max - org_min) + org_min
+    else:
+        output_matrix = numpy.clip(output_matrix, org_min, org_max)
 
     # Clip results within safe values
     output_matrix = numpy.clip(output_matrix, PIXEL_MIN, PIXEL_MAX)
