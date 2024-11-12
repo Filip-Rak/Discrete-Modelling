@@ -11,7 +11,7 @@ def main():
     ex2()
     ex3()
     ex4()
-    ex5()
+    # ex5()
 
 # Exercises
 # --------------------
