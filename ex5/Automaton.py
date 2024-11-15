@@ -1,8 +1,10 @@
 from enum import Enum
-import numpy as np
+import numpy as numpy
 import random
 
-# Constant states
+# Constants
+# --------------------
+# States of the cell
 class CellState(Enum):
     EMPTY = 0   # -> Forest
     FIRE = 1    # -> Burned
@@ -26,13 +28,7 @@ GROW_DURATION_MAX = 125
 OVERGROW_DURATION_MIN = 500
 OVERGROW_DURATION_MAX = 700
 
-# Chance of fire spreading
-WIND_DIRECTION_WEIGHT = 0.9
-PARALLER_DIRECTION_WEIGHT = 0.7
-OPPOSITE_DIRECTION_WEIGHT = 0.05
-NEUTRAL_DIRECTION_WEIGHT = 0.1
-
-
+# Directions of the wind
 class WindDirection(Enum):
     NONE = 0
     N = 1
@@ -44,21 +40,33 @@ class WindDirection(Enum):
     NE = 7
     SE = 8
 
-# Automaton class
+# Chance of fire spreading based on wind direction
+WIND_DIRECTION_WEIGHT = 0.9
+PARALLER_DIRECTION_WEIGHT = 0.7
+OPPOSITE_DIRECTION_WEIGHT = 0.05
+NEUTRAL_DIRECTION_WEIGHT = 0.1
+
 class CellularAutomaton:
-    def __init__(self, rows, cols):
+    # Constructor
+    # ----------------
+    def __init__(self, rows: int, cols: int):
+        # Grid setup
         self.rows = rows
         self.cols = cols
-        self.grid = np.zeros((rows, cols), dtype=int)  # Initialize empty grid
+        self.grid = numpy.zeros((rows, cols), dtype=int)  # Initialize empty grid
         self.initial_grid = self.grid.copy()
-        self.wind_direction = WindDirection.NONE  # Default: no wind
-        self.fire_spread_chance = 0.8  # Default 80% chance to spread fire
-        self.timers = np.full((rows, cols), -1, dtype=int)  # -1 means no fire
 
-    def initialize_from_map(self, map_array):
+        # Update modifiers
+        self.wind_direction = WindDirection.NONE  # Default: no wind
+        self.fire_spread_chance = 0.5  # Default: 80% chance to spread fire
+        self.timers = numpy.full((rows, cols), -1, dtype=int)  # -Default: -1 means no time transition
+
+    # Public Methods
+    # ----------------
+    def initialize_from_map(self, map_array: numpy.ndarray):
         """Initialize the automaton grid based on a given map."""
         # Copy the grid to an array
-        self.grid = np.array(map_array)
+        self.grid = numpy.array(map_array)
 
         # Initialize all the cells
         for row in range(self.rows):
@@ -70,9 +78,12 @@ class CellularAutomaton:
         self.initial_grid = self.grid.copy()
 
     def update(self):
-        """Update the automaton grid based on transition rules."""
+        """Update the automaton grid based on rules."""
+
+        # Work on grid's copy
         new_grid = self.grid.copy()
 
+        # Iterates through grid matrix
         for row in range(self.rows):
             for col in range(self.cols):
                 state = self.grid[row, col]
@@ -101,9 +112,34 @@ class CellularAutomaton:
                             new_grid[nr, nc] = CellState.FLOOD.value
                             self.init_cell(nr, nc, CellState.FLOOD.value)
 
+        # Update the grid
         self.grid = new_grid
 
-    def init_cell(self, row, col, state):
+    def reset(self):
+        """Return the state of the grid to initial form"""
+        self.grid = self.initial_grid.copy()
+        self.timers = numpy.full((self.rows, self.cols), -1, dtype=int)  # Reset timers
+
+        # Reinitialize the grid
+        # Initialize all the cells
+        for row in range(self.rows):
+            for col in range(self.cols):
+                state = self.grid[row, col]
+                self.init_cell(row, col, state)
+
+    def put_cell(self, row: int, col: int, state: CellState):
+        """Puts and initializes cell, with a new given state, directly into the grid"""
+        self.grid[row, col] = state
+        self.init_cell(row, col, state)
+
+    def set_wind(self, direction: WindDirection):
+        """Set the wind direction and adjust fire spread chance."""
+        self.wind_direction = direction
+
+    # Private Methods
+    # ----------------
+    def init_cell(self, row: int, col: int, state: CellState):
+        """Initializes cell timer within the matrix"""
         if state == CellState.EMPTY.value:
             self.timers[row, col] = random.randint(GROW_DURATION_MIN, GROW_DURATION_MAX)
         elif state == CellState.FIRE.value:
@@ -122,12 +158,8 @@ class CellularAutomaton:
         elif state == CellState.BURNED.value:
             self.timers[row, col] = random.randint(RUINED_DURATION_MIN, RUINED_DURATION_MAX)
 
-    # Updates within old, not new grid
-    def put_cell(self, row, col, value):
-        self.grid[row, col] = value
-        self.init_cell(row, col, value)
-
-    def transition_cell(self, row, col, state, new_grid):
+    def transition_cell(self, row: int, col: int, state: CellState, grid: numpy.ndarray):
+        """Update the cell to it's next state"""
         new_state = state
         if state == CellState.EMPTY.value:
             new_state = CellState.FOREST.value
@@ -143,27 +175,10 @@ class CellularAutomaton:
             return
 
         # Update and initialize the cell
-        new_grid[row, col] = new_state
+        grid[row, col] = new_state
         self.init_cell(row, col, new_state)
 
-    def reset(self):
-        self.grid = self.initial_grid.copy()
-        self.timers = np.full((self.rows, self.cols), -1, dtype=int)  # Reset timers
-
-        # Reinitialize the grid
-        # Initialize all the cells
-        for row in range(self.rows):
-            for col in range(self.cols):
-                state = self.grid[row, col]
-                self.init_cell(row, col, state)
-
-    def set_wind(self, direction: WindDirection, intensity: int = 1):
-        """Set the wind direction and adjust fire spread chance."""
-        self.wind_direction = direction
-        self.fire_spread_chance = 0.5 + (intensity * 0.05)  # Increase chance with intensity
-        self.fire_spread_chance = min(self.fire_spread_chance, 1.0)  # Clamp to max 100%
-
-    def get_neighbors(self, row, col):
+    def get_neighbors(self, row: int, col: int) -> list:
         """Get valid neighbors for a given cell, including diagonals."""
         neighbors = []
         for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]:
@@ -172,8 +187,10 @@ class CellularAutomaton:
                 neighbors.append((nr, nc))
         return neighbors
 
-    def get_neighbors_with_wind_and_weights(self, row, col):
+    def get_neighbors_with_wind_and_weights(self, row, col) -> list:
         """Get neighbors with weights based on wind direction."""
+
+        # Weights with orienation to wind
         wfd = WIND_DIRECTION_WEIGHT
         wpd = PARALLER_DIRECTION_WEIGHT
         wod = OPPOSITE_DIRECTION_WEIGHT
@@ -211,6 +228,3 @@ class CellularAutomaton:
                 neighbors_with_weights.append(((nr, nc), weight))
 
         return neighbors_with_weights
-
-
-

@@ -1,16 +1,26 @@
 from Automaton import CellularAutomaton, CellState
 from Visualization import Visualization
-import numpy as np
+from PIL import Image
+import numpy
 
-def load_map_from_image(image_path, rows, cols):
+# Constants
+# --------------------
+InputPath = "Input/"
+
+# Helper Functions
+# --------------------
+def load_map_from_image(image_path: str, rows: int, cols: int) -> numpy.ndarray:
     """
-    Load a map from an image file and map colors dynamically to states.
+    Load a map from an image file. \n
+    Resizes the image to fit the size of the grid and maps states based on color
     """
-    from PIL import Image
+    
+    # Create grid
     img = Image.open(image_path).convert("RGB")
-    img = img.resize((cols, rows))  # Skalowanie obrazu
-    grid = np.zeros((rows, cols), dtype=int)
+    img = img.resize((cols, rows))  # Image scailing
+    grid = numpy.zeros((rows, cols), dtype=int)
 
+    # Map pixels
     for y in range(rows):
         for x in range(cols):
             pixel = img.getpixel((x, y))
@@ -18,7 +28,7 @@ def load_map_from_image(image_path, rows, cols):
 
     return grid
 
-def map_pixel_to_state_dynamic(pixel):
+def map_pixel_to_state_dynamic(pixel: float) -> int:
     r, g, b = pixel
 
     # Water: Blue dominance
@@ -35,27 +45,26 @@ def map_pixel_to_state_dynamic(pixel):
     # Rest considered as ground
     return CellState.EMPTY.value
 
-
-
-INPUT_PATH = "Input/"
-
+# Main function
+# --------------------
 def main():
     # Settings
     rows = 70
     cols = 120
     cell_size = 10
-    use_map = True  # Set to True to load from an image
+    use_map = True  # Toggle for random or image map based grid
 
     # Create cellular automaton
     automaton = CellularAutomaton(rows, cols)
 
     if use_map:
-        map_path = INPUT_PATH + "map5.png"  # Replace with the path to your map image
+        map_path = InputPath + "map1.png"
         grid = load_map_from_image(map_path, rows, cols)
         automaton.initialize_from_map(grid)
     else:
-        # Initialize with some random data
-        automaton.initialize_from_map(np.random.choice([4, 5], size=(rows, cols)))
+        # Initialize with random states
+        state_pool = [CellState.FOREST.value, CellState.OVERGORWN_FOREST.value]
+        automaton.initialize_from_map(numpy.random.choice(state_pool, size=(rows, cols)))
 
     # Create visualization
     visualization = Visualization(automaton, cell_size)
@@ -63,5 +72,7 @@ def main():
     # Run visualization
     visualization.run()
 
+# Entry Point
+# --------------------
 if __name__ == "__main__":
     main()
