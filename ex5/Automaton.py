@@ -30,6 +30,7 @@ class CellularAutomaton:
         self.initial_grid = self.grid.copy()
         self.wind_direction = WindDirection.NONE  # Default: no wind
         self.fire_spread_chance = 0.8  # Default 80% chance to spread fire
+        self.fire_timers = np.full((rows, cols), -1, dtype=int)  # -1 means no fire
 
     def initialize_from_map(self, map_array):
         """Initialize the automaton grid based on a given map."""
@@ -45,17 +46,25 @@ class CellularAutomaton:
                 state = self.grid[row, col]
 
                 if state == CellState.FIRE.value:
+                    # Decrease fire timer
+                    if self.fire_timers[row, col] > 0:
+                        self.fire_timers[row, col] -= 1
+                    elif self.fire_timers[row, col] == 0:
+                        new_grid[row, col] = CellState.BURNED.value  # Fire burns out
+
                     # Spread fire with weighted probabilities
                     neighbors_with_weights = self.get_neighbors_with_wind_and_weights(row, col)
                     for (nr, nc), weight in neighbors_with_weights:
                         if self.grid[nr, nc] == CellState.FOREST.value:
                             if random.random() < self.fire_spread_chance * weight:
                                 new_grid[nr, nc] = CellState.FIRE.value
+                                self.fire_timers[nr, nc] = 5  # Set initial fire timer
 
         self.grid = new_grid
 
     def reset(self):
         self.grid = self.initial_grid.copy()
+        self.fire_timers = np.full((self.rows, self.cols), -1, dtype=int)  # Reset timers
 
     def set_wind(self, direction: WindDirection, intensity: int = 1):
         """Set the wind direction and adjust fire spread chance."""
@@ -71,7 +80,6 @@ class CellularAutomaton:
             if 0 <= nr < self.rows and 0 <= nc < self.cols:
                 neighbors.append((nr, nc))
         return neighbors
-
 
     def get_neighbors_with_wind_and_weights(self, row, col):
         """Get neighbors with weights based on wind direction."""
