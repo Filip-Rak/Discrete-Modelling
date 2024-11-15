@@ -6,7 +6,7 @@ class Visualization:
     def __init__(self, automaton, cell_size=20):
         self.automaton = automaton
         self.cell_size = cell_size
-        self.window_width = automaton.cols * cell_size + 200
+        self.window_width = automaton.cols * cell_size + 250
         self.window_height = automaton.rows * cell_size
 
         # Update speed
@@ -31,17 +31,22 @@ class Visualization:
         self.clock = pygame.time.Clock()
 
         # Button positions
+        WIDTH = 200
+        HEIGHT = 40
+
         self.buttons = {
-            "pause": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 25, 150, 40), "text": "Start"},
-            "reset": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 75, 150, 40), "text": "Reset"},
-            "slower": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 125, 70, 40), "text": "<<"},
-            "faster": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20 + 80, 125, 70, 40), "text": ">>"},
-            "wind": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 500, 150, 40),"text": "Wind: %s" % self.automaton.wind_direction.name},
-            "empty": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 250, 150, 40), "text": "Empty"},
-            "forest": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 300, 150, 40), "text": "Forest"},
-            "fire": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 350, 150, 40), "text": "Fire"},
-            "water": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 400, 150, 40), "text": "Water"},
-            "burned": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 450, 150, 40), "text": "Burned"}
+            "pause": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 25, WIDTH, HEIGHT), "text": "Start"},
+            "reset": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 75, WIDTH, HEIGHT), "text": "Reset"},
+            "slower": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 125, WIDTH / 2 - 10, HEIGHT), "text": "<<"},
+            "faster": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20 + 110, 125, WIDTH / 2 - 10, HEIGHT), "text": ">>"},
+            "wind": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 250, WIDTH, HEIGHT),"text": "Wind: %s" % self.automaton.wind_direction.name},
+            "empty": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 300, WIDTH, HEIGHT), "text": "Ground"},
+            "forest": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 350, WIDTH, HEIGHT), "text": "Forest"},
+            "dense_forest": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 400, WIDTH, HEIGHT), "text": "Dense Forest"},
+            "fire": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 450, WIDTH, HEIGHT), "text": "Fire"},
+            "water": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 500, WIDTH, HEIGHT), "text": "Water"},
+            "flood": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 550, WIDTH, HEIGHT), "text": "Flood"},
+            "burned": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 600, WIDTH, HEIGHT), "text": "Scorched"}
         }
 
     def draw_grid(self):
@@ -82,13 +87,13 @@ class Visualization:
     def get_color(self, state):
         """Get color based on cell state."""
         color_map = {
-            CellState.EMPTY: (255, 255, 255),
+            CellState.EMPTY: (153, 76, 0),
             CellState.FIRE: (255, 0, 0),
-            CellState.WATER: (0, 0, 255),
-            CellState.FLOOD: (0, 0, 235),
-            CellState.FOREST: (0, 235, 0),
-            CellState.OVERGORWN_FOREST: (0, 255, 0),
-            CellState.BURNED: (128, 128, 128),
+            CellState.WATER: (51, 153, 255),
+            CellState.FLOOD: (102, 178, 255),
+            CellState.FOREST: (0, 255, 0),
+            CellState.OVERGORWN_FOREST: (0, 190, 0),
+            CellState.BURNED: (160, 160, 160),
         }
         return color_map[state]
 
@@ -145,15 +150,19 @@ class Visualization:
                             current_index = directions.index(self.automaton.wind_direction)
                             new_direction = directions[(current_index + 1) % len(directions)]
                             self.automaton.set_wind(new_direction)
-                            self.buttons["wind"]["text"] = "Wind %s" % new_direction.name
+                            self.buttons["wind"]["text"] = "Wind: %s" % new_direction.name
                         elif key == "empty":
                             self.selected_tool = CellState.EMPTY
-                        elif key == "fire":
-                            self.selected_tool = CellState.FIRE
                         elif key == "forest":
                             self.selected_tool = CellState.FOREST
+                        elif key == "dense_forest":
+                            self.selected_tool = CellState.OVERGORWN_FOREST
+                        elif key == "fire":
+                            self.selected_tool = CellState.FIRE
                         elif key == "water":
                             self.selected_tool = CellState.WATER
+                        elif key == "flood":
+                            self.selected_tool = CellState.FLOOD
                         elif key == "burned":
                             self.selected_tool = CellState.BURNED
 
@@ -164,7 +173,8 @@ class Visualization:
                     if x < self.automaton.cols * self.cell_size:
                         col, row = x // self.cell_size, y // self.cell_size
                         if 0 <= row < self.automaton.rows and 0 <= col < self.automaton.cols:
-                            self.automaton.grid[row, col] = self.selected_tool.value  # Set cell state
+                            # self.automaton.grid[row, col] = self.selected_tool.value  # Set cell state
+                            self.automaton.put_cell(row, col, self.selected_tool.value)
 
 
             elif event.type == pygame.KEYDOWN:
