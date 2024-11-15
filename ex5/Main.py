@@ -31,9 +31,9 @@ def load_map_from_image(image_path, cell_size):
 
 def main():
     # Settings
-    rows = 35
-    cols = 60
-    cell_size = 20
+    rows = 70
+    cols = 120
+    cell_size = 10
     use_map = False  # Set to True to load from an image
 
     # Create cellular automaton
