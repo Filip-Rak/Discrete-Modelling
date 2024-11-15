@@ -148,11 +148,19 @@ class Visualization:
                         elif key == "burned":
                             self.selected_tool = CellState.BURNED
 
+            elif event.type == pygame.MOUSEMOTION:
+                # Check if the left mouse button is pressed
+                if pygame.mouse.get_pressed()[0]:  # [0] for left button
+                    x, y = pygame.mouse.get_pos()
+                    if x < self.automaton.cols * self.cell_size:
+                        col, row = x // self.cell_size, y // self.cell_size
+                        if 0 <= row < self.automaton.rows and 0 <= col < self.automaton.cols:
+                            self.automaton.grid[row, col] = self.selected_tool.value  # Set cell state
+
+
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.paused = not self.paused
-                elif event.key == pygame.K_r:
-                    self.automaton.initialize_from_map(np.zeros_like(self.automaton.grid))
 
     def run(self):
         """Main loop for the visualization."""
