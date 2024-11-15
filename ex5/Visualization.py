@@ -9,17 +9,21 @@ class Visualization:
         self.window_width = automaton.cols * cell_size + 200
         self.window_height = automaton.rows * cell_size
 
-        # Constants
+        # Update speed
         self.MAX_UPDATE_SPEED = 30
         self.MIN_UPDATE_SPEED = 1
+        self.SPEED_CHANGE_SLOW = 1
+        self.SPEED_CHANGE_NORMAL = 5
+        self.SPEED_CHANGE_FAST = 10
+        self.set_update_speed(5)
+        self.time_since_last_update = 0;
 
-        # Defaults
+        # Time
+        self.delta_time = 0
+
         self.running = True
         self.paused = True
         self.selected_tool = CellState.EMPTY
-        self.delta_time = 0
-        self.set_update_speed(5)
-        self.time_since_last_update = 0;
 
         pygame.init()
         self.screen = pygame.display.set_mode((self.window_width, self.window_height))
@@ -60,13 +64,19 @@ class Visualization:
             self.screen.blit(text, text_rect)
 
     def draw_text(self):
-        """Draw the current simulation speed."""
-        font = pygame.font.Font(None, 32)
-        text = "Speed: %d UPS" % self.updates_per_sec
-        text_surface = font.render(text, True, (0, 0, 0))
-        text_rect = text_surface.get_rect(
-            center=(self.automaton.cols * self.cell_size + 95, 185))
-        self.screen.blit(text_surface, text_rect)
+        # Update Speed
+        speed_font = pygame.font.Font(None, 32)
+        speed_text = "Speed: %d UPS" % self.updates_per_sec
+        speed_text_surface = speed_font.render(speed_text, True, (0, 0, 0))
+        speed_text_rect = speed_text_surface.get_rect(center=(self.automaton.cols * self.cell_size + 95, 185))
+        self.screen.blit(speed_text_surface, speed_text_rect)
+
+        # Update speed key tooltip
+        st_font = pygame.font.Font(None, 24)
+        st_text = "Ctrl = %d | Shift = %d" % (self.SPEED_CHANGE_NORMAL, self.SPEED_CHANGE_FAST)
+        st_text_surface = st_font.render(st_text, True, (0, 0, 0))
+        st_text_rect = st_text_surface.get_rect(center=(self.automaton.cols * self.cell_size + 95, 205))
+        self.screen.blit(st_text_surface, st_text_rect)
 
     def get_color(self, state):
         """Get color based on cell state."""
@@ -82,6 +92,15 @@ class Visualization:
     def set_update_speed(self, new_speed):
         self.updates_per_sec = self.clamp(new_speed, self.MIN_UPDATE_SPEED, self.MAX_UPDATE_SPEED)
         self.time_between_updates = (1 / self.updates_per_sec) * 1000.0;    # Miliseconds
+
+    def adjust_speed_change(self):
+        mods = pygame.key.get_mods()
+        if mods & pygame.KMOD_CTRL:
+            return self.SPEED_CHANGE_NORMAL
+        elif mods & pygame.KMOD_SHIFT:
+            return self.SPEED_CHANGE_FAST
+
+        return self.SPEED_CHANGE_SLOW
 
     def clamp(self, val, min, max):
         if val > max: return max
@@ -113,9 +132,11 @@ class Visualization:
                             print("Reset Clicked")
                             self.automaton.reset()
                         elif key == "slower":
-                            self.set_update_speed(self.updates_per_sec - 1)
+                            speed_step = self.adjust_speed_change()
+                            self.set_update_speed(self.updates_per_sec - speed_step)
                         elif key == "faster":
-                            self.set_update_speed(self.updates_per_sec + 1)
+                            speed_step = self.adjust_speed_change()
+                            self.set_update_speed(self.updates_per_sec + speed_step)
                         elif key == "empty":
                             self.selected_tool = CellState.EMPTY
                         elif key == "fire":
