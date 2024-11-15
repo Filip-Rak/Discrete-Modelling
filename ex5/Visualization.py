@@ -1,6 +1,6 @@
 import numpy
 import pygame
-from Automaton import CellularAutomaton, CellState
+from Automaton import CellularAutomaton, CellState, WindDirection
 
 class Visualization:
     def __init__(self, automaton, cell_size=20):
@@ -36,6 +36,7 @@ class Visualization:
             "reset": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 75, 150, 40), "text": "Reset"},
             "slower": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 125, 70, 40), "text": "<<"},
             "faster": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20 + 80, 125, 70, 40), "text": ">>"},
+            "wind": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 500, 150, 40),"text": "Wind: %s" % self.automaton.wind_direction.name},
             "empty": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 250, 150, 40), "text": "Empty"},
             "forest": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 300, 150, 40), "text": "Forest"},
             "fire": {"rect": pygame.Rect(self.automaton.cols * self.cell_size + 20, 350, 150, 40), "text": "Fire"},
@@ -137,6 +138,12 @@ class Visualization:
                         elif key == "faster":
                             speed_step = self.adjust_speed_change()
                             self.set_update_speed(self.updates_per_sec + speed_step)
+                        elif key == "wind":
+                            directions = list(WindDirection)
+                            current_index = directions.index(self.automaton.wind_direction)
+                            new_direction = directions[(current_index + 1) % len(directions)]
+                            self.automaton.set_wind(new_direction)
+                            self.buttons["wind"]["text"] = "Wind %s" % new_direction.name
                         elif key == "empty":
                             self.selected_tool = CellState.EMPTY
                         elif key == "fire":
