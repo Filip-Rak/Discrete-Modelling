@@ -45,7 +45,7 @@ def main():
         automaton.initialize_from_map(grid)
     else:
         # Initialize with some random data
-        automaton.initialize_from_map(np.random.choice([3], size=(rows, cols)))
+        automaton.initialize_from_map(np.random.choice([4], size=(rows, cols)))
 
     # Create visualization
     visualization = Visualization(automaton, cell_size)

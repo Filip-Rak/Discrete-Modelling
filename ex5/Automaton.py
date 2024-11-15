@@ -4,11 +4,26 @@ import random
 
 # Constant states
 class CellState(Enum):
-    EMPTY = 0
-    FIRE = 1
-    WATER = 2
-    FOREST = 3
-    BURNED = 4
+    EMPTY = 0   # -> Forest
+    FIRE = 1    # -> Burned
+    WATER = 2   # Stays constant
+    FLOOD = 3   # -> Empty
+    FOREST = 4  # -> Overgrown Forest
+    OVERGORWN_FOREST = 5  # Stays constant. Burns longer
+    BURNED = 6  # -> Empty
+
+# Time transitions
+BURN_DURATION_MIN = 1
+BURN_DURATION_MAX = 5
+
+RUINED_DURATION_MIN = 50
+RUINED_DURATION_MAX = 75
+
+GROW_DURATION_MIN = 100
+GROW_DURATION_MAX = 125
+
+OVERGROW_DURATION_MIN = 500
+OVERGROW_DURATION_MAX = 700
 
 class WindDirection(Enum):
     NONE = 0
@@ -30,7 +45,7 @@ class CellularAutomaton:
         self.initial_grid = self.grid.copy()
         self.wind_direction = WindDirection.NONE  # Default: no wind
         self.fire_spread_chance = 0.8  # Default 80% chance to spread fire
-        self.fire_timers = np.full((rows, cols), -1, dtype=int)  # -1 means no fire
+        self.timers = np.full((rows, cols), -1, dtype=int)  # -1 means no fire
 
     def initialize_from_map(self, map_array):
         """Initialize the automaton grid based on a given map."""
@@ -45,26 +60,67 @@ class CellularAutomaton:
             for col in range(self.cols):
                 state = self.grid[row, col]
 
-                if state == CellState.FIRE.value:
-                    # Decrease fire timer
-                    if self.fire_timers[row, col] > 0:
-                        self.fire_timers[row, col] -= 1
-                    elif self.fire_timers[row, col] == 0:
-                        new_grid[row, col] = CellState.BURNED.value  # Fire burns out
+                # Decrease cell timer
+                if self.timers[row, col] > 0:
+                    self.timers[row, col] -= 1
+                elif self.timers[row, col] == 0:
+                    # Tranistion cell's state if timer runs out
+                    self.transition_cell(row, col, state, new_grid)
 
-                    # Spread fire with weighted probabilities
+                # Spread fire with weighted probabilities
+                if state == CellState.FIRE.value:
                     neighbors_with_weights = self.get_neighbors_with_wind_and_weights(row, col)
                     for (nr, nc), weight in neighbors_with_weights:
                         if self.grid[nr, nc] == CellState.FOREST.value:
                             if random.random() < self.fire_spread_chance * weight:
                                 new_grid[nr, nc] = CellState.FIRE.value
-                                self.fire_timers[nr, nc] = 5  # Set initial fire timer
+                                self.init_cell(nr, nc, CellState.FIRE.value)
 
         self.grid = new_grid
 
+    def init_cell(self, row, col, state):
+        if state == CellState.EMPTY.value:
+            self.timers[row, col] = random.randint(GROW_DURATION_MIN, GROW_DURATION_MAX)
+        elif state == CellState.FIRE.value:
+            self.timers[row, col] = random.randint(BURN_DURATION_MIN, BURN_DURATION_MAX)
+        elif state == CellState.WATER.value:
+            self.timers[row, col] = -1
+        elif state == CellState.FLOOD.value:
+            self.timers[row, col] = random.randint(RUINED_DURATION_MIN, RUINED_DURATION_MAX)
+        elif state == CellState.FOREST.value:
+            self.timers[row, col] = random.randint(OVERGROW_DURATION_MIN, OVERGROW_DURATION_MIN)
+        elif state == CellState.OVERGORWN_FOREST.value:
+            self.timers[row, col] = -1
+        elif state == CellState.BURNED.value:
+            self.timers[row, col] = random.randint(RUINED_DURATION_MIN, RUINED_DURATION_MAX)
+
+    # Updates within old, not new grid
+    def put_cell(self, row, col, value):
+        self.grid[row, col] = value
+        self.init_cell(row, col, value)
+
+    def transition_cell(self, row, col, state, new_grid):
+        new_state = state
+        if state == CellState.EMPTY.value:
+            new_state = CellState.FOREST.value
+        elif state == CellState.FIRE.value:
+            new_state = CellState.BURNED.value
+        elif state == CellState.FLOOD.value:
+            new_state = CellState.EMPTY.value
+        elif state == CellState.FOREST.value:
+            new_state = CellState.OVERGORWN_FOREST.value
+        elif state == CellState.BURNED.value:
+            new_state = CellState.EMPTY.value
+        else:   # Unhandled cell type
+            return
+
+        # Update and initialize the cell
+        new_grid[row, col] = new_state
+        self.init_cell(row, col, new_state)
+
     def reset(self):
         self.grid = self.initial_grid.copy()
-        self.fire_timers = np.full((self.rows, self.cols), -1, dtype=int)  # Reset timers
+        self.timers = np.full((self.rows, self.cols), -1, dtype=int)  # Reset timers
 
     def set_wind(self, direction: WindDirection, intensity: int = 1):
         """Set the wind direction and adjust fire spread chance."""

@@ -85,7 +85,9 @@ class Visualization:
             CellState.EMPTY: (255, 255, 255),
             CellState.FIRE: (255, 0, 0),
             CellState.WATER: (0, 0, 255),
-            CellState.FOREST: (0, 255, 0),
+            CellState.FLOOD: (0, 0, 235),
+            CellState.FOREST: (0, 235, 0),
+            CellState.OVERGORWN_FOREST: (0, 255, 0),
             CellState.BURNED: (128, 128, 128),
         }
         return color_map[state]
@@ -120,7 +122,7 @@ class Visualization:
                 if x < self.automaton.cols * self.cell_size:
                     col, row = x // self.cell_size, y // self.cell_size
                     if 0 <= row < self.automaton.rows and 0 <= col < self.automaton.cols:
-                        self.automaton.grid[row, col] = self.selected_tool.value  # Set cell state
+                        self.automaton.put_cell(row, col, self.selected_tool.value) # Set a new cell state
                 # Check if click is on a button
                 for key, button in self.buttons.items():
                     if button["rect"].collidepoint(x, y):
