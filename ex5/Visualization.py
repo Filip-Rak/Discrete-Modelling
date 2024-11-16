@@ -21,7 +21,7 @@ class Visualization:
         self.SPEED_CHANGE_SLOW = 1
         self.SPEED_CHANGE_NORMAL = 5
         self.SPEED_CHANGE_FAST = 10
-        self.set_update_speed(5)
+        self._set_update_speed(5)
         self.time_since_last_update = 0;
 
         # Time
@@ -30,7 +30,7 @@ class Visualization:
         # Flags
         self.running = True
         self.paused = True
-        self.selected_tool = CellState.EMPTY
+        self.selected_tool = CellState.FIRE
 
         pygame.init()
         self.screen = pygame.display.set_mode((self.window_width, self.window_height))
@@ -58,16 +58,16 @@ class Visualization:
 
     # Update Methods
     # ----------------
-    def update(self):
+    def _update(self):
         """Main update method"""
-        self.handle_events()
+        self._handle_events()
         if not self.paused:
             self.time_since_last_update += self.delta_time
             if self.time_since_last_update >= self.time_between_updates:
                 self.automaton.update()
                 self.time_since_last_update = 0
 
-    def handle_events(self):
+    def _handle_events(self):
         """Handle user input events."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -90,11 +90,11 @@ class Visualization:
                             self.paused = True
                             self.automaton.reset()
                         elif key == "slower":
-                            speed_step = self.adjust_speed_change()
-                            self.set_update_speed(self.updates_per_sec - speed_step)
+                            speed_step = self._adjust_speed_change()
+                            self._set_update_speed(self.updates_per_sec - speed_step)
                         elif key == "faster":
-                            speed_step = self.adjust_speed_change()
-                            self.set_update_speed(self.updates_per_sec + speed_step)
+                            speed_step = self._adjust_speed_change()
+                            self._set_update_speed(self.updates_per_sec + speed_step)
                         elif key == "wind":
                             directions = list(WindDirection)
                             current_index = directions.index(self.automaton.wind_direction)
@@ -106,7 +106,7 @@ class Visualization:
                         elif key == "forest":
                             self.selected_tool = CellState.FOREST
                         elif key == "dense_forest":
-                            self.selected_tool = CellState.OVERGORWN_FOREST
+                            self.selected_tool = CellState.OVERGROWN_FOREST
                         elif key == "fire":
                             self.selected_tool = CellState.FIRE
                         elif key == "water":
@@ -131,12 +131,12 @@ class Visualization:
                 if event.key == pygame.K_SPACE:
                     self.paused = not self.paused
 
-    def set_update_speed(self, new_speed: float):
+    def _set_update_speed(self, new_speed: float):
         """Sets the speed of automaton updates."""
-        self.updates_per_sec = self.clamp(new_speed, self.MIN_UPDATE_SPEED, self.MAX_UPDATE_SPEED)
+        self.updates_per_sec = self._clamp(new_speed, self.MIN_UPDATE_SPEED, self.MAX_UPDATE_SPEED)
         self.time_between_updates = (1 / self.updates_per_sec) * 1000.0;    # Miliseconds
 
-    def adjust_speed_change(self) -> float:
+    def _adjust_speed_change(self) -> float:
         """Returns the value of update speed buttons based on keyboard input."""
         mods = pygame.key.get_mods()
         if mods & pygame.KMOD_CTRL:
@@ -146,7 +146,7 @@ class Visualization:
 
         return self.SPEED_CHANGE_SLOW
 
-    def clamp(self, val: float, min: float, max: float) -> float:
+    def _clamp(self, val: float, min: float, max: float) -> float:
         """Clamps a number between min and max"""
         if val > max: return max
         if val < min: return min
@@ -155,27 +155,27 @@ class Visualization:
 
     # Render Methods
     # ----------------
-    def render(self):
+    def _render(self):
         """Main rendering method."""
         self.screen.fill((220, 220, 220))
-        self.draw_grid()
-        self.draw_buttons()
-        self.draw_text()
+        self._draw_grid()
+        self._draw_buttons()
+        self._draw_text()
         pygame.display.flip()
         self.delta_time = self.clock.tick(60)
 
-    def draw_grid(self):
+    def _draw_grid(self):
         """Draws the cellular automaton grid."""
         for row in range(self.automaton.rows):
             for col in range(self.automaton.cols):
                 state = self.automaton.grid[row, col]
-                color = self.get_color(CellState(state))
+                color = self._get_color(CellState(state))
                 pygame.draw.rect(self.screen, color,
                                  (col * self.cell_size, row * self.cell_size, self.cell_size, self.cell_size))
                 pygame.draw.rect(self.screen, (200, 200, 200),  # Grid lines
                                  (col * self.cell_size, row * self.cell_size, self.cell_size, self.cell_size), 1)
 
-    def draw_buttons(self):
+    def _draw_buttons(self):
         """Draws the buttons."""
         font = pygame.font.Font(None, 36)
         for key, button in self.buttons.items():
@@ -184,7 +184,7 @@ class Visualization:
             text_rect = text.get_rect(center=button["rect"].center)
             self.screen.blit(text, text_rect)
 
-    def draw_text(self):
+    def _draw_text(self):
         """Draws text elements of the UI"""
         # Update Speed
         speed_font = pygame.font.Font(None, 32)
@@ -200,7 +200,7 @@ class Visualization:
         st_text_rect = st_text_surface.get_rect(center=(self.automaton.cols * self.cell_size + 120, 205))
         self.screen.blit(st_text_surface, st_text_rect)
 
-    def get_color(self, state: CellState):
+    def _get_color(self, state: CellState):
         """Get color based on cell state."""
         color_map = {
             CellState.EMPTY: (153, 76, 0),
@@ -208,7 +208,7 @@ class Visualization:
             CellState.WATER: (51, 153, 255),
             CellState.FLOOD: (102, 178, 255),
             CellState.FOREST: (0, 255, 0),
-            CellState.OVERGORWN_FOREST: (0, 190, 0),
+            CellState.OVERGROWN_FOREST: (0, 190, 0),
             CellState.BURNED: (160, 160, 160),
         }
         return color_map[state]
@@ -216,10 +216,10 @@ class Visualization:
     # Main Loop's Method
     # ----------------
     def run(self):
-        """Main loop for the visualization."""
+        """Main visualization loop."""
         while self.running:
-            self.update()
-            self.render()
+            self._update()
+            self._render()
 
         # Quit the app when running is false
         pygame.quit()

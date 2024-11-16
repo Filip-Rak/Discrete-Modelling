@@ -12,7 +12,7 @@ InputPath = "Input/"
 def load_map_from_image(image_path: str, rows: int, cols: int) -> numpy.ndarray:
     """
     Load a map from an image file. \n
-    Resizes the image to fit the size of the grid and maps states based on color
+    Resizes the image to fit the size of the grid and maps states based on color.
     """
     
     # Create grid
@@ -24,11 +24,12 @@ def load_map_from_image(image_path: str, rows: int, cols: int) -> numpy.ndarray:
     for y in range(rows):
         for x in range(cols):
             pixel = img.getpixel((x, y))
-            grid[y, x] = map_pixel_to_state_dynamic(pixel)
+            grid[y, x] = map_pixel_to_state(pixel)
 
     return grid
 
-def map_pixel_to_state_dynamic(pixel: float) -> int:
+def map_pixel_to_state(pixel: float) -> int:
+    """Returns a state assgined to a given pixel based on it's color."""
     r, g, b = pixel
 
     # Water: Blue dominance
@@ -58,7 +59,7 @@ def main():
     automaton = CellularAutomaton(rows, cols)
 
     if use_map:
-        map_path = InputPath + "map1.png"
+        map_path = InputPath + "photo1.png"
         grid = load_map_from_image(map_path, rows, cols)
         automaton.initialize_from_map(grid)
     else:

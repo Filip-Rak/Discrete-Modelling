@@ -11,7 +11,7 @@ class CellState(Enum):
     WATER = 2   # Stays constant
     FLOOD = 3   # -> Empty
     FOREST = 4  # -> Overgrown Forest
-    OVERGORWN_FOREST = 5  # Stays constant. Burns longer
+    OVERGROWN_FOREST = 5  # Stays constant. Burns longer
     BURNED = 6  # -> Empty
 
 # Time transitions
@@ -22,8 +22,8 @@ OVERGROWN_BURN_MULTIPLIER = 6
 RUINED_DURATION_MIN = 50
 RUINED_DURATION_MAX = 75
 
-GROW_DURATION_MIN = 100
-GROW_DURATION_MAX = 125
+GROW_DURATION_MIN = 150
+GROW_DURATION_MAX = 175
 
 OVERGROW_DURATION_MIN = 500
 OVERGROW_DURATION_MAX = 700
@@ -54,12 +54,12 @@ class CellularAutomaton:
         self.rows = rows
         self.cols = cols
         self.grid = numpy.zeros((rows, cols), dtype=int)  # Initialize empty grid
-        self.initial_grid = self.grid.copy()
+        self._initial_grid = self.grid.copy()
 
         # Update modifiers
         self.wind_direction = WindDirection.NONE  # Default: no wind
-        self.fire_spread_chance = 0.5  # Default: 80% chance to spread fire
-        self.timers = numpy.full((rows, cols), -1, dtype=int)  # -Default: -1 means no time transition
+        self._fire_spread_chance = 0.5  # Default: 80% chance to spread fire
+        self._timers = numpy.full((rows, cols), -1, dtype=int)  # -Default: -1 means no time transition
 
     # Public Methods
     # ----------------
@@ -72,10 +72,10 @@ class CellularAutomaton:
         for row in range(self.rows):
             for col in range(self.cols):
                 state = self.grid[row, col]
-                self.init_cell(row, col, state)
+                self._init_dell(row, col, state)
 
         # Make a copy for restarts
-        self.initial_grid = self.grid.copy()
+        self._initial_grid = self.grid.copy()
 
     def update(self):
         """Update the automaton grid based on rules."""
@@ -89,76 +89,76 @@ class CellularAutomaton:
                 state = self.grid[row, col]
 
                 # Decrease cell timer
-                if self.timers[row, col] > 0:
-                    self.timers[row, col] -= 1
-                elif self.timers[row, col] == 0:
+                if self._timers[row, col] > 0:
+                    self._timers[row, col] -= 1
+                elif self._timers[row, col] == 0:
                     # Tranistion cell's state if timer runs out
-                    self.transition_cell(row, col, state, new_grid)
+                    self._transition_cell(row, col, state, new_grid)
 
                 # Spread fire with weighted probabilities
                 if state == CellState.FIRE.value:
-                    neighbors_with_weights = self.get_neighbors_with_wind_and_weights(row, col)
+                    neighbors_with_weights = self._get_neighbors_with_wind_and_weights(row, col)
                     for (nr, nc), weight in neighbors_with_weights:
-                        if self.grid[nr, nc] == CellState.FOREST.value or self.grid[nr, nc] == CellState.OVERGORWN_FOREST.value:
-                            if random.random() < self.fire_spread_chance * weight:
+                        if self.grid[nr, nc] == CellState.FOREST.value or self.grid[nr, nc] == CellState.OVERGROWN_FOREST.value:
+                            if random.random() < self._fire_spread_chance * weight:
                                 new_grid[nr, nc] = CellState.FIRE.value
-                                self.init_cell(nr, nc, CellState.FIRE.value)
+                                self._init_dell(nr, nc, CellState.FIRE.value)
 
                 # Spread water to neighboring cells
                 elif state == CellState.WATER.value or state == CellState.FLOOD.value:
-                    neighbors = self.get_neighbors(row, col)
+                    neighbors = self._get_neighbors(row, col)
                     for nr, nc in neighbors:
                         if self.grid[nr, nc] in [CellState.FIRE.value, CellState.BURNED.value]:
                             new_grid[nr, nc] = CellState.FLOOD.value
-                            self.init_cell(nr, nc, CellState.FLOOD.value)
+                            self._init_dell(nr, nc, CellState.FLOOD.value)
 
         # Update the grid
         self.grid = new_grid
 
     def reset(self):
         """Return the state of the grid to initial form"""
-        self.grid = self.initial_grid.copy()
-        self.timers = numpy.full((self.rows, self.cols), -1, dtype=int)  # Reset timers
+        self.grid = self._initial_grid.copy()
+        self._timers = numpy.full((self.rows, self.cols), -1, dtype=int)  # Reset timers
 
         # Reinitialize the grid
         # Initialize all the cells
         for row in range(self.rows):
             for col in range(self.cols):
                 state = self.grid[row, col]
-                self.init_cell(row, col, state)
+                self._init_dell(row, col, state)
 
     def put_cell(self, row: int, col: int, state: CellState):
         """Puts and initializes cell, with a new given state, directly into the grid"""
         self.grid[row, col] = state
-        self.init_cell(row, col, state)
+        self._init_dell(row, col, state)
 
     def set_wind(self, direction: WindDirection):
-        """Set the wind direction and adjust fire spread chance."""
+        """Set the wind direction adjusting fire spread chance."""
         self.wind_direction = direction
 
     # Private Methods
     # ----------------
-    def init_cell(self, row: int, col: int, state: CellState):
+    def _init_dell(self, row: int, col: int, state: CellState):
         """Initializes cell timer within the matrix"""
         if state == CellState.EMPTY.value:
-            self.timers[row, col] = random.randint(GROW_DURATION_MIN, GROW_DURATION_MAX)
+            self._timers[row, col] = random.randint(GROW_DURATION_MIN, GROW_DURATION_MAX)
         elif state == CellState.FIRE.value:
-            if self.grid[row, col] == CellState.OVERGORWN_FOREST.value:
-                self.timers[row, col] = random.randint(BURN_DURATION_MIN * OVERGROWN_BURN_MULTIPLIER, BURN_DURATION_MAX * OVERGROWN_BURN_MULTIPLIER)
+            if self.grid[row, col] == CellState.OVERGROWN_FOREST.value:
+                self._timers[row, col] = random.randint(BURN_DURATION_MIN * OVERGROWN_BURN_MULTIPLIER, BURN_DURATION_MAX * OVERGROWN_BURN_MULTIPLIER)
             else:
-                self.timers[row, col] = random.randint(BURN_DURATION_MIN, BURN_DURATION_MAX)
+                self._timers[row, col] = random.randint(BURN_DURATION_MIN, BURN_DURATION_MAX)
         elif state == CellState.WATER.value:
-            self.timers[row, col] = -1
+            self._timers[row, col] = -1
         elif state == CellState.FLOOD.value:
-            self.timers[row, col] = random.randint(RUINED_DURATION_MIN, RUINED_DURATION_MAX)
+            self._timers[row, col] = random.randint(RUINED_DURATION_MIN, RUINED_DURATION_MAX)
         elif state == CellState.FOREST.value:
-            self.timers[row, col] = random.randint(OVERGROW_DURATION_MIN, OVERGROW_DURATION_MAX)
-        elif state == CellState.OVERGORWN_FOREST.value:
-            self.timers[row, col] = -1
+            self._timers[row, col] = random.randint(OVERGROW_DURATION_MIN, OVERGROW_DURATION_MAX)
+        elif state == CellState.OVERGROWN_FOREST.value:
+            self._timers[row, col] = -1
         elif state == CellState.BURNED.value:
-            self.timers[row, col] = random.randint(RUINED_DURATION_MIN, RUINED_DURATION_MAX)
+            self._timers[row, col] = random.randint(RUINED_DURATION_MIN, RUINED_DURATION_MAX)
 
-    def transition_cell(self, row: int, col: int, state: CellState, grid: numpy.ndarray):
+    def _transition_cell(self, row: int, col: int, state: CellState, grid: numpy.ndarray):
         """Update the cell to it's next state"""
         new_state = state
         if state == CellState.EMPTY.value:
@@ -168,7 +168,7 @@ class CellularAutomaton:
         elif state == CellState.FLOOD.value:
             new_state = CellState.EMPTY.value
         elif state == CellState.FOREST.value:
-            new_state = CellState.OVERGORWN_FOREST.value
+            new_state = CellState.OVERGROWN_FOREST.value
         elif state == CellState.BURNED.value:
             new_state = CellState.EMPTY.value
         else:   # Unhandled cell type
@@ -176,9 +176,9 @@ class CellularAutomaton:
 
         # Update and initialize the cell
         grid[row, col] = new_state
-        self.init_cell(row, col, new_state)
+        self._init_dell(row, col, new_state)
 
-    def get_neighbors(self, row: int, col: int) -> list:
+    def _get_neighbors(self, row: int, col: int) -> list:
         """Get valid neighbors for a given cell, including diagonals."""
         neighbors = []
         for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]:
@@ -187,7 +187,7 @@ class CellularAutomaton:
                 neighbors.append((nr, nc))
         return neighbors
 
-    def get_neighbors_with_wind_and_weights(self, row, col) -> list:
+    def _get_neighbors_with_wind_and_weights(self, row, col) -> list:
         """Get neighbors with weights based on wind direction."""
 
         # Weights with orienation to wind
