@@ -41,7 +41,7 @@ def map_pixel_to_state(pixel: float) -> int:
         if g > 100:  # Brighter green
             return CellState.FOREST.value
         else:  # Darker green
-            return CellState.OVERGORWN_FOREST.value
+            return CellState.OVERGROWN_FOREST.value
 
     # Rest considered as ground
     return CellState.EMPTY.value
@@ -64,7 +64,7 @@ def main():
         automaton.initialize_from_map(grid)
     else:
         # Initialize with random states
-        state_pool = [CellState.FOREST.value, CellState.OVERGORWN_FOREST.value]
+        state_pool = [CellState.FOREST.value, CellState.OVERGROWN_FOREST.value]
         automaton.initialize_from_map(numpy.random.choice(state_pool, size=(rows, cols)))
 
     # Create visualization
