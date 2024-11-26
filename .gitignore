@@ -1,5 +1,7 @@
 ex6/*
 
 !ex6/src/
-
 !ex6/src/**
+
+!ex6/include/
+!ex6/include/**
