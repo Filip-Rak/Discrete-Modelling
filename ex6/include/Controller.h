@@ -1,15 +1,17 @@
 #pragma once
 
 #include "Visualization.h"
-// include ui
+#include "UI.h"
 // include automaton
+
+#include <iostream>
 
 class Controller 
 {
 private:
 	// Components
 	Visualization visualization;
-	// !-- ui
+	UI ui;
 	// !-- automaton
 
 	// Flags
@@ -25,8 +27,7 @@ public:
 
 private:
 	void process_events();
-
 	void update();
-
 	void render();
+	void initialize_ui();
 };

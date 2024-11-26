@@ -40,7 +40,9 @@ public:
 
 	/* Getters */
 	bool is_window_open() const;
-	tgui::Gui get_gui();
+	float get_ui_view_offset() const;
+	float get_ui_view_width() const;
+	tgui::Gui& get_gui();
 
 private:
 	/* Private Methods */

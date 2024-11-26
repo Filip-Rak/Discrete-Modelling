@@ -1,6 +1,5 @@
 #include "Visualization.h"
 
-
 /* Constructor */
 Visualization::Visualization(int window_width, int window_height, int grid_width, int grid_height):
 	window(sf::VideoMode(window_width, window_height), "LGA"),
@@ -21,7 +20,7 @@ Visualization::Visualization(int window_width, int window_height, int grid_width
     const float ui_view_width = (float)UI_VIEW_PORTION * window_width;
     const float ui_view_height = (float)window_height;
 
-    ui_view.setViewport(sf::FloatRect(ui_view_width / window_width, 0.f, ui_view_width / window_width, 1.f));
+    ui_view.setViewport(sf::FloatRect(1 - UI_VIEW_PORTION, 0.f, UI_VIEW_PORTION, 1.f));
     ui_view.setSize(ui_view_width, ui_view_height);
     ui_view.setCenter(ui_view_width / 2, ui_view_height / 2);
 
@@ -57,7 +56,7 @@ void Visualization::process_window_events()
                 handle_mouse_click(event.mouseMove.x, event.mouseMove.y);
             }
         }
-
+       
 
         gui.handleEvent(event); // Process GUI events
     }
@@ -96,6 +95,15 @@ void Visualization::draw_grid()
 
 void Visualization::draw_ui()
 {
+    // Change the view to UI section
+    window.setView(ui_view);
+
+    // Draw background
+    sf::RectangleShape background(sf::Vector2f(ui_view.getSize().x, ui_view.getSize().y));
+    background.setFillColor(sf::Color::Green);
+    window.draw(background);
+
+    // Update the GUI
     gui.draw();
 }
 
@@ -113,6 +121,21 @@ void Visualization::display()
 bool Visualization::is_window_open() const
 {
     return window.isOpen();
+}
+
+float Visualization::get_ui_view_offset() const
+{
+    return window.getSize().x * ui_view.getViewport().left;
+}
+
+float Visualization::get_ui_view_width() const
+{
+    return window.getSize().x * ui_view.getViewport().width;
+}
+
+tgui::Gui& Visualization::get_gui()
+{
+    return gui;
 }
 
 /* Private Methods */

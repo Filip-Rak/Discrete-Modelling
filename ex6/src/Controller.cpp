@@ -5,8 +5,11 @@
 
 // Constructor
 Controller::Controller(int window_width, int window_height, int grid_width, int grid_height):
-	visualization(window_width, window_height, grid_width, grid_height)
-{}
+	visualization(window_width, window_height, grid_width, grid_height),
+	ui(visualization.get_gui())
+{
+	initialize_ui();
+}
 
 // Main loop
 void Controller::run()
@@ -50,7 +53,29 @@ void Controller::render()
 
 	// Draw elements
 	visualization.draw_grid();
+	visualization.draw_ui();
 
 	// Display drawn elements
 	visualization.display();
+}
+
+// Set callbacks
+void Controller::initialize_ui()
+{
+	// Pass UI-specific dimensions
+	float ui_offset_x = visualization.get_ui_view_offset();
+	float ui_width = visualization.get_ui_view_width();
+
+	ui.initialize(ui_offset_x, ui_width);
+
+	// Register pause callbacks
+	ui.set_pause_callback([this]()
+		{
+			std::cout << "Pause pressed\n";
+		});
+
+	ui.set_reset_callback([this]()
+		{
+			std::cout << "Reset pressed\n";
+		});
 }
