@@ -2,7 +2,7 @@
 
 /* Constructor */
 Visualization::Visualization(int window_width, int window_height, int grid_width, int grid_height):
-	window(sf::VideoMode(window_width, window_height), "LGA"),
+	window(sf::VideoMode(window_width, window_height), "LGA", sf::Style::Close),
 	gui(window),
     cell_size(1),
     grid_width(grid_width),

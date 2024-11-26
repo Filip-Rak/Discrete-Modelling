@@ -19,7 +19,7 @@ private:
 	// Constants
 	const float UI_VIEW_PORTION = 0.2f;
 	const float GRID_PADDING = 20.f;
-	const float CELL_OUTLINE_PORTION = 0.1f;
+	const float CELL_OUTLINE_PORTION = 0.f;
 	// const float CELL_OUTLINE_PORTION = 0.1f;
 
 	// Settings
