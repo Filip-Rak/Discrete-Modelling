@@ -10,7 +10,7 @@ Visualization::Visualization(int window_width, int window_height, int grid_width
     grid_height(grid_height)
 {
     // Set grid view
-    const float grid_view_width = (float)(window_width - UI_VIEW_WIDTH);
+    const float grid_view_width = (float)(window_width * (1 - UI_VIEW_PORTION));
     const float grid_view_height = (float)window_height;
 
     grid_view.setViewport(sf::FloatRect(0.f, 0.f, grid_view_width / window_width, 1.f));
@@ -18,7 +18,7 @@ Visualization::Visualization(int window_width, int window_height, int grid_width
     grid_view.setCenter(grid_view_width / 2, grid_view_height / 2);
 
     // Set ui view
-    const float ui_view_width = (float)UI_VIEW_WIDTH;
+    const float ui_view_width = (float)UI_VIEW_PORTION * window_width;
     const float ui_view_height = (float)window_height;
 
     ui_view.setViewport(sf::FloatRect(ui_view_width / window_width, 0.f, ui_view_width / window_width, 1.f));
@@ -43,6 +43,21 @@ void Visualization::process_window_events()
         {
             update_views();
         }
+        if (event.type == sf::Event::MouseButtonPressed) 
+        {
+            if (event.mouseButton.button == sf::Mouse::Left) 
+            {
+                handle_mouse_click(event.mouseButton.x, event.mouseButton.y);
+            }
+        }
+        if (event.type == sf::Event::MouseMoved) 
+        {
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) 
+            {
+                handle_mouse_click(event.mouseMove.x, event.mouseMove.y);
+            }
+        }
+
 
         gui.handleEvent(event); // Process GUI events
     }
@@ -59,10 +74,9 @@ void Visualization::draw_grid()
     window.draw(background);
 
     // Draw grid cells
-    float cell_internal_size = cell_size;
     float cell_outline_size = cell_size * CELL_OUTLINE_PORTION;
 
-    sf::RectangleShape cell(sf::Vector2f(cell_internal_size, cell_internal_size));
+    sf::RectangleShape cell(sf::Vector2f(cell_size, cell_size));
     cell.setFillColor(sf::Color::Cyan);
     cell.setOutlineThickness(-cell_outline_size);
     cell.setOutlineColor(sf::Color::Black);
@@ -71,8 +85,8 @@ void Visualization::draw_grid()
     {
         for (int j = 0; j < grid_height; j++)
         {
-            float x = GRID_PADDING + i * cell_internal_size;
-            float y = GRID_PADDING + j * cell_internal_size;
+            float x = GRID_PADDING + i * cell_size;
+            float y = GRID_PADDING + j * cell_size;
 
             cell.setPosition(x, y);
             window.draw(cell);
@@ -118,4 +132,23 @@ void Visualization::find_grid_dimensions()
 void Visualization::update_views()
 {
     find_grid_dimensions();
+}
+
+void Visualization::handle_mouse_click(int mouse_x, int mouse_y)
+{
+    // Convert window coords into grid coords
+    sf::Vector2f world_coords = window.mapPixelToCoords(sf::Vector2i(mouse_x, mouse_y), grid_view);
+
+    // Find the index of the cell
+    int cell_x = (world_coords.x - GRID_PADDING) / cell_size;
+    int cell_y = (world_coords.y - GRID_PADDING) / cell_size;
+
+    // Check if the click happened inside the grid
+    if (cell_x >= 0 && cell_x < grid_width && cell_y >= 0 && cell_y < grid_height) 
+    {
+        std::cout << "Clicked cell: (" << cell_x << ", " << cell_y << ")\n";
+    }
+    else {
+        std::cout << "Clicked outside the grid\n";
+    }
 }

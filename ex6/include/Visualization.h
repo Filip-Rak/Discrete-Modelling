@@ -17,9 +17,9 @@ private:
 	sf::View ui_view;
 
 	// Constants
-	const float UI_VIEW_WIDTH = 300.f;
+	const float UI_VIEW_PORTION = 0.2f;
 	const float GRID_PADDING = 20.f;
-	const float CELL_OUTLINE_PORTION = 0.f;
+	const float CELL_OUTLINE_PORTION = 0.1f;
 	// const float CELL_OUTLINE_PORTION = 0.1f;
 
 	// Settings
@@ -46,4 +46,5 @@ private:
 	/* Private Methods */
 	void find_grid_dimensions();
 	void update_views();
+	void handle_mouse_click(int mouse_x, int mouse_y);
 };
