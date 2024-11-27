@@ -11,10 +11,7 @@ private:
 
 	// Components
 	tgui::Gui& gui_ref;	// Reference to the GUI within Visualization Class
-
-	// Callback functions
-	std::function<void()> on_pause;
-	std::function<void()> on_reset;
+	std::unordered_map<std::string, tgui::Button::Ptr> buttons;
 
 public:
 	/* Constructor */
@@ -25,7 +22,6 @@ public:
 	// Initialize UI elements
 	void initialize(float ui_offset_x, float ui_width);
 
-	/* Setters */
-	void set_pause_callback(const std::function<void()>& callback);
-	void set_reset_callback(const std::function<void()>& callback);
+	/* Getters */
+	tgui::Button::Ptr UI::get_button(const std::string& name);
 };

@@ -16,7 +16,7 @@ private:
 
 	// Flags
 	bool use_gpu = false;
-	bool paused = false;
+	bool paused = true;
 
 public:
 	// Constructor

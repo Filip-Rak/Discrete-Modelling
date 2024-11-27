@@ -19,11 +19,7 @@ void UI::initialize(float ui_offset_x, float ui_width)
 	pause_button->setSize(basic_width, basic_height);
 	pause_button->setTextSize(basic_text_size);
 	pause_button->setPosition(total_x_offset, top_margin);
-	pause_button->onPress([this]()
-		{
-			if (on_pause) 
-				on_pause();
-		});
+	buttons["pause"] = pause_button;
 
 	gui_ref.add(pause_button);
 
@@ -32,22 +28,37 @@ void UI::initialize(float ui_offset_x, float ui_width)
 	reset_button->setSize(basic_width, basic_height);
 	reset_button->setTextSize(basic_text_size);
 	reset_button->setPosition(total_x_offset, top_margin * 2 + basic_height * 1);
-	reset_button->onPress([this]()
-		{
-			if (on_reset)
-				on_reset();
-		});
+	buttons["reset"] = reset_button;
+
 
 	gui_ref.add(reset_button);
+
+	// Slower Button
+	float left_button_width = (basic_width - basic_margin) / 2;
+
+	auto slower_button = tgui::Button::create("<");
+	slower_button->setSize(left_button_width, basic_height);
+	slower_button->setTextSize(basic_text_size);
+	slower_button->setPosition(total_x_offset, top_margin * 3 + basic_height * 2);
+	buttons["slower"] = slower_button;
+
+
+	gui_ref.add(slower_button);	
+	
+	// Faster Button
+	float total_right_button_offset = total_x_offset + left_button_width + basic_margin;
+
+	auto faster_button = tgui::Button::create(">");
+	faster_button->setSize(left_button_width, basic_height);
+	faster_button->setTextSize(basic_text_size);
+	faster_button->setPosition(total_right_button_offset, top_margin * 3 + basic_height * 2);
+	buttons["faster"] = faster_button;
+
+	gui_ref.add(faster_button);
 }
 
-/* Setters */
-void UI::set_pause_callback(const std::function<void()>& callback)
+/* Getters */
+tgui::Button::Ptr UI::get_button(const std::string& name)
 {
-	on_pause = callback;
-}
-
-void UI::set_reset_callback(const std::function<void()>& callback)
-{
-	on_reset = callback;
+	return buttons[name];
 }

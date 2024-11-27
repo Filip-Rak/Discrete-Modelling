@@ -68,14 +68,36 @@ void Controller::initialize_ui()
 
 	ui.initialize(ui_offset_x, ui_width);
 
-	// Register pause callbacks
-	ui.set_pause_callback([this]()
+	// Register callbacks
+	ui.get_button("pause")->onPress([this]()
 		{
-			std::cout << "Pause pressed\n";
+			// Debug
+			std::cout << ui.get_button("pause")->getText() << " pressed\n";
+
+			// Toggle the paused state
+			paused = !paused;
+
+			// Change the name based on state
+			if (paused)
+				ui.get_button("pause")->setText("Pause");
+			else
+				ui.get_button("pause")->setText("Resume");
 		});
 
-	ui.set_reset_callback([this]()
+	ui.get_button("reset")->onPress([this]()
 		{
 			std::cout << "Reset pressed\n";
+			paused = true;
+			ui.get_button("pause")->setText("Start");
+		});	
+	
+	ui.get_button("slower")->onPress([this]()
+		{
+			std::cout << "Slower pressed\n";
+		});	
+	
+	ui.get_button("faster")->onPress([this]()
+		{
+			std::cout << "Faster pressed\n";
 		});
 }

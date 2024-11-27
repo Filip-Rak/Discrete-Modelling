@@ -168,10 +168,5 @@ void Visualization::handle_mouse_click(int mouse_x, int mouse_y)
 
     // Check if the click happened inside the grid
     if (cell_x >= 0 && cell_x < grid_width && cell_y >= 0 && cell_y < grid_height) 
-    {
         std::cout << "Clicked cell: (" << cell_x << ", " << cell_y << ")\n";
-    }
-    else {
-        std::cout << "Clicked outside the grid\n";
-    }
 }
