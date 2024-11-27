@@ -66,37 +66,43 @@ void Controller::initialize_ui()
 	float ui_offset_x = visualization.get_ui_view_offset();
 	float ui_width = visualization.get_ui_view_width();
 
+	// Create the UI
 	ui.initialize(ui_offset_x, ui_width);
 
 	// Register callbacks
-	ui.get_button("pause")->onPress([this]()
+	auto pause_button = ui.get_widget_as<tgui::Button>("pause");
+	auto reset_button = ui.get_widget_as<tgui::Button>("reset");
+	auto slower_button = ui.get_widget_as<tgui::Button>("slower");
+	auto faster_button = ui.get_widget_as<tgui::Button>("faster");
+
+	pause_button->onPress([this, pause_button]()
 		{
 			// Debug
-			std::cout << ui.get_button("pause")->getText() << " pressed\n";
+			std::cout << pause_button->getText() << " pressed\n";
 
 			// Toggle the paused state
 			paused = !paused;
 
 			// Change the name based on state
 			if (paused)
-				ui.get_button("pause")->setText("Pause");
+				pause_button->setText("Pause");
 			else
-				ui.get_button("pause")->setText("Resume");
+				pause_button->setText("Resume");
 		});
 
-	ui.get_button("reset")->onPress([this]()
+	reset_button->onPress([this, pause_button]()
 		{
 			std::cout << "Reset pressed\n";
 			paused = true;
-			ui.get_button("pause")->setText("Start");
+			pause_button->setText("Start");
 		});	
 	
-	ui.get_button("slower")->onPress([this]()
+	slower_button->onPress([this]()
 		{
 			std::cout << "Slower pressed\n";
 		});	
 	
-	ui.get_button("faster")->onPress([this]()
+	faster_button->onPress([this]()
 		{
 			std::cout << "Faster pressed\n";
 		});

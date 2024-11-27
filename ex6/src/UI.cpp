@@ -33,7 +33,7 @@ void UI::initialize(float ui_offset_x, float ui_width)
         float width;                // Width of the element
         float x_offset;             // X-offset relative to total_x_offset
         bool advance_vertically;    // Whether this element starts a new row
-        float y_offset;         // Additional vertical gap
+        float y_offset;             // Offset modification on Y-axis
     };
 
     // UI element definitions
@@ -41,10 +41,10 @@ void UI::initialize(float ui_offset_x, float ui_width)
     {
         {"pause", "button", "Start", basic_text_size, basic_width, 0, true, 0},
         {"reset", "button", "Reset", basic_text_size, basic_width, 0, true, 0},
-        {"slower", "button", "<", basic_text_size, half_button_width, 0,  true, 0},
-        {"faster", "button", ">", basic_text_size, half_button_width, half_button_width + basic_margin, false, 0},
         {"speed_label", "label", "Speed: 5 UPS", small_text_size, ui_width, -basic_margin, true, 0},
         {"desc_label", "label", "Ctrl = 5 | Shift = 10", very_small_text_size, ui_width, -basic_margin, true, -40},
+        {"slower", "button", "<", basic_text_size, half_button_width, 0,  true, -40},
+        {"faster", "button", ">", basic_text_size, half_button_width, half_button_width + basic_margin, false, 0},
     };
 
     // Iterate through UI element configs
@@ -64,7 +64,7 @@ void UI::initialize(float ui_offset_x, float ui_width)
             button->setSize(config.width, basic_height);
             button->setTextSize(config.text_size);
             button->setPosition(total_x_offset + config.x_offset, current_y_pos);
-            buttons[config.name] = button;
+            widgets[config.name] = button;
             gui_ref.add(button);
         }
         else if (config.element_type == "label") 
@@ -74,13 +74,14 @@ void UI::initialize(float ui_offset_x, float ui_width)
             label->setTextSize(config.text_size);
             label->setHorizontalAlignment(tgui::Label::HorizontalAlignment::Center);
             label->setPosition(total_x_offset + config.x_offset, current_y_pos);
+            widgets[config.name] = label;
             gui_ref.add(label);
         }
     }
 }
 
 /* Getters */
-tgui::Button::Ptr UI::get_button(const std::string& name)
+tgui::Widget::Ptr UI::get_widget(const std::string& name) 
 {
-	return buttons[name];
+    return widgets[name];
 }

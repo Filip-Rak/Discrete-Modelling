@@ -11,7 +11,7 @@ private:
 
 	// Components
 	tgui::Gui& gui_ref;	// Reference to the GUI within Visualization Class
-	std::unordered_map<std::string, tgui::Button::Ptr> buttons;
+	std::unordered_map<std::string, tgui::Widget::Ptr> widgets;
 
 public:
 	/* Constructor */
@@ -23,5 +23,12 @@ public:
 	void initialize(float ui_offset_x, float ui_width);
 
 	/* Getters */
-	tgui::Button::Ptr UI::get_button(const std::string& name);
+	tgui::Widget::Ptr get_widget(const std::string& name);
+
+	// Template helper to retrieve a specific widget type
+	template<typename T>
+	std::shared_ptr<T> get_widget_as(const std::string& name)
+	{
+		return std::dynamic_pointer_cast<T>(get_widget(name));
+	}
 };
