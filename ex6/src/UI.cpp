@@ -44,6 +44,7 @@ void UI::initialize(float ui_offset_x, float ui_width, float ctrl_speed, float s
     {
         {"pause", "button", "Start", basic_text_size, basic_width, 0, true, 0},
         {"reset", "button", "Reset", basic_text_size, basic_width, 0, true, 0},
+        {"generate", "button", "Generate", basic_text_size, basic_width, 0, true, 0},
         {"speed_label", "label", "not set", small_text_size, ui_width, -basic_margin, true, 0},
         {"desc_label", "label", desc_label_text, very_small_text_size, ui_width, -basic_margin, true, -40},
         {"slower", "button", "<", basic_text_size, half_button_width, 0,  true, -40},

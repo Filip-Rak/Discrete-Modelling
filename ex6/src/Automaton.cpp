@@ -8,13 +8,17 @@ Automaton::Automaton(int width, int height)
 
 	// Dynamically allocate space for cell data
 	this->cells = new uint16_t[width * height];
+	this->cells_fallback = new uint16_t[width * height];
 }
 
 Automaton::~Automaton()
 {
 	// Free dynamic cell data
 	delete[] this->cells;
+	delete[] this->cells_fallback;
+
     this->cells = nullptr;
+    this->cells_fallback = nullptr;
 }
 
 /* Public Methods */
@@ -35,5 +39,14 @@ void Automaton::generate_random(float probability)
         {
             this->cells[i] = set_state(0, EMPTY);
         }
+
+        this->cells_fallback[i] = this->cells[i];
     }
+}
+
+void Automaton::reset()
+{
+    // Copy original cells to current cells
+    for (int i = 0; i < width * height; i++)
+        cells[i] = cells_fallback[i];
 }

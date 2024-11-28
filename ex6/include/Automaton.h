@@ -25,6 +25,7 @@ public:
 private:
 	/* Attributes */
 	uint16_t* cells;
+	uint16_t* cells_fallback;
 	int width;
 	int height;
 

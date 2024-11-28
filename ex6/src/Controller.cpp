@@ -86,6 +86,7 @@ void Controller::initialize_ui()
 	// Get buttons
 	auto pause_button = ui.get_widget_as<tgui::Button>("pause");
 	auto reset_button = ui.get_widget_as<tgui::Button>("reset");
+	auto generate_button = ui.get_widget_as<tgui::Button>("generate");
 	auto slower_button = ui.get_widget_as<tgui::Button>("slower");
 	auto faster_button = ui.get_widget_as<tgui::Button>("faster");
 
@@ -108,6 +109,14 @@ void Controller::initialize_ui()
 	reset_button->onPress([this, pause_button]()
 		{
 			std::cout << "Reset pressed\n";
+			paused = true;
+			automaton.reset();
+			pause_button->setText("Start");
+		});		
+	
+	generate_button->onPress([this, pause_button]()
+		{
+			std::cout << "Generate pressed\n";
 			paused = true;
 			automaton.generate_random();
 			pause_button->setText("Start");
