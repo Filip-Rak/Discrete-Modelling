@@ -3,6 +3,7 @@
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp>
 #include <functional>
+#include <string>
 
 class UI
 {
@@ -20,7 +21,7 @@ public:
 	/* Public Methods */
 
 	// Initialize UI elements
-	void initialize(float ui_offset_x, float ui_width);
+	void initialize(float ui_offset_x, float ui_width, float ctrl_speed, float shift_speed);
 
 	/* Getters */
 	tgui::Widget::Ptr get_widget(const std::string& name);
@@ -31,4 +32,7 @@ public:
 	{
 		return std::dynamic_pointer_cast<T>(get_widget(name));
 	}
+
+	/* Setters */
+	void set_speed_label_speed(float speed);
 };

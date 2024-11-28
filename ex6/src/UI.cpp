@@ -5,7 +5,7 @@
 UI::UI(tgui::Gui& gui) : gui_ref(gui) {}
 
 /* Public Methods */
-void UI::initialize(float ui_offset_x, float ui_width) 
+void UI::initialize(float ui_offset_x, float ui_width, float ctrl_speed, float shift_speed)
 {
     // Layout configuration
     const float basic_margin = ui_width * 0.15;
@@ -36,13 +36,16 @@ void UI::initialize(float ui_offset_x, float ui_width)
         float y_offset;             // Offset modification on Y-axis
     };
 
+    // Long configs
+    std::string desc_label_text = "Ctrl = " + std::to_string((int)ctrl_speed) + " | Shift = " + std::to_string((int)shift_speed);
+
     // UI element definitions
     std::vector<UIElementConfig> element_configs = 
     {
         {"pause", "button", "Start", basic_text_size, basic_width, 0, true, 0},
         {"reset", "button", "Reset", basic_text_size, basic_width, 0, true, 0},
-        {"speed_label", "label", "Speed: 5 UPS", small_text_size, ui_width, -basic_margin, true, 0},
-        {"desc_label", "label", "Ctrl = 5 | Shift = 10", very_small_text_size, ui_width, -basic_margin, true, -40},
+        {"speed_label", "label", "not set", small_text_size, ui_width, -basic_margin, true, 0},
+        {"desc_label", "label", desc_label_text, very_small_text_size, ui_width, -basic_margin, true, -40},
         {"slower", "button", "<", basic_text_size, half_button_width, 0,  true, -40},
         {"faster", "button", ">", basic_text_size, half_button_width, half_button_width + basic_margin, false, 0},
     };
@@ -84,4 +87,11 @@ void UI::initialize(float ui_offset_x, float ui_width)
 tgui::Widget::Ptr UI::get_widget(const std::string& name) 
 {
     return widgets[name];
+}
+
+void UI::set_speed_label_speed(float speed)
+{
+    auto speed_label = get_widget_as<tgui::Label>("speed_label");
+    std::string text = "Speed: " + std::to_string((int)speed) + " UPS";
+    speed_label->setText(text);
 }

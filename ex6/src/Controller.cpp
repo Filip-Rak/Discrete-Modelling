@@ -59,7 +59,6 @@ void Controller::render()
 	visualization.display();
 }
 
-// Set callbacks
 void Controller::initialize_ui()
 {
 	// Pass UI-specific dimensions
@@ -67,14 +66,16 @@ void Controller::initialize_ui()
 	float ui_width = visualization.get_ui_view_width();
 
 	// Create the UI
-	ui.initialize(ui_offset_x, ui_width);
+	ui.initialize(ui_offset_x, ui_width, LOW_SPEED_CHANGE, HIGH_SPEED_CHANGE);
+	ui.set_speed_label_speed(update_speed);
 
-	// Register callbacks
+	// Get buttons
 	auto pause_button = ui.get_widget_as<tgui::Button>("pause");
 	auto reset_button = ui.get_widget_as<tgui::Button>("reset");
 	auto slower_button = ui.get_widget_as<tgui::Button>("slower");
 	auto faster_button = ui.get_widget_as<tgui::Button>("faster");
 
+	// Register callbacks
 	pause_button->onPress([this, pause_button]()
 		{
 			// Debug
@@ -100,10 +101,31 @@ void Controller::initialize_ui()
 	slower_button->onPress([this]()
 		{
 			std::cout << "Slower pressed\n";
+			change_update_speed(-1);
 		});	
 	
 	faster_button->onPress([this]()
 		{
 			std::cout << "Faster pressed\n";
+			change_update_speed(1);
 		});
+}
+
+void Controller::change_update_speed(float direction)
+{
+	// Apply speed change value based on keyboard
+	float change = STANDARD_SPEED_CHANGE;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+		change = LOW_SPEED_CHANGE;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+		change = HIGH_SPEED_CHANGE;
+
+	// Find new speed and clamp it
+	float new_speed = update_speed + change * direction;
+	new_speed = std::max(UPDATE_SPEED_MIN, std::min(new_speed, UPDATE_SPEED_MAX));
+
+	// Update the speed and labels
+	update_speed = new_speed;
+	std::cout << "Speed: " << update_speed << "\n";
+	ui.set_speed_label_speed(update_speed);
 }
