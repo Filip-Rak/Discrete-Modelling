@@ -2,6 +2,7 @@
 
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp>
+#include "Automaton.h"
 
 class Visualization
 {
@@ -17,6 +18,12 @@ private:
 	sf::View ui_view;
 
 	// Constants
+	const std::map<Automaton::State, sf::Color> state_colors =
+	{
+		{Automaton::WALL, sf::Color::Black},
+		{Automaton::GAS, sf::Color::Blue},
+		{Automaton::EMPTY, sf::Color::White}
+	};
 	const float UI_VIEW_PORTION = 0.2f;
 	const float GRID_PADDING = 20.f;
 	const float CELL_OUTLINE_PORTION = 0.f;
@@ -33,7 +40,7 @@ public:
 
 	/* Public Methods */
 	void process_window_events();
-	void draw_grid();
+	void draw_grid(uint16_t* cells);
 	void draw_ui();
 	void clear();
 	void display();
@@ -49,4 +56,5 @@ private:
 	void find_grid_dimensions();
 	void update_views();
 	void handle_mouse_click(int mouse_x, int mouse_y);
+	sf::Color state_to_color(Automaton::State state);
 };

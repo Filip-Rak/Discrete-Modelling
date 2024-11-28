@@ -34,39 +34,45 @@ public:
 	~Automaton();
 
 	/* Grid Operations */
-	void generate_random(float probability = 0.5f);	// Creates a random grid
+	void generate_random(float probability = 0.2f);	// Creates a random grid
 	void update();
 	void reset();
 
-	/* Accessors */
-	inline State get_state(uint16_t cell)
+	/* Getters */
+	inline uint16_t* get_cells()
+	{
+		return this->cells;
+	}
+
+	/* Static Accessors */
+	inline static State get_state(uint16_t cell)
 	{
 		return static_cast<State>(cell & 0b1100000000000000); // Mask bits 15-14
 	}
 
-	inline uint16_t set_state(uint16_t cell, State state) 
+	inline static uint16_t set_state(uint16_t cell, State state)
 	{
 		return (cell & 0b0011111111111111) | state; // Clear bits 15-14, then set new state
 	}
 
 	// Input directions (lower 4 bits)
-	inline uint8_t get_input(uint16_t cell) 
+	inline static uint8_t get_input(uint16_t cell)
 	{
 		return cell & 0x0F;
 	}
 
-	inline uint16_t set_input(uint16_t cell, uint8_t input) 
+	inline static uint16_t set_input(uint16_t cell, uint8_t input)
 	{
 		return (cell & 0xFFF0) | (input & 0x0F); // Clear lower 4 bits, then set input
 	}
 
 	// Output directions (next 4 bits)
-	inline uint8_t get_output(uint16_t cell) 
+	inline static uint8_t get_output(uint16_t cell)
 	{
 		return (cell >> 4) & 0x0F;
 	}
 
-	inline uint16_t set_output(uint16_t cell, uint8_t output) 
+	inline static uint16_t set_output(uint16_t cell, uint8_t output)
 	{
 		return (cell & 0xFF0F) | ((output & 0x0F) << 4); // Clear bits 4-7, then set output
 	}

@@ -66,7 +66,7 @@ void Controller::render()
 	visualization.clear();
 
 	// Draw elements
-	visualization.draw_grid();
+	visualization.draw_grid(automaton.get_cells());
 	visualization.draw_ui();
 
 	// Display drawn elements
@@ -109,6 +109,7 @@ void Controller::initialize_ui()
 		{
 			std::cout << "Reset pressed\n";
 			paused = true;
+			automaton.generate_random();
 			pause_button->setText("Start");
 		});	
 	

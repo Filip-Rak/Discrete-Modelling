@@ -62,7 +62,7 @@ void Visualization::process_window_events()
     }
 }
 
-void Visualization::draw_grid()
+void Visualization::draw_grid(uint16_t* cells)
 {
     // Change rendering view to the grid
     window.setView(grid_view);
@@ -76,7 +76,6 @@ void Visualization::draw_grid()
     float cell_outline_size = cell_size * CELL_OUTLINE_PORTION;
 
     sf::RectangleShape cell(sf::Vector2f(cell_size, cell_size));
-    cell.setFillColor(sf::Color::Cyan);
     cell.setOutlineThickness(-cell_outline_size);
     cell.setOutlineColor(sf::Color::Black);
 
@@ -84,6 +83,12 @@ void Visualization::draw_grid()
     {
         for (int j = 0; j < grid_height; j++)
         {
+            // Set color
+            int cell_id = i * j;
+            Automaton::State cell_state = Automaton::get_state(cells[cell_id]);
+            cell.setFillColor(state_to_color(cell_state));
+
+            // Set position
             float x = GRID_PADDING + i * cell_size;
             float y = GRID_PADDING + j * cell_size;
 
@@ -169,4 +174,9 @@ void Visualization::handle_mouse_click(int mouse_x, int mouse_y)
     // Check if the click happened inside the grid
     if (cell_x >= 0 && cell_x < grid_width && cell_y >= 0 && cell_y < grid_height) 
         std::cout << "Clicked cell: (" << cell_x << ", " << cell_y << ")\n";
+}
+
+sf::Color Visualization::state_to_color(Automaton::State state)
+{
+    return state_colors.at(state);
 }

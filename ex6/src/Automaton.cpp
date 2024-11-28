@@ -17,6 +17,7 @@ Automaton::~Automaton()
     this->cells = nullptr;
 }
 
+/* Public Methods */
 void Automaton::generate_random(float probability)
 {
     for (int i = 0; i < this->width * this->height; i++)
@@ -26,7 +27,7 @@ void Automaton::generate_random(float probability)
         {
             uint16_t cell = 0;
             cell = set_state(cell, GAS);
-            cell = set_input(cell, rand() & 0x0F); // Randomize inputs
+            cell = set_input(cell, rand() & 0x0F);  // Randomize inputs
             cell = set_output(cell, rand() & 0x0F); // Randomize outputs
             this->cells[i] = cell;
         }
@@ -36,4 +37,3 @@ void Automaton::generate_random(float probability)
         }
     }
 }
-
