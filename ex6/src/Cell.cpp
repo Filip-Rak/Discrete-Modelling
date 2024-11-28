@@ -32,3 +32,8 @@ void Cell::set_output(Direction dir, bool value)
 {
     change_state(dir, value, 4);
 }
+
+bool Cell::is_active() const
+{
+    return (state & 0x0F) > 0;  // Check if first 4 bits are higher than 0
+}

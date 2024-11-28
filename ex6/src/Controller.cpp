@@ -6,9 +6,11 @@
 // Constructor
 Controller::Controller(int window_width, int window_height, int grid_width, int grid_height):
 	visualization(window_width, window_height, grid_width, grid_height),
-	ui(visualization.get_gui())
+	ui(visualization.get_gui()),
+	automaton(grid_width, grid_height)
 {
 	initialize_ui();
+	automaton.generate_random();
 }
 
 // Main loop

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Visualization.h"
+#include "Automaton.h"
 #include "UI.h"
 // include automaton
 
@@ -12,7 +13,7 @@ private:
 	// Components
 	Visualization visualization;
 	UI ui;
-	// !-- automaton
+	Automaton automaton;
 
 	// Flags
 	bool use_gpu = false;

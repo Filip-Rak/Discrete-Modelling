@@ -33,4 +33,5 @@ public:
 
 	/* Getters */
 	// !-- bool get_state?
+	bool is_active() const;
 };
