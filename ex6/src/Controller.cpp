@@ -17,12 +17,7 @@ void Controller::run()
 	while (visualization.is_window_open())
 	{
 		process_events();
-
-		if (!paused)
-		{
-			update();
-		}
-
+		update();
 		render();
 	}
 }
@@ -43,7 +38,24 @@ void Controller::process_events()
 
 void Controller::update()
 {
+	// Delta time update
+	delta_time = delta_clock.restart().asSeconds();
 
+	// Automaton update
+	if (!paused)
+	{
+		// Increase the time if not paused
+		time_since_update += delta_time;
+		if (time_since_update > time_between_updates)
+		{
+			// Reset the time
+			time_since_update -= time_between_updates;
+
+			// Update the automaton
+			std::cout << "Automaton update\n";
+		}
+
+	}
 }
 
 void Controller::render()
@@ -124,8 +136,11 @@ void Controller::change_update_speed(float direction)
 	float new_speed = update_speed + change * direction;
 	new_speed = std::max(UPDATE_SPEED_MIN, std::min(new_speed, UPDATE_SPEED_MAX));
 
-	// Update the speed and labels
+	// Update the speed and time
 	update_speed = new_speed;
+	time_between_updates = 1 / update_speed;
+
+	// Update labels
 	std::cout << "Speed: " << update_speed << "\n";
 	ui.set_speed_label_speed(update_speed);
 }
