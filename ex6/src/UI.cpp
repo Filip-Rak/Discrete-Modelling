@@ -45,11 +45,15 @@ void UI::initialize(float ui_offset_x, float ui_width, float ctrl_speed, float s
         {"pause", "button", "Start", basic_text_size, basic_width, 0, true, 0},
         {"reset", "button", "Reset", basic_text_size, basic_width, 0, true, 0},
         {"generate", "button", "Generate", basic_text_size, basic_width, 0, true, 0},
+        {"prob_input", "text_area", "not set", small_text_size, basic_width / 2, basic_width / 4, true, 0},
         {"speed_label", "label", "not set", small_text_size, ui_width, -basic_margin, true, 0},
         {"desc_label", "label", desc_label_text, very_small_text_size, ui_width, -basic_margin, true, -20},
         {"slower", "button", "<", basic_text_size, half_button_width, 0,  true, -20},
         {"faster", "button", ">", basic_text_size, half_button_width, half_button_width + basic_margin, false, 0},
         {"outline", "button", "Enable Outline", very_small_text_size, basic_width, 0, true, 0},
+        {"air_button", "button", "Air", basic_text_size, basic_width, 0, true, 40},
+        {"gas_button", "button", "Gas", basic_text_size, basic_width, 0, true, 0},
+        {"wall_button", "button", "Wall", basic_text_size, basic_width, 0, true, 0},
     };
 
     // Iterate through UI element configs
@@ -81,6 +85,25 @@ void UI::initialize(float ui_offset_x, float ui_width, float ctrl_speed, float s
             label->setPosition(total_x_offset + config.x_offset, current_y_pos);
             widgets[config.name] = label;
             gui_ref.add(label);
+        }
+        else if (config.element_type == "spin_button")
+        {
+            auto spin_button = tgui::SpinButton::create(0.f, 1.f);
+            spin_button->setSize(config.width, basic_height);
+            spin_button->setTextSize(config.text_size);
+            spin_button->setPosition(total_x_offset + config.x_offset, current_y_pos);
+            widgets[config.name] = spin_button;
+            gui_ref.add(spin_button);
+        }
+        else if (config.element_type == "text_area")
+        {
+            auto text_area = tgui::TextArea::create();
+            text_area->setSize(config.width, basic_height);
+            text_area->setTextSize(config.text_size);
+            text_area->setText(config.text);
+            text_area->setPosition(total_x_offset + config.x_offset, current_y_pos);
+            widgets[config.name] = text_area;
+            gui_ref.add(text_area);
         }
     }
 }

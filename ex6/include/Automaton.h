@@ -2,6 +2,8 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include <map>
+#include <iostream>
 
 class Automaton
 {

@@ -39,7 +39,7 @@ void Controller::update_clicked_cell(int cell_x, int cell_y)
 
 	// Update the cell
 	auto old_cell = cells[cell_index];
-	auto new_cell = Automaton::set_state(old_cell, Automaton::GAS);
+	auto new_cell = Automaton::set_state(old_cell, selected_state);
 
 	// Return the updated cell back into the grid
 	cells[cell_index] = new_cell;
@@ -111,8 +111,14 @@ void Controller::initialize_ui()
 	auto slower_button = ui.get_widget_as<tgui::Button>("slower");
 	auto faster_button = ui.get_widget_as<tgui::Button>("faster");
 	auto outline_button = ui.get_widget_as<tgui::Button>("outline");
+	auto air_button = ui.get_widget_as<tgui::Button>("air_button");
+	auto gas_button = ui.get_widget_as<tgui::Button>("gas_button");
+	auto wall_button = ui.get_widget_as<tgui::Button>("wall_button");
+	auto probability_text_area = ui.get_widget_as<tgui::TextArea>("prob_input");
 
 	// Register callbacks
+
+	// Control buttons
 	pause_button->onPress([this, pause_button]()
 		{
 			// Debug
@@ -163,6 +169,52 @@ void Controller::initialize_ui()
 				outline_button->setText("Disable Outline");
 			else
 				outline_button->setText("Enable Outline");
+		});
+
+	// State tools
+	air_button->onPress([this]
+		{
+			selected_state = Automaton::State::EMPTY;
+			std::cout << "Select: Air\n";
+		});	
+
+	gas_button->onPress([this]
+		{
+			selected_state = Automaton::State::GAS;
+			std::cout << "Select: Gas\n";
+		});	
+
+	wall_button->onPress([this]
+		{
+			selected_state = Automaton::State::WALL;
+			std::cout << "Select: Wall\n";
+		});
+
+	float prob_disp_text = probability * 100.f;
+	probability_text_area->setText(std::to_string(50));
+
+	probability_text_area->onTextChange([this, probability_text_area]()
+		{
+			// Prevent recursion
+			if (text_input_in_use) return;
+
+			text_input_in_use = true; // Set the guard
+
+			std::string text = probability_text_area->getText().toStdString();
+
+			// Remove non-numeric characters
+			text.erase(std::remove_if(text.begin(), text.end(),
+				[](char c) { return !std::isdigit(c); }),
+				text.end());
+
+			// Convert to integer and clamp
+			int value = text.empty() ? 0 : std::stoi(text);
+			if (value > 100) value = 100;
+
+			// Update the text to reflect the valid percentage
+			probability_text_area->setText(std::to_string(value));
+
+			text_input_in_use = false; // Clear the guard
 		});
 }
 
