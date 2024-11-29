@@ -64,6 +64,21 @@ void Controller::update()
 	// Delta time update
 	delta_time = delta_clock.restart().asSeconds();
 
+	// Fps update
+	accumulated_time += delta_time;
+	frames_since_update += 1;
+
+	if (accumulated_time >= FPS_UPDATE_INTERVAL)
+	{
+		// Update the display
+		float fps = frames_since_update / accumulated_time;
+		ui.set_fps_label_fps(ceil(fps));
+
+		// Reset counter
+		frames_since_update = 0;
+		accumulated_time = 0;
+	}
+
 	// Automaton update
 	if (!paused)
 	{
@@ -103,6 +118,7 @@ void Controller::initialize_ui()
 	// Create the UI
 	ui.initialize(ui_offset_x, ui_width, LOW_SPEED_CHANGE, HIGH_SPEED_CHANGE);
 	ui.set_speed_label_speed(update_speed);
+	ui.set_fps_label_fps(ceil(1 / delta_time));
 
 	// Get buttons
 	auto pause_button = ui.get_widget_as<tgui::Button>("pause");
@@ -172,9 +188,9 @@ void Controller::initialize_ui()
 		{
 			bool enabled = visualization.toggle_grid_outline();
 			if (enabled)
-				outline_button->setText("Disable Grid");
+				outline_button->setText("Show Grid");
 			else
-				outline_button->setText("Enable Grid");
+				outline_button->setText("Hide Grid");
 		});
 
 	// State tools

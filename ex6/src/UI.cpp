@@ -12,7 +12,7 @@ void UI::initialize(float ui_offset_x, float ui_width, float ctrl_speed, float s
     const float basic_width = ui_width - basic_margin * 2;
     const float basic_height = 40;
     const float basic_text_size = 30;
-    const float small_text_size = 28;
+    const float small_text_size = 26;
     const float very_small_text_size = 22;
     const float top_margin = 20;
 
@@ -44,13 +44,14 @@ void UI::initialize(float ui_offset_x, float ui_width, float ctrl_speed, float s
     {
         {"pause", "button", "Start", basic_text_size, basic_width, 0, true, 0},
         {"reset", "button", "Reset", basic_text_size, basic_width, 0, true, 0},
-        {"generate", "button", "Generate", basic_text_size, basic_width, 0, true, 0},
         {"prob_input", "text_area", "not set", small_text_size, basic_width / 2, basic_width / 4, true, 0},
-        {"speed_label", "label", "not set", small_text_size, ui_width, -basic_margin, true, 0},
-        {"desc_label", "label", desc_label_text, very_small_text_size, ui_width, -basic_margin, true, -20},
+        {"generate", "button", "Generate", basic_text_size, basic_width, 0, true, 0},
+        {"fps_label", "label", "not set", small_text_size, ui_width, -basic_margin, true, -10},
+        {"speed_label", "label", "not set", small_text_size, ui_width, -basic_margin, true, -20},
+        {"desc_label", "label", desc_label_text, very_small_text_size, ui_width, -basic_margin, true, -30},
         {"slower", "button", "<", basic_text_size, half_button_width, 0,  true, -20},
         {"faster", "button", ">", basic_text_size, half_button_width, half_button_width + basic_margin, false, 0},
-        {"outline", "button", "Enable Outline", very_small_text_size, basic_width, 0, true, 0},
+        {"outline", "button", "Show Grid", very_small_text_size, basic_width, 0, true, 0},
         {"air_button", "button", "Air", basic_text_size, basic_width, 0, true, 40},
         {"gas_button", "button", "Gas", basic_text_size, basic_width, 0, true, 0},
         {"wall_button", "button", "Wall", basic_text_size, basic_width, 0, true, 0},
@@ -119,4 +120,11 @@ void UI::set_speed_label_speed(float speed)
     auto speed_label = get_widget_as<tgui::Label>("speed_label");
     std::string text = "Speed: " + std::to_string((int)speed) + " UPS";
     speed_label->setText(text);
+}
+
+void UI::set_fps_label_fps(int fps)
+{
+    auto fps_label = get_widget_as<tgui::Label>("fps_label");
+    std::string text = "FPS: " + std::to_string(fps);
+    fps_label->setText(text);
 }

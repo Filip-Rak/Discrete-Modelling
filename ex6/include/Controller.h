@@ -29,12 +29,16 @@ private:
 	const float LOW_SPEED_CHANGE = 1;
 	float update_speed = 50;
 
-	// Time
+	// Delta Time
 	sf::Clock delta_clock;
-	float delta_time;
-
+	float delta_time = 1;
 	float time_between_updates = 1 / update_speed;
 	float time_since_update = time_between_updates;
+
+	// FPS
+	int frames_since_update = 0;
+	const float FPS_UPDATE_INTERVAL = 1;
+	float accumulated_time = 0;
 
 	// Generation
 	float MIN_PROBABILITY = 0.f;
