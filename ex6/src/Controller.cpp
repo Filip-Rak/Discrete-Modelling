@@ -11,6 +11,11 @@ Controller::Controller(int window_width, int window_height, int grid_width, int 
 {
 	initialize_ui();
 	automaton.generate_random();
+
+	visualization.set_cell_click_callback([this](int cell_x, int cell_y)
+		{
+			update_clicked_cell(cell_x, cell_y);
+		});
 }
 
 // Main loop
@@ -22,6 +27,22 @@ void Controller::run()
 		update();
 		render();
 	}
+}
+
+void Controller::update_clicked_cell(int cell_x, int cell_y)
+{
+	std::cout << "update_clicked_cell() called\n";
+
+	// Get the cell from automaton
+	auto cells = automaton.get_cells();
+	int cell_index = cell_y * automaton.get_width() + cell_x;
+
+	// Update the cell
+	auto old_cell = cells[cell_index];
+	auto new_cell = Automaton::set_state(old_cell, Automaton::GAS);
+
+	// Return the updated cell back into the grid
+	cells[cell_index] = new_cell;
 }
 
 // Private Methods
@@ -89,6 +110,7 @@ void Controller::initialize_ui()
 	auto generate_button = ui.get_widget_as<tgui::Button>("generate");
 	auto slower_button = ui.get_widget_as<tgui::Button>("slower");
 	auto faster_button = ui.get_widget_as<tgui::Button>("faster");
+	auto outline_button = ui.get_widget_as<tgui::Button>("outline");
 
 	// Register callbacks
 	pause_button->onPress([this, pause_button]()
@@ -132,6 +154,15 @@ void Controller::initialize_ui()
 		{
 			std::cout << "Faster pressed\n";
 			change_update_speed(1);
+		});
+
+	outline_button->onPress([this, outline_button]()
+		{
+			bool enabled = visualization.toggle_grid_outline();
+			if (enabled)
+				outline_button->setText("Disable Outline");
+			else
+				outline_button->setText("Enable Outline");
 		});
 }
 

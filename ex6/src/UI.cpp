@@ -10,8 +10,8 @@ void UI::initialize(float ui_offset_x, float ui_width, float ctrl_speed, float s
     // Layout configuration
     const float basic_margin = ui_width * 0.15;
     const float basic_width = ui_width - basic_margin * 2;
-    const float basic_height = 60;
-    const float basic_text_size = 40;
+    const float basic_height = 40;
+    const float basic_text_size = 30;
     const float small_text_size = 28;
     const float very_small_text_size = 22;
     const float top_margin = 20;
@@ -46,9 +46,10 @@ void UI::initialize(float ui_offset_x, float ui_width, float ctrl_speed, float s
         {"reset", "button", "Reset", basic_text_size, basic_width, 0, true, 0},
         {"generate", "button", "Generate", basic_text_size, basic_width, 0, true, 0},
         {"speed_label", "label", "not set", small_text_size, ui_width, -basic_margin, true, 0},
-        {"desc_label", "label", desc_label_text, very_small_text_size, ui_width, -basic_margin, true, -40},
-        {"slower", "button", "<", basic_text_size, half_button_width, 0,  true, -40},
+        {"desc_label", "label", desc_label_text, very_small_text_size, ui_width, -basic_margin, true, -20},
+        {"slower", "button", "<", basic_text_size, half_button_width, 0,  true, -20},
         {"faster", "button", ">", basic_text_size, half_button_width, half_button_width + basic_margin, false, 0},
+        {"outline", "button", "Enable Outline", very_small_text_size, basic_width, 0, true, 0},
     };
 
     // Iterate through UI element configs

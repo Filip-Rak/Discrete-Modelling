@@ -40,6 +40,7 @@ public:
 
 	// Main loop
 	void run();
+	void update_clicked_cell(int cell_x, int cell_y);
 
 private:
 	void process_events();

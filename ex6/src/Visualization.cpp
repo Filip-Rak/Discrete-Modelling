@@ -73,7 +73,7 @@ void Visualization::draw_grid(uint16_t* cells)
     window.draw(background);
 
     // Draw grid cells
-    float cell_outline_size = cell_size * CELL_OUTLINE_PORTION;
+    float cell_outline_size = cell_size * cell_outline_portion;
 
     sf::RectangleShape cell(sf::Vector2f(cell_size, cell_size));
     cell.setOutlineThickness(-cell_outline_size);
@@ -84,7 +84,8 @@ void Visualization::draw_grid(uint16_t* cells)
         for (int j = 0; j < grid_height; j++)
         {
             // Set color
-            int cell_id = i * j;
+            // int cell_id = i * j;    // For cool parallel drawing
+            int cell_id = j * grid_width + i;
             Automaton::State cell_state = Automaton::get_state(cells[cell_id]);
             cell.setFillColor(state_to_color(cell_state));
 
@@ -122,6 +123,17 @@ void Visualization::display()
     window.display();
 }
 
+bool Visualization::toggle_grid_outline()
+{
+    outline_enabled = !outline_enabled;
+    if (outline_enabled)
+        cell_outline_portion = CELL_OUTLINE_PORTION_ENABLED;
+    else
+        cell_outline_portion = 0;
+
+    return outline_enabled;
+}
+
 /* Getters */
 bool Visualization::is_window_open() const
 {
@@ -141,6 +153,18 @@ float Visualization::get_ui_view_width() const
 tgui::Gui& Visualization::get_gui()
 {
     return gui;
+}
+
+
+/* Setters */
+void Visualization::set_cell_click_callback(std::function<void(int, int)> callback)
+{
+    this->cell_click_callback = callback;
+}
+
+void Visualization::set_cell_outline(float value)
+{
+    cell_outline_portion = value;
 }
 
 /* Private Methods */
@@ -172,8 +196,11 @@ void Visualization::handle_mouse_click(int mouse_x, int mouse_y)
     int cell_y = (world_coords.y - GRID_PADDING) / cell_size;
 
     // Check if the click happened inside the grid
-    if (cell_x >= 0 && cell_x < grid_width && cell_y >= 0 && cell_y < grid_height) 
+    if (cell_x >= 0 && cell_x < grid_width && cell_y >= 0 && cell_y < grid_height)
+    {
         std::cout << "Clicked cell: (" << cell_x << ", " << cell_y << ")\n";
+        cell_click_callback(cell_x, cell_y);
+    }
 }
 
 sf::Color Visualization::state_to_color(Automaton::State state)

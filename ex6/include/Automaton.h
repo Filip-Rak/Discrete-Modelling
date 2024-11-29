@@ -35,7 +35,7 @@ public:
 	~Automaton();
 
 	/* Grid Operations */
-	void generate_random(float probability = 0.2f);	// Creates a random grid
+	void generate_random(float probability = 0.1f);	// Creates a random grid
 	void update();
 	void reset();
 
@@ -43,6 +43,16 @@ public:
 	inline uint16_t* get_cells()
 	{
 		return this->cells;
+	}
+
+	inline int get_width() const
+	{
+		return width;
+	}	
+	
+	inline int get_height() const
+	{
+		return height;
 	}
 
 	/* Static Accessors */
