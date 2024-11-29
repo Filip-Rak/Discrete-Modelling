@@ -142,12 +142,18 @@ void Controller::initialize_ui()
 			pause_button->setText("Start");
 		});		
 	
-	generate_button->onPress([this, pause_button]()
+	generate_button->onPress([this, pause_button, probability_text_area]()
 		{
-			std::cout << "Generate pressed\n";
+			// Regenrate cells
+			float probability_value = std::stof(probability_text_area->getText().toStdString()) / 100.f;
+			automaton.generate_random(probability_value);
+
+			// Pause
 			paused = true;
-			automaton.generate_random();
 			pause_button->setText("Start");
+
+			// Debug
+			std::cout << "Generate pressed: " << probability_value << "\n";
 		});	
 	
 	slower_button->onPress([this]()
@@ -166,9 +172,9 @@ void Controller::initialize_ui()
 		{
 			bool enabled = visualization.toggle_grid_outline();
 			if (enabled)
-				outline_button->setText("Disable Outline");
+				outline_button->setText("Disable Grid");
 			else
-				outline_button->setText("Enable Outline");
+				outline_button->setText("Enable Grid");
 		});
 
 	// State tools
@@ -190,8 +196,7 @@ void Controller::initialize_ui()
 			std::cout << "Select: Wall\n";
 		});
 
-	float prob_disp_text = probability * 100.f;
-	probability_text_area->setText(std::to_string(50));
+	probability_text_area->setText(std::to_string((int)(probability * 100.f)));
 
 	probability_text_area->onTextChange([this, probability_text_area]()
 		{
@@ -208,8 +213,9 @@ void Controller::initialize_ui()
 				text.end());
 
 			// Convert to integer and clamp
-			int value = text.empty() ? 0 : std::stoi(text);
-			if (value > 100) value = 100;
+			float min = MIN_PROBABILITY * 100, max = MAX_PROBABILITY * 100;
+			int value = text.empty() ? min : std::stoi(text);
+			if (value > max) value = max;
 
 			// Update the text to reflect the valid percentage
 			probability_text_area->setText(std::to_string(value));
