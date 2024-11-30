@@ -42,6 +42,7 @@ public:
 	~Automaton();
 
 	/* Grid Operations */
+	void generate_random_legacy(float probability = 0.1f);	// Creates a random grid
 	void generate_random(float probability = 0.1f);	// Creates a random grid
 	void update();
 	void reset();

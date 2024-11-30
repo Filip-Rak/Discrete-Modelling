@@ -22,7 +22,7 @@ Automaton::~Automaton()
 }
 
 /* Public Methods */
-void Automaton::generate_random(float probability)
+void Automaton::generate_random_legacy(float probability)
 {
     for (int i = 0; i < this->width * this->height; i++) 
     {
@@ -47,6 +47,58 @@ void Automaton::generate_random(float probability)
 
         // Copy to fallback array
         this->cells_fallback[i] = this->cells[i];
+    }
+}
+
+void Automaton::generate_random(float probability)
+{
+    int wall_position = this->width / 6; // Adjust proportion for wall position
+    int gas_end = wall_position;        // End of gas region
+    int wall_start = wall_position;     // Start of wall region
+    int wall_end = wall_start + 1;      // End of wall region (1-cell wide)
+
+    for (int y = 0; y < this->height; ++y)
+    {
+        for (int x = 0; x < this->width; ++x)
+        {
+            uint16_t cell = 0;
+            int index = y * this->width + x;
+
+            if (x < gas_end) // Gas-filled region
+            {
+                float rand_val = static_cast<float>(rand()) / RAND_MAX;
+
+                if (rand_val < probability || probability == 1.0f)
+                {
+                    cell = set_state(cell, GAS);            // Set state to GAS
+                    cell = set_input(cell, (1 << Automaton::DOWN));
+                    cell = set_output(cell, 0);             // Start with no outputs
+                }
+                else
+                {
+                    cell = set_state(cell, EMPTY);          // Set state to EMPTY
+                    cell = set_input(cell, 0);              // No inputs
+                    cell = set_output(cell, 0);             // No outputs
+                }
+            }
+            else if (x >= wall_start && x < wall_end) // Wall region
+            {
+                cell = set_state(cell, Automaton::WALL);   // Set state to WALL
+                cell = set_input(cell, 0);                // No inputs
+                cell = set_output(cell, 0);               // No outputs
+            }
+            else // Empty region
+            {
+                cell = set_state(cell, EMPTY);            // Set state to EMPTY
+                cell = set_input(cell, 0);                // No inputs
+                cell = set_output(cell, 0);               // No outputs
+            }
+
+            this->cells[index] = cell;
+
+            // Copy to fallback array
+            this->cells_fallback[index] = cell;
+        }
     }
 }
 

@@ -34,15 +34,28 @@ void Controller::update_clicked_cell(int cell_x, int cell_y)
 {
 	std::cout << "update_clicked_cell() called\n";
 
-	// Get the cell from automaton
+	// Replace the cell
+	uint16_t new_cell = 0;
+	new_cell = Automaton::set_state(new_cell, selected_state);
+
+	if (selected_state & Automaton::GAS)
+	{
+		// Setting meaningful gas direction is required
+		// Go down.
+		// It doesn't go down.
+		// Why does it not go down? 
+		// Some other directions just make it disappear
+		// The cause likely are neighbour id calculation within Automaton::Update being incorrect
+		// But I do not care
+
+		new_cell = Automaton::set_input(new_cell, Automaton::DOWN);
+	}
+
+	// Get cell array from the automaton
 	auto cells = automaton.get_cells();
 	int cell_index = cell_y * automaton.get_width() + cell_x;
 
-	// Update the cell
-	auto old_cell = cells[cell_index];
-	auto new_cell = Automaton::set_state(old_cell, selected_state);
-
-	// Return the updated cell back into the grid
+	// Put the new cell in the array
 	cells[cell_index] = new_cell;
 
 	// Update the cell within the grid
