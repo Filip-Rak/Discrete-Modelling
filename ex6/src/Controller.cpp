@@ -21,6 +21,7 @@ Controller::Controller(int window_width, int window_height, int grid_width, int 
 // Main loop
 void Controller::run()
 {
+	visualization.update_grid(automaton.get_cells());
 	while (visualization.is_window_open())
 	{
 		process_events();
@@ -43,6 +44,9 @@ void Controller::update_clicked_cell(int cell_x, int cell_y)
 
 	// Return the updated cell back into the grid
 	cells[cell_index] = new_cell;
+
+	// Update the grid before rendering
+	visualization.update_grid(automaton.get_cells());
 }
 
 // Private Methods
@@ -102,7 +106,7 @@ void Controller::render()
 	visualization.clear();
 
 	// Draw elements
-	visualization.draw_grid(automaton.get_cells());
+	visualization.draw_grid(outline_enabled);
 	visualization.draw_ui();
 
 	// Display drawn elements
@@ -156,6 +160,7 @@ void Controller::initialize_ui()
 			paused = true;
 			automaton.reset();
 			pause_button->setText("Start");
+			visualization.update_grid(automaton.get_cells());
 		});		
 	
 	generate_button->onPress([this, pause_button, probability_text_area]()
@@ -163,6 +168,7 @@ void Controller::initialize_ui()
 			// Regenrate cells
 			float probability_value = std::stof(probability_text_area->getText().toStdString()) / 100.f;
 			automaton.generate_random(probability_value);
+			visualization.update_grid(automaton.get_cells());
 
 			// Pause
 			paused = true;
@@ -186,8 +192,9 @@ void Controller::initialize_ui()
 
 	outline_button->onPress([this, outline_button]()
 		{
-			bool enabled = visualization.toggle_grid_outline();
-			if (enabled)
+			outline_enabled = !outline_enabled;
+
+			if (outline_enabled)
 				outline_button->setText("Show Grid");
 			else
 				outline_button->setText("Hide Grid");

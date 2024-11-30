@@ -26,16 +26,19 @@ private:
 	};
 	const float UI_VIEW_PORTION = 0.2f;
 	const float GRID_PADDING = 20.f;
-	bool outline_enabled = false;
-	float cell_outline_portion = 0.f;
-	const float CELL_OUTLINE_PORTION_ENABLED = 0.1f;
 
 	// Settings
 	float cell_size;
 	int grid_width;
 	int grid_height;
-
 	std::function<void(int, int)> cell_click_callback;
+
+	// Precomputed
+	sf::VertexArray grid_vertices;
+	sf::VertexArray grid_lines;
+	sf::RectangleShape cell_shape;
+	sf::RectangleShape grid_background;
+	sf::RectangleShape ui_background;
 	
 public:
 	/* Constructor */
@@ -43,11 +46,13 @@ public:
 
 	/* Public Methods */
 	void process_window_events();
-	void draw_grid(uint16_t* cells);
+	void init_grid();
+	void update_grid(uint16_t* cells);
+	void draw_grid(bool draw_grid_lines);
+	void init_ui();
 	void draw_ui();
 	void clear();
 	void display();
-	bool toggle_grid_outline();
 
 	/* Getters */
 	bool is_window_open() const;
@@ -57,7 +62,6 @@ public:
 
 	/* Setters */
 	void set_cell_click_callback(std::function<void(int, int)> callback);
-	void set_cell_outline(float value);
 
 private:
 	/* Private Methods */

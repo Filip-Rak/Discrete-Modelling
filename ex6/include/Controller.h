@@ -46,6 +46,9 @@ private:
 	float probability = 0.1f;
 	// float probability = (MIN_PROBABILITY + MAX_PROBABILITY) / 2.f;
 
+	// Visuals
+	bool outline_enabled = false;
+
 public:
 	// Constructor
 	Controller(int window_width, int window_height, int grid_width, int grid_height);

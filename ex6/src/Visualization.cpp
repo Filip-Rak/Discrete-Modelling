@@ -8,6 +8,10 @@ Visualization::Visualization(int window_width, int window_height, int grid_width
     grid_width(grid_width),
     grid_height(grid_height)
 {
+    // Set window attributes
+    window.setFramerateLimit(0); // Limit to 120 FPS
+    window.setVerticalSyncEnabled(false);
+
     // Set grid view
     const float grid_view_width = (float)(window_width * (1 - UI_VIEW_PORTION));
     const float grid_view_height = (float)window_height;
@@ -24,8 +28,10 @@ Visualization::Visualization(int window_width, int window_height, int grid_width
     ui_view.setSize(ui_view_width, ui_view_height);
     ui_view.setCenter(ui_view_width / 2, ui_view_height / 2);
 
-    // Estimate cell size
+    // Initialize visuals
     find_grid_dimensions();
+    init_grid();
+    init_ui();
 }
 
 /* Public Methods */
@@ -62,41 +68,115 @@ void Visualization::process_window_events()
     }
 }
 
-void Visualization::draw_grid(uint16_t* cells)
+void Visualization::init_grid()
+{
+    // Initialize the vertex array for the grid
+    grid_vertices.setPrimitiveType(sf::Quads);
+    grid_vertices.resize(grid_width * grid_height * 4); // 4 vertices per cell
+
+    for (int i = 0; i < grid_width; i++) {
+        for (int j = 0; j < grid_height; j++) {
+            int cell_id = j * grid_width + i;
+
+            // Compute the four corners of the cell
+            float x = GRID_PADDING + i * cell_size;
+            float y = GRID_PADDING + j * cell_size;
+
+            sf::Vertex* quad = &grid_vertices[cell_id * 4];
+
+            quad[0].position = sf::Vector2f(x, y);
+            quad[1].position = sf::Vector2f(x + cell_size, y);
+            quad[2].position = sf::Vector2f(x + cell_size, y + cell_size);
+            quad[3].position = sf::Vector2f(x, y + cell_size);
+
+            // Initial color (default, can be updated later)
+            sf::Color initial_color = state_to_color(Automaton::EMPTY);
+            quad[0].color = initial_color;
+            quad[1].color = initial_color;
+            quad[2].color = initial_color;
+            quad[3].color = initial_color;
+        }
+    }
+
+    // Initialize the vertex array for the grid lines
+    grid_lines.setPrimitiveType(sf::Lines);
+    grid_lines.resize((grid_width + 1) * 2 + (grid_height + 1) * 2); // Horizontal + Vertical lines
+
+    int idx = 0;
+
+    // Horizontal lines
+    for (int j = 0; j <= grid_height; j++) {
+        float y = GRID_PADDING + j * cell_size;
+
+        grid_lines[idx].position = sf::Vector2f(GRID_PADDING, y);
+        grid_lines[idx].color = sf::Color::Black;
+        idx++;
+
+        grid_lines[idx].position = sf::Vector2f(GRID_PADDING + grid_width * cell_size, y);
+        grid_lines[idx].color = sf::Color::Black;
+        idx++;
+    }
+
+    // Vertical lines
+    for (int i = 0; i <= grid_width; i++) {
+        float x = GRID_PADDING + i * cell_size;
+
+        grid_lines[idx].position = sf::Vector2f(x, GRID_PADDING);
+        grid_lines[idx].color = sf::Color::Black;
+        idx++;
+
+        grid_lines[idx].position = sf::Vector2f(x, GRID_PADDING + grid_height * cell_size);
+        grid_lines[idx].color = sf::Color::Black;
+        idx++;
+    }
+
+    // Initialize grid background
+    grid_background.setSize(sf::Vector2f(grid_view.getSize().x, grid_view.getSize().y));
+    grid_background.setFillColor(sf::Color(173, 216, 230)); // Light blue
+}
+
+void Visualization::update_grid(uint16_t* cells)
+{
+    // Update the color of each cell in the vertex array
+    for (int i = 0; i < grid_width; i++) 
+    {
+        for (int j = 0; j < grid_height; j++) 
+        {
+            int cell_id = j * grid_width + i;
+
+            Automaton::State cell_state = Automaton::get_state(cells[cell_id]);
+            sf::Color cell_color = state_to_color(cell_state);
+
+            sf::Vertex* quad = &grid_vertices[cell_id * 4];
+            quad[0].color = cell_color;
+            quad[1].color = cell_color;
+            quad[2].color = cell_color;
+            quad[3].color = cell_color;
+        }
+    }
+}
+
+void Visualization::draw_grid(bool draw_grid_lines)
 {
     // Change rendering view to the grid
     window.setView(grid_view);
 
     // Draw grid background
-    sf::RectangleShape background(sf::Vector2f(grid_view.getSize().x, grid_view.getSize().y));
-    background.setFillColor(sf::Color(173, 216, 230)); // Light blue
-    window.draw(background);
+    window.draw(grid_background);
 
-    // Draw grid cells
-    float cell_outline_size = cell_size * cell_outline_portion;
+    // Draw the grid cells
+    window.draw(grid_vertices);
 
-    sf::RectangleShape cell(sf::Vector2f(cell_size, cell_size));
-    cell.setOutlineThickness(-cell_outline_size);
-    cell.setOutlineColor(sf::Color::Black);
+    // Draw grid lines
+    if(draw_grid_lines)
+        window.draw(grid_lines);
+}
 
-    for (int i = 0; i < grid_width; i++)
-    {
-        for (int j = 0; j < grid_height; j++)
-        {
-            // Set color
-            // int cell_id = i * j;    // For cool parallel drawing
-            int cell_id = j * grid_width + i;
-            Automaton::State cell_state = Automaton::get_state(cells[cell_id]);
-            cell.setFillColor(state_to_color(cell_state));
-
-            // Set position
-            float x = GRID_PADDING + i * cell_size;
-            float y = GRID_PADDING + j * cell_size;
-
-            cell.setPosition(x, y);
-            window.draw(cell);
-        }
-    }
+void Visualization::init_ui()
+{
+    // Initialize UI background
+    ui_background.setSize(sf::Vector2f(ui_view.getSize().x, ui_view.getSize().y));
+    ui_background.setFillColor(sf::Color::Green);
 }
 
 void Visualization::draw_ui()
@@ -104,10 +184,8 @@ void Visualization::draw_ui()
     // Change the view to UI section
     window.setView(ui_view);
 
-    // Draw background
-    sf::RectangleShape background(sf::Vector2f(ui_view.getSize().x, ui_view.getSize().y));
-    background.setFillColor(sf::Color::Green);
-    window.draw(background);
+    // Draw UI background
+    window.draw(ui_background);
 
     // Update the GUI
     gui.draw();
@@ -121,17 +199,6 @@ void Visualization::clear()
 void Visualization::display()
 {
     window.display();
-}
-
-bool Visualization::toggle_grid_outline()
-{
-    outline_enabled = !outline_enabled;
-    if (outline_enabled)
-        cell_outline_portion = CELL_OUTLINE_PORTION_ENABLED;
-    else
-        cell_outline_portion = 0;
-
-    return outline_enabled;
 }
 
 /* Getters */
@@ -160,11 +227,6 @@ tgui::Gui& Visualization::get_gui()
 void Visualization::set_cell_click_callback(std::function<void(int, int)> callback)
 {
     this->cell_click_callback = callback;
-}
-
-void Visualization::set_cell_outline(float value)
-{
-    cell_outline_portion = value;
 }
 
 /* Private Methods */

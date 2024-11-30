@@ -27,7 +27,7 @@ void Automaton::generate_random(float probability)
     for (int i = 0; i < this->width * this->height; i++)
     {
         float rand_val = static_cast<float>(rand()) / RAND_MAX;
-        if (rand_val <= probability) 
+        if (rand_val < probability || probability == 1) 
         {
             uint16_t cell = 0;
             cell = set_state(cell, GAS);
