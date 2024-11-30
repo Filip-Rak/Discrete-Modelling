@@ -45,8 +45,8 @@ void Controller::update_clicked_cell(int cell_x, int cell_y)
 	// Return the updated cell back into the grid
 	cells[cell_index] = new_cell;
 
-	// Update the grid before rendering
-	visualization.update_grid(automaton.get_cells());
+	// Update the cell within the grid
+	visualization.update_grid_cell(automaton.get_cells(), cell_x, cell_y);
 }
 
 // Private Methods

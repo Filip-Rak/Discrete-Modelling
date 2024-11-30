@@ -156,6 +156,23 @@ void Visualization::update_grid(uint16_t* cells)
     }
 }
 
+void Visualization::update_grid_cell(uint16_t* cells, int cell_x, int cell_y)
+{
+    // Calculate cell ID in row-major order
+    int cell_id = cell_y * grid_width + cell_x;
+
+    // Get the updated cell state and color
+    Automaton::State cell_state = Automaton::get_state(cells[cell_id]);
+    sf::Color cell_color = state_to_color(cell_state);
+
+    // Update the vertex colors for this cell
+    sf::Vertex* quad = &grid_vertices[cell_id * 4];
+    quad[0].color = cell_color;
+    quad[1].color = cell_color;
+    quad[2].color = cell_color;
+    quad[3].color = cell_color;
+}
+
 void Visualization::draw_grid(bool draw_grid_lines)
 {
     // Change rendering view to the grid

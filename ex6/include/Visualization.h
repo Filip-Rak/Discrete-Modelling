@@ -48,6 +48,7 @@ public:
 	void process_window_events();
 	void init_grid();
 	void update_grid(uint16_t* cells);
+	void update_grid_cell(uint16_t* cells, int cell_x, int cell_y);
 	void draw_grid(bool draw_grid_lines);
 	void init_ui();
 	void draw_ui();
