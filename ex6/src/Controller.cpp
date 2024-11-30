@@ -44,11 +44,16 @@ void Controller::update_clicked_cell(int cell_x, int cell_y)
 		// Go down.
 		// It doesn't go down.
 		// Why does it not go down? 
+		// It goes top and right
 		// Some other directions just make it disappear
 		// The cause likely are neighbour id calculation within Automaton::Update being incorrect
-		// But I do not care
+		// But it's not an issue
 
-		new_cell = Automaton::set_input(new_cell, Automaton::DOWN);
+		// new_cell = Automaton::set_input(new_cell, Automaton::DOWN);
+
+		// This works.
+		// The other one is cooler tho
+		new_cell = Automaton::set_input(new_cell, (1 << Automaton::DOWN));
 	}
 
 	// Get cell array from the automaton

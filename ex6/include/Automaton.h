@@ -95,4 +95,8 @@ public:
 	{
 		return (cell & 0xFF0F) | ((output & 0x0F) << 4); // Clear bits 4-7, then set output
 	}
+
+private:
+	/* Private Functions */
+	void output_to(uint16_t* output_arr, int sender_id, int receiver_id, Direction forward_direction, Direction opposite_direction);
 };

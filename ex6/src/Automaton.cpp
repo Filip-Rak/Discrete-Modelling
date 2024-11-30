@@ -104,6 +104,8 @@ void Automaton::generate_random(float probability)
 
 void Automaton::update()
 {
+    // 1. Collisiion
+
     // Masks
     uint8_t up_down_mask = (1 << Automaton::UP) | (1 << Automaton::DOWN);
     uint8_t left_right_mask = (1 << Automaton::LEFT) | (1 << Automaton::RIGHT);
@@ -111,7 +113,6 @@ void Automaton::update()
     // Create copy of the grid
     uint16_t* updated_cells = new uint16_t[width * height];
 
-    // 1. Collisiion
     // Handle all collision for every cell first
     for (int i = 0; i < width; i++)
     {
@@ -149,13 +150,16 @@ void Automaton::update()
 
     // 2. Streaming
     uint16_t* streamed_inputs = new uint16_t[width * height];
-
     for (int i = 0; i < width; i++)
     {
         for (int j = 0; j < height; j++)
         {
             int cell_id = j * width + i;
             uint16_t cell = updated_cells[cell_id];
+
+            // Skip walls 
+            if (get_state(cell) == WALL)
+                continue;
 
             // Get the current output
             uint8_t output = get_output(cell);
@@ -164,74 +168,28 @@ void Automaton::update()
             if (output & (1 << Automaton::UP))
             {
                 int neighbor_id = (j > 0) ? (j - 1) * width + i : -1; // Boundary check
-                if (neighbor_id == -1 || get_state(updated_cells[neighbor_id]) == WALL)
-                {
-                    // Reflect UP to DOWN
-                    updated_cells[cell_id] = set_input(updated_cells[cell_id], get_input(updated_cells[cell_id]) | (1 << Automaton::DOWN));
-                }
-                else
-                {
-                    uint16_t neighbor_cell = updated_cells[neighbor_id];
-                    updated_cells[neighbor_id] = set_input(neighbor_cell, get_input(neighbor_cell) | (1 << Automaton::UP));
-                }
+                output_to(updated_cells, cell_id, neighbor_id, UP, DOWN);
             }
 
             if (output & (1 << Automaton::DOWN))
             {
                 int neighbor_id = (j < height - 1) ? (j + 1) * width + i : -1; // Boundary check
-                if (neighbor_id == -1 || get_state(updated_cells[neighbor_id]) == WALL)
-                {
-                    // Reflect DOWN to UP
-                    updated_cells[cell_id] = set_input(updated_cells[cell_id], get_input(updated_cells[cell_id]) | (1 << Automaton::UP));
-                }
-                else
-                {
-                    uint16_t neighbor_cell = updated_cells[neighbor_id];
-                    updated_cells[neighbor_id] = set_input(neighbor_cell, get_input(neighbor_cell) | (1 << Automaton::DOWN));
-                }
+                output_to(updated_cells, cell_id, neighbor_id, DOWN, UP);
             }
 
             if (output & (1 << Automaton::LEFT))
             {
                 int neighbor_id = (i > 0) ? j * width + (i - 1) : -1; // Boundary check
-                if (neighbor_id == -1 || get_state(updated_cells[neighbor_id]) == WALL)
-                {
-                    // Reflect LEFT to RIGHT
-                    updated_cells[cell_id] = set_input(updated_cells[cell_id], get_input(updated_cells[cell_id]) | (1 << Automaton::RIGHT));
-                }
-                else
-                {
-                    uint16_t neighbor_cell = updated_cells[neighbor_id];
-                    updated_cells[neighbor_id] = set_input(neighbor_cell, get_input(neighbor_cell) | (1 << Automaton::LEFT));
-                }
+                output_to(updated_cells, cell_id, neighbor_id, LEFT, RIGHT);
             }
 
             if (output & (1 << Automaton::RIGHT))
             {
                 int neighbor_id = (i < width - 1) ? j * width + (i + 1) : -1; // Boundary check
-                if (neighbor_id == -1 || get_state(updated_cells[neighbor_id]) == WALL)
-                {
-                    // Reflect RIGHT to LEFT
-                    updated_cells[cell_id] = set_input(updated_cells[cell_id], get_input(updated_cells[cell_id]) | (1 << Automaton::LEFT));
-                }
-                else
-                {
-                    uint16_t neighbor_cell = updated_cells[neighbor_id];
-                    updated_cells[neighbor_id] = set_input(neighbor_cell, get_input(neighbor_cell) | (1 << Automaton::RIGHT));
-                }
+                output_to(updated_cells, cell_id, neighbor_id, RIGHT, LEFT);
             }
-
-            // Clear all the inputs within the cell
-            // updated_cells[cell_id] = set_input(cell, 0);
         }
     }
-
-    // Replace the residual inputs in the updated arr as streamed inputs
-    // for (int i = 0; i < width * height; i++)
-    // {
-        // updated_cells[i] = set_input(updated_cells[i], streamed_inputs[i]);
-   //  }
-
 
     // Update the states
     for (int i = 0; i < height * width; i++)
@@ -273,4 +231,19 @@ void Automaton::reset()
     // Copy original cells to current cells
     for (int i = 0; i < width * height; i++)
         cells[i] = cells_fallback[i];
+}
+
+// Transfer input direction into output within a neighbour cell
+void Automaton::output_to(uint16_t* output_arr, int sender_id, int receiver_id, Direction forward_direction, Direction opposite_direction)
+{
+    if (receiver_id == -1 || get_state(output_arr[receiver_id]) == WALL)
+    {
+        // Reflect forward to opposite direction
+        output_arr[sender_id] = set_input(output_arr[sender_id], get_input(output_arr[sender_id]) | (1 << opposite_direction));
+    }
+    else
+    {
+        uint16_t receiver_cell = output_arr[receiver_id];
+        output_arr[receiver_id] = set_input(receiver_cell, get_input(receiver_cell) | (1 << forward_direction));
+    }
 }
