@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <map>
+#include <bitset>
 #include <iostream>
 
 class Automaton
@@ -26,8 +27,12 @@ public:
 
 private:
 	/* Attributes */
+
+	// Bit format //
+	// 15 14 | 13 12 11 10 9 8 | 7 6 5 4 | 3 2 1 0
+	// State | Empty | Outputs | Inputs
 	uint16_t* cells;
-	uint16_t* cells_fallback;
+	uint16_t* cells_fallback;	
 	int width;
 	int height;
 

@@ -94,7 +94,10 @@ void Controller::update()
 			time_since_update -= time_between_updates;
 
 			// Update the automaton
-			std::cout << "Automaton update\n";
+			automaton.update();
+
+			// Update the visualization after grid chnages
+			visualization.update_grid(automaton.get_cells());
 		}
 
 	}
@@ -149,9 +152,9 @@ void Controller::initialize_ui()
 
 			// Change the name based on state
 			if (paused)
-				pause_button->setText("Pause");
-			else
 				pause_button->setText("Resume");
+			else
+				pause_button->setText("Pause");
 		});
 
 	reset_button->onPress([this, pause_button]()
