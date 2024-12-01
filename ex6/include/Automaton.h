@@ -44,7 +44,9 @@ public:
 	/* Grid Operations */
 	void generate_random_legacy(float probability = 0.1f);	// Creates a random grid
 	void generate_random(float probability = 0.1f);	// Creates a random grid
-	void update();
+	void update_cpu();
+	void update_gpu();
+	void update(bool use_gpu);
 	void reset();
 
 	/* Getters */

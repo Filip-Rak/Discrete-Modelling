@@ -102,7 +102,7 @@ void Automaton::generate_random(float probability)
     }
 }
 
-void Automaton::update()
+void Automaton::update_cpu()
 {
     // 1. Collisiion
 
@@ -224,6 +224,19 @@ void Automaton::update()
     // Update the cell array
     std::swap(cells, updated_cells);
     delete[] updated_cells;
+}
+
+void Automaton::update_gpu()
+{
+
+}
+
+void Automaton::update(bool use_gpu)
+{
+    if (use_gpu)
+        update_gpu();
+    else
+        update_cpu();
 }
 
 void Automaton::reset()

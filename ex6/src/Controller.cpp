@@ -52,8 +52,7 @@ void Controller::update_clicked_cell(int cell_x, int cell_y)
 		// new_cell = Automaton::set_input(new_cell, Automaton::DOWN);
 
 		// This works.
-		// The other one is cooler tho
-		new_cell = Automaton::set_input(new_cell, (1 << Automaton::DOWN));
+		new_cell = Automaton::set_input(new_cell, (1 << Automaton::LEFT) | (1 << Automaton::RIGHT) | (1 << Automaton::UP) | (1 << Automaton::DOWN));
 	}
 
 	// Get cell array from the automaton
@@ -112,7 +111,7 @@ void Controller::update()
 			time_since_update -= time_between_updates;
 
 			// Update the automaton
-			automaton.update();
+			automaton.update(use_gpu);
 
 			// Update the visualization after grid chnages
 			visualization.update_grid(automaton.get_cells());
@@ -149,15 +148,18 @@ void Controller::initialize_ui()
 	auto pause_button = ui.get_widget_as<tgui::Button>("pause");
 	auto reset_button = ui.get_widget_as<tgui::Button>("reset");
 	auto generate_button = ui.get_widget_as<tgui::Button>("generate");
+
 	auto slower_button = ui.get_widget_as<tgui::Button>("slower");
 	auto faster_button = ui.get_widget_as<tgui::Button>("faster");
 	auto outline_button = ui.get_widget_as<tgui::Button>("outline");
+	auto toggle_pu = ui.get_widget_as<tgui::Button>("toggle_pu");
+
 	auto air_button = ui.get_widget_as<tgui::Button>("air_button");
 	auto gas_button = ui.get_widget_as<tgui::Button>("gas_button");
 	auto wall_button = ui.get_widget_as<tgui::Button>("wall_button");
 	auto probability_text_area = ui.get_widget_as<tgui::TextArea>("prob_input");
 
-	// Register callbacks
+	// Initialize buttons
 
 	// Control buttons
 	pause_button->onPress([this, pause_button]()
@@ -173,6 +175,9 @@ void Controller::initialize_ui()
 				pause_button->setText("Resume");
 			else
 				pause_button->setText("Pause");
+
+			// Debug output
+			print_flag_status("paused", paused);
 		});
 
 	reset_button->onPress([this, pause_button]()
@@ -182,6 +187,9 @@ void Controller::initialize_ui()
 			automaton.reset();
 			pause_button->setText("Start");
 			visualization.update_grid(automaton.get_cells());
+
+			// Debug output
+			print_flag_status("paused", paused);
 		});		
 	
 	generate_button->onPress([this, pause_button, probability_text_area]()
@@ -197,18 +205,21 @@ void Controller::initialize_ui()
 
 			// Debug
 			std::cout << "Generate pressed: " << probability_value << "\n";
+
+			// Debug output
+			print_flag_status("paused", paused);
 		});	
 	
 	slower_button->onPress([this]()
 		{
-			std::cout << "Slower pressed\n";
 			change_update_speed(-1);
+			std::cout << "Lower speed to: " << update_speed << "\n";
 		});	
 	
 	faster_button->onPress([this]()
 		{
-			std::cout << "Faster pressed\n";
 			change_update_speed(1);
+			std::cout << "Increase speed to: " << update_speed << "\n";
 		});
 
 	outline_button->onPress([this, outline_button]()
@@ -219,6 +230,29 @@ void Controller::initialize_ui()
 				outline_button->setText("Show Grid");
 			else
 				outline_button->setText("Hide Grid");
+
+			// Debug output
+			print_flag_status("outline_enabled", outline_enabled);
+		});
+	
+	if (use_gpu)
+		toggle_pu->setText("Using: GPU");
+	else
+		toggle_pu->setText("Using: CPU");
+
+	toggle_pu->onPress([this, toggle_pu]()
+		{
+			// Toggle the flag
+			use_gpu = !use_gpu;
+
+			// Update the text
+			if (use_gpu)
+				toggle_pu->setText("Using: GPU");
+			else 
+				toggle_pu->setText("Using: CPU");
+
+			// Debug output
+			print_flag_status("use_gpu", use_gpu);
 		});
 
 	// State tools
@@ -266,6 +300,11 @@ void Controller::initialize_ui()
 
 			text_input_in_use = false; // Clear the guard
 		});
+}
+
+void Controller::print_flag_status(std::string name, bool value)
+{
+	std::cout << name + " flag set to " << value << "\n";
 }
 
 void Controller::change_update_speed(float direction)

@@ -61,5 +61,6 @@ private:
 	void update();
 	void render();
 	void initialize_ui();
+	void print_flag_status(std::string name, bool value);
 	void change_update_speed(float direction);
 };
