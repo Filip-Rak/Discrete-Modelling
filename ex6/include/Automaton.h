@@ -6,6 +6,8 @@
 #include <bitset>
 #include <iostream>
 
+#include "AutomatonCUDA.h"
+
 class Automaton
 {
 public:
@@ -27,6 +29,9 @@ public:
 
 private:
 	/* Attributes */
+
+	// Components
+	AutomatonCUDA cuda_helper;
 
 	// Bit format //
 	// 15 14 | 13 12 11 10 9 8 | 7 6 5 4 | 3 2 1 0

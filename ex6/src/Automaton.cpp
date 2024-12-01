@@ -1,7 +1,8 @@
 #include "Automaton.h"
 
 /* Constructor & Destructor */
-Automaton::Automaton(int width, int height)
+Automaton::Automaton(int width, int height) : 
+    cuda_helper(width, height)
 {
 	this->width = width;
 	this->height = height;
@@ -228,9 +229,17 @@ void Automaton::update_cpu()
 
 void Automaton::update_gpu()
 {
+    // Copy cells to GPU
+    cuda_helper.send(this->cells);
 
+    // Update the cells within GPU
+    cuda_helper.update();
+
+    // Copy cells from GPU
+    cuda_helper.retrieve(cells);
 }
 
+// Main update function
 void Automaton::update(bool use_gpu)
 {
     if (use_gpu)
