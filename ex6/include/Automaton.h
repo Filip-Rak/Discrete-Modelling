@@ -7,6 +7,8 @@
 #include <iostream>
 
 #include "AutomatonCUDA.h"
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
 
 class Automaton
 {
@@ -71,34 +73,34 @@ public:
 	}
 
 	/* Static Accessors */
-	inline static State get_state(uint16_t cell)
+	__host__ __device__ inline static State get_state(uint16_t cell)
 	{
 		return static_cast<State>(cell & 0b1100000000000000); // Mask bits 15-14
 	}
 
-	inline static uint16_t set_state(uint16_t cell, State state)
+	__host__ __device__ inline static uint16_t set_state(uint16_t cell, State state)
 	{
 		return (cell & 0b0011111111111111) | state; // Clear bits 15-14, then set new state
 	}
 
 	// Input directions (lower 4 bits)
-	inline static uint8_t get_input(uint16_t cell)
+	__host__ __device__ inline static uint8_t get_input(uint16_t cell)
 	{
 		return cell & 0x0F;
 	}
 
-	inline static uint16_t set_input(uint16_t cell, uint8_t input)
+	__host__ __device__ inline static uint16_t set_input(uint16_t cell, uint8_t input)
 	{
 		return (cell & 0xFFF0) | (input & 0x0F); // Clear lower 4 bits, then set input
 	}
 
 	// Output directions (next 4 bits)
-	inline static uint8_t get_output(uint16_t cell)
+	__host__ __device__ inline static uint8_t get_output(uint16_t cell)
 	{
 		return (cell >> 4) & 0x0F;
 	}
 
-	inline static uint16_t set_output(uint16_t cell, uint8_t output)
+	__host__ __device__ inline static uint16_t set_output(uint16_t cell, uint8_t output)
 	{
 		return (cell & 0xFF0F) | ((output & 0x0F) << 4); // Clear bits 4-7, then set output
 	}

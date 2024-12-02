@@ -26,7 +26,7 @@ private:
 	const float STANDARD_SPEED_CHANGE = 10;
 	const float HIGH_SPEED_CHANGE = 50;
 	const float LOW_SPEED_CHANGE = 1;
-	float update_speed = 5;
+	float update_speed = 60;
 
 	// Delta Time
 	sf::Clock delta_clock;

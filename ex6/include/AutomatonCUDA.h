@@ -8,8 +8,13 @@
 #include <iostream>
 
 /* Kernels | Outside the class */
-__global__ void collision_kernel(cudaTextureObject_t tex_obj, uint16_t* outputs, int width, int height);
-__global__ void streaming_kernel(cudaTextureObject_t tex_obj, uint16_t* inputs, int width, int height);
+__global__ void collision_kernel(uint16_t* d_cells, int width, int height);
+
+__global__ void streaming_kernel(uint16_t* d_cells, uint16_t* inputs, int width, int height);
+
+/* Kernel Definitions */
+__device__ constexpr uint8_t UP_DOWN_MASK = (1 << 0) | (1 << 3); // UP and DOWN
+__device__ constexpr uint8_t LEFT_RIGHT_MASK = (1 << 1) | (1 << 2); // LEFT and RIGHT
 
 class AutomatonCUDA
 {
@@ -18,7 +23,8 @@ private:
 
 	// Arrays
 	uint16_t* d_cells;
-	uint16_t* inputs;
+	uint16_t* d_inputs;
+	uint16_t* h_inputs;
 
 	int width, height;	// Dimensions of the grid
 
@@ -40,4 +46,5 @@ private:
 	bool check_CUDA_availability();
 	void allocate_memory();
 	void print_malloc_failure(cudaError_t success_code, std::string name, int size);
+	void combine_local_neighbours(uint16_t* h_cells, uint16_t* h_inputs);
 };
