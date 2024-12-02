@@ -21,7 +21,7 @@ Controller::Controller(int window_width, int window_height, int grid_width, int 
 // Main loop
 void Controller::run()
 {
-	visualization.update_grid(automaton.get_cells());
+	visualization.manage_grid_update(automaton.get_cells());
 	while (visualization.is_window_open())
 	{
 		process_events();
@@ -113,8 +113,8 @@ void Controller::update()
 			// Update the automaton
 			automaton.update(use_gpu);
 
-			// Update the visualization after grid chnages
-			visualization.update_grid(automaton.get_cells());
+			// Update the visualization after grid changes
+			visualization.manage_grid_update(automaton.get_cells());
 		}
 
 	}
@@ -186,7 +186,7 @@ void Controller::initialize_ui()
 			paused = true;
 			automaton.reset();
 			pause_button->setText("Start");
-			visualization.update_grid(automaton.get_cells());
+			visualization.manage_grid_update(automaton.get_cells());
 
 			// Debug output
 			print_flag_status("paused", paused);
@@ -197,7 +197,7 @@ void Controller::initialize_ui()
 			// Regenrate cells
 			float probability_value = std::stof(probability_text_area->getText().toStdString()) / 100.f;
 			automaton.generate_random(probability_value);
-			visualization.update_grid(automaton.get_cells());
+			visualization.manage_grid_update(automaton.get_cells());
 
 			// Pause
 			paused = true;

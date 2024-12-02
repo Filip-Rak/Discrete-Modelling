@@ -4,6 +4,15 @@ __global__ void addKernel(int *c, const int *a, const int *b)
 {
     int i = threadIdx.x;
     c[i] = a[i] + b[i];
+
+    // Calculate global thread ID
+    int thread_id = threadIdx.x + blockIdx.x * blockDim.x;
+
+    // Print thread information
+    if (threadIdx.x == 0 && blockIdx.x == 0) // Only first thread in the first block
+    {
+        printf("Thread ID: %d (Block: %d, Thread: %d)\n", threadIdx.x, blockIdx.x, threadIdx.x);
+    }
 }
 
 int run()

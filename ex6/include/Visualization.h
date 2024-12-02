@@ -2,6 +2,7 @@
 
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp>
+#include <cstdint>
 #include "Automaton.h"
 
 class Visualization
@@ -39,15 +40,20 @@ private:
 	sf::RectangleShape cell_shape;
 	sf::RectangleShape grid_background;
 	sf::RectangleShape ui_background;
+
+	// Cells from previous frame
+	uint16_t* previous_cells;
+	bool first_iteration;
 	
 public:
 	/* Constructor */
 	Visualization(int window_width, int window_height, int grid_width, int grid_height);
+	~Visualization();
 
 	/* Public Methods */
 	void process_window_events();
 	void init_grid();
-	void update_grid(uint16_t* cells);
+	void manage_grid_update(uint16_t* cells);
 	void update_grid_cell(uint16_t* cells, int cell_x, int cell_y);
 	void draw_grid(bool draw_grid_lines);
 	void init_ui();
@@ -66,6 +72,8 @@ public:
 
 private:
 	/* Private Methods */
+	void update_whole_grid(uint16_t* cells);
+	void update_grid_cells(uint16_t* cells);
 	void find_grid_dimensions();
 	void update_views();
 	void handle_mouse_click(int mouse_x, int mouse_y);

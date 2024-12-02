@@ -32,6 +32,15 @@ Visualization::Visualization(int window_width, int window_height, int grid_width
     find_grid_dimensions();
     init_grid();
     init_ui();
+
+    // Allocate memory for previous cells
+    previous_cells = new uint16_t[grid_width * grid_height];
+    first_iteration = true;
+}
+
+Visualization::~Visualization()
+{
+    delete[] previous_cells;
 }
 
 /* Public Methods */
@@ -135,7 +144,15 @@ void Visualization::init_grid()
     grid_background.setFillColor(sf::Color(173, 216, 230)); // Light blue
 }
 
-void Visualization::update_grid(uint16_t* cells)
+void Visualization::manage_grid_update(uint16_t* cells)
+{
+    if (first_iteration)
+        update_whole_grid(cells);
+    else
+        update_grid_cells(cells);
+}
+
+void Visualization::update_whole_grid(uint16_t* cells)
 {
     // Update the color of each cell in the vertex array
     for (int i = 0; i < grid_width; i++) 
@@ -152,6 +169,35 @@ void Visualization::update_grid(uint16_t* cells)
             quad[1].color = cell_color;
             quad[2].color = cell_color;
             quad[3].color = cell_color;
+        }
+    }
+
+    first_iteration = false;
+}
+
+void Visualization::update_grid_cells(uint16_t* cells)
+{
+    for (int i = 0; i < grid_width; i++)
+    {
+        for (int j = 0; j < grid_height; j++)
+        {
+            int cell_id = j * grid_width + i;
+
+            // Check if cell state has changed before updating
+            if (cells[cell_id] != previous_cells[cell_id])
+            {
+                Automaton::State current_state = Automaton::get_state(cells[cell_id]);
+                sf::Color cell_color = state_to_color(current_state);
+
+                sf::Vertex* quad = &grid_vertices[cell_id * 4];
+                quad[0].color = cell_color;
+                quad[1].color = cell_color;
+                quad[2].color = cell_color;
+                quad[3].color = cell_color;
+
+                // Update previous cell
+                previous_cells[cell_id] = cells[cell_id];
+            }
         }
     }
 }

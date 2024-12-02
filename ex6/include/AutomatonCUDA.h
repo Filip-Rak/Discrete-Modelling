@@ -7,22 +7,18 @@
 #include <cstdint>
 #include <iostream>
 
+/* Kernels | Outside the class */
+__global__ void collision_kernel(cudaTextureObject_t tex_obj, uint16_t* outputs, int width, int height);
+__global__ void streaming_kernel(cudaTextureObject_t tex_obj, uint16_t* inputs, int width, int height);
+
 class AutomatonCUDA
 {
 private:
 	/* Attributes */
 
 	// Arrays
-	cudaChannelFormatDesc channel_desc;	// Channel descriptor for textures
-	cudaArray* d_initial_grid;	// Texture memory with state given to the automaton (read-only)
-	cudaArray* d_outputs_tex;	// Texture memory for outputs during streaming (read-only)
-	uint16_t* d_outputs;		// Writeable memory for outputs (GPU)
-	uint16_t* d_inputs;			// Writeable memory for inputs (GPU, 2D Array)
-	uint16_t* results;			// Memory for results, used by CPU
-
-	// Texture memory setting
-	cudaResourceDesc res_desc;
-	cudaTextureDesc tex_desc;
+	uint16_t* d_cells;
+	uint16_t* inputs;
 
 	int width, height;	// Dimensions of the grid
 
@@ -45,7 +41,3 @@ private:
 	void allocate_memory();
 	void print_malloc_failure(cudaError_t success_code, std::string name, int size);
 };
-
-/* Kernels | Outside the class */
-__global__ void collision_kernel(cudaTextureObject_t tex_obj, uint16_t* outputs, int width, int height);
-__global__ void streaming_kernel(cudaTextureObject_t tex_obj, uint16_t* inputs, int width, int height);
