@@ -32,7 +32,7 @@ void Controller::run()
 
 void Controller::update_clicked_cell(int cell_x, int cell_y)
 {
-	std::cout << "update_clicked_cell() called\n";
+	std::cout << "Update cell (" << cell_x << ", " << cell_y << ") state\n";
 
 	// Replace the cell
 	uint16_t new_cell = 0;
