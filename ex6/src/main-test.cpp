@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-int main_test() {
+int main2() {
     // Create an SFML window
     sf::RenderWindow window(sf::VideoMode(800, 600), "SFML + TGUI Test");
 

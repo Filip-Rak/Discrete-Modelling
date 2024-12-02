@@ -1,4 +1,4 @@
-#include "AutomatonCUDA.h"
+﻿#include "AutomatonCUDA.h"
 
 // Constructor: Set up device memory
 AutomatonCUDA::AutomatonCUDA(int width, int height) : 
@@ -7,14 +7,26 @@ AutomatonCUDA::AutomatonCUDA(int width, int height) :
 	// Check CUDA availability
 	cuda_available = check_CUDA_availability();;
 
-	// Set memory as NULL if CUDA not present
+	// Stop execution if CUDA not available
 	if (!cuda_available)
 	{
-		// d_cells = nullptr;
 		return;
 	}
 
+	// Allocate memory on GPU
 	allocate_memory();
+
+	// Set up texture memory
+	this->res_desc = {};
+	res_desc.resType = cudaResourceTypeArray;
+
+	this->tex_desc = {};
+	tex_desc.addressMode[0] = cudaAddressModeClamp; // Clamp outside boundary
+	tex_desc.addressMode[1] = cudaAddressModeClamp;
+	tex_desc.filterMode = cudaFilterModePoint;     // No interpolation
+	tex_desc.readMode = cudaReadModeElementType;
+	tex_desc.normalizedCoords = 0;                 // Use normalized coordinates
+
 }
 
 // Destructor: Free device memory
@@ -60,7 +72,33 @@ void AutomatonCUDA::update()
 	if (!cuda_available)
 		return;
 
-	// Call kernels
+	// Define block and grid dimensions
+	dim3 threads_per_block(16, 16);
+	dim3 num_blocks((width + threads_per_block.x - 1) / threads_per_block.x,
+		(height + threads_per_block.y - 1) / threads_per_block.y);
+
+	// Collision Phase: Create a texture for fast read-only memory with initial grid
+	cudaTextureObject_t initial_grid_tex;
+	res_desc.res.array.array = d_initial_grid;
+	cudaCreateTextureObject(&initial_grid_tex, &res_desc, &tex_desc, nullptr);
+
+	// Collision Phase: Launch Kernel
+	collision_kernel <<< num_blocks, threads_per_block >>> (initial_grid_tex, d_outputs, width, height);
+
+	// Collision Phase: Free texture from memory
+	cudaDestroyTextureObject(initial_grid_tex);
+
+	// Streaming Phase: Create a texture for fast read-only memory with outputs
+	cudaTextureObject_t outputs_tex;
+	res_desc.res.array.array = d_outputs_tex; // Bind outputs as the new texture
+	cudaCreateTextureObject(&outputs_tex, &res_desc, &tex_desc, nullptr);
+
+	// Streaming Phase: Launch kernel
+
+	// Streaming Phase: Free texture from memory
+	cudaDestroyTextureObject(outputs_tex);
+
+	// Consolidation Phase: Combine the results sequentially
 }
 
 // Copy GPU's state to CPU
@@ -119,4 +157,20 @@ void AutomatonCUDA::print_malloc_failure(cudaError_t success_code, std::string n
 {
 	if (success_code != cudaSuccess)
 		std::cerr << "CUDA malloc for " + name + " failed for size " << size << ": " << cudaGetErrorString(success_code) << "\n";
+}
+
+/* Kernels */
+__global__ void collision_kernel(cudaTextureObject_t initial_grid_tex, uint16_t* outputs, int width, int height)
+{
+	// Calculate thread's 2D position in the grid
+	// int x = blockIdx.x * blockDim.x + threadIdx.x;
+	// int y = blockIdx.y * blockDim.y + threadIdx.y;
+
+	// Read data from the texture object
+	// uint16_t cell_data = tex2D<uint16_t>(initial_grid_tex, x, y);
+}
+
+__global__ void streaming_kernel(cudaTextureObject_t outputs_tex, uint16_t* inputs, int width, int height)
+{
+	return __global__ void();
 }

@@ -325,6 +325,5 @@ void Controller::change_update_speed(float direction)
 	time_between_updates = 1 / update_speed;
 
 	// Update labels
-	std::cout << "Speed: " << update_speed << "\n";
 	ui.set_speed_label_speed(update_speed);
 }

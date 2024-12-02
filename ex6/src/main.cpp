@@ -2,10 +2,10 @@
 
 int main() 
 {
-    const int window_width = 1400;
-    const int window_height = 900;
-    const int grid_width = 110;
-    const int grid_height = 90;
+    const int window_width = 1200, window_height = 900;
+    // const int window_width = 1400, window_height = 900;
+    // const int grid_width = 110, grid_height = 90;   // Def
+    const int grid_width = 200, grid_height = 200;
 
     // Create and run the app
     Controller controller(window_width, window_height, grid_width, grid_height);
