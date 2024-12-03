@@ -92,7 +92,7 @@ __global__ void streaming_kernel(uint16_t* d_cells, uint16_t* inputs, int width,
 	{
 		bool is_within_bounds = (y > 0);
 
-		if (is_within_bounds)
+		if (is_within_bounds && ((d_cells[cell_id - width] & 0b1100000000000000) != 0b0000000000000000))
 		{
 			int neighbor_id = (y - 1) * width + x;
 			inputs[neighbor_id * 5 + 0] |= (1 << Automaton::UP);
@@ -108,7 +108,7 @@ __global__ void streaming_kernel(uint16_t* d_cells, uint16_t* inputs, int width,
 	{
 		bool is_within_bounds = (y < height - 1);
 
-		if (is_within_bounds)
+		if (is_within_bounds && ((d_cells[cell_id + width] & 0b1100000000000000) != 0b0000000000000000))
 		{
 			int neighbor_id = (y + 1) * width + x;
 			inputs[neighbor_id * 5 + 0] |= (1 << Automaton::DOWN);
@@ -124,7 +124,7 @@ __global__ void streaming_kernel(uint16_t* d_cells, uint16_t* inputs, int width,
 	{
 		bool is_within_bounds = (x > 0);
 
-		if (is_within_bounds)
+		if (is_within_bounds && ((d_cells[cell_id - 1] & 0b1100000000000000) != 0b0000000000000000))
 		{
 			int neighbor_id = y * width + (x - 1);
 			inputs[neighbor_id * 5 + 0] |= (1 << Automaton::LEFT);
@@ -140,7 +140,7 @@ __global__ void streaming_kernel(uint16_t* d_cells, uint16_t* inputs, int width,
 	{
 		bool is_within_bounds = (x < width - 1);
 
-		if (is_within_bounds)
+		if (is_within_bounds && ((d_cells[cell_id + 1] & 0b1100000000000000) != 0b0000000000000000))
 		{
 			int neighbor_id = y * width + (x + 1);
 			inputs[neighbor_id * 5 + 0] |= (1 << Automaton::RIGHT);
@@ -227,10 +227,6 @@ void AutomatonCUDA::retrieve(uint16_t* h_cells)
 	if (!cuda_available)
 		return;
 
-	// Copy the latest cell data from the device
-	int alloc_size = width * height * sizeof(uint16_t);
-	cudaMemcpy(h_cells, d_cells, alloc_size, cudaMemcpyDeviceToHost);
-
 	// Combine local neighbor inputs and update h_cells
 	combine_local_neighbours(h_cells, h_inputs);
 }
@@ -281,6 +277,7 @@ void AutomatonCUDA::combine_local_neighbours(uint16_t* h_cells, uint16_t* h_inpu
 	for (int i = 0; i < width * height; ++i)
 	{
 		h_cells[i] = Automaton::set_input(h_cells[i], 0);
+		h_cells[i] = Automaton::set_output(h_cells[i], 0);
 	}
 
 	// Iterate over each cell in the grid
@@ -306,50 +303,42 @@ void AutomatonCUDA::combine_local_neighbours(uint16_t* h_cells, uint16_t* h_inpu
 			// UP neighbor
 			if (y > 0)
 			{
-				int up_id = (y - 1) * width + x;
-				if (Automaton::get_state(h_cells[up_id]) != Automaton::WALL)
-				{
-					uint16_t up_input_cell = h_inputs[cell_id * 5 + 1];
-					uint8_t up_input_bits = Automaton::get_input(up_input_cell);
-					h_cells[up_id] = Automaton::set_input(h_cells[up_id],
-						Automaton::get_input(h_cells[up_id]) | up_input_bits);
-				}
+				int tgt_id = cell_id - width;
+				int loc_id = cell_id * 5 + 1;
+
+				uint16_t target_input_cell = h_inputs[loc_id];
+				uint8_t target_input_bits = Automaton::get_input(target_input_cell);
+				h_cells[tgt_id] = Automaton::set_input(h_cells[tgt_id], Automaton::get_input(h_cells[tgt_id]) | target_input_bits);
 			}
 			// DOWN neighbor
 			if (y < height - 1)
 			{
-				int down_id = (y + 1) * width + x;
-				if (Automaton::get_state(h_cells[down_id]) != Automaton::WALL)
-				{
-					uint16_t down_input_cell = h_inputs[cell_id * 5 + 2];
-					uint8_t down_input_bits = Automaton::get_input(down_input_cell);
-					h_cells[down_id] = Automaton::set_input(h_cells[down_id],
-						Automaton::get_input(h_cells[down_id]) | down_input_bits);
-				}
+				int tgt_id = cell_id + width;
+				int loc_id = cell_id * 5 + 2;
+
+				uint16_t target_input_cell = h_inputs[loc_id];
+				uint8_t target_input_bits = Automaton::get_input(target_input_cell);
+				h_cells[tgt_id] = Automaton::set_input(h_cells[tgt_id], Automaton::get_input(h_cells[tgt_id]) | target_input_bits);
 			}
 			// LEFT neighbor
 			if (x > 0)
 			{
-				int left_id = y * width + (x - 1);
-				if (Automaton::get_state(h_cells[left_id]) != Automaton::WALL)
-				{
-					uint16_t left_input_cell = h_inputs[cell_id * 5 + 3];
-					uint8_t left_input_bits = Automaton::get_input(left_input_cell);
-					h_cells[left_id] = Automaton::set_input(h_cells[left_id],
-						Automaton::get_input(h_cells[left_id]) | left_input_bits);
-				}
+				int tgt_id = cell_id - 1;
+				int loc_id = cell_id * 5 + 3;
+
+				uint16_t target_input_cell = h_inputs[loc_id];
+				uint8_t target_input_bits = Automaton::get_input(target_input_cell);
+				h_cells[tgt_id] = Automaton::set_input(h_cells[tgt_id], Automaton::get_input(h_cells[tgt_id]) | target_input_bits);
 			}
 			// RIGHT neighbor
 			if (x < width - 1)
 			{
-				int right_id = y * width + (x + 1);
-				if (Automaton::get_state(h_cells[right_id]) != Automaton::WALL)
-				{
-					uint16_t right_input_cell = h_inputs[cell_id * 5 + 4];
-					uint8_t right_input_bits = Automaton::get_input(right_input_cell);
-					h_cells[right_id] = Automaton::set_input(h_cells[right_id],
-						Automaton::get_input(h_cells[right_id]) | right_input_bits);
-				}
+				int tgt_id = cell_id + 1;
+				int loc_id = cell_id * 5 + 4;
+
+				uint16_t target_input_cell = h_inputs[loc_id];
+				uint8_t target_input_bits = Automaton::get_input(target_input_cell);
+				h_cells[tgt_id] = Automaton::set_input(h_cells[tgt_id], Automaton::get_input(h_cells[tgt_id]) | target_input_bits);
 			}
 		}
 	}
@@ -374,9 +363,6 @@ void AutomatonCUDA::combine_local_neighbours(uint16_t* h_cells, uint16_t* h_inpu
 		{
 			cell = Automaton::set_state(cell, Automaton::EMPTY);
 		}
-
-		// Clear the output bits for the next iteration
-		cell = Automaton::set_output(cell, 0);
 
 		// Write back the updated cell
 		h_cells[i] = cell;
