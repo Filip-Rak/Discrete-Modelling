@@ -72,7 +72,7 @@ void Automaton::generate_random(float probability)
                 if (rand_val < probability || probability == 1.0f)
                 {
                     cell = set_state(cell, GAS);            // Set state to GAS
-                    cell = set_input(cell, (1 << Automaton::DOWN));
+                    cell = set_input(cell, (1 << LEFT) | (1 << RIGHT) | (1 << UP) | (1 << DOWN));
                     cell = set_output(cell, 0);             // Start with no outputs
                 }
                 else

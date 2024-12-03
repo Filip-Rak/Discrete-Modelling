@@ -42,12 +42,12 @@ __global__ void collision_kernel(uint16_t* d_cells, int width, int height)
 	uint8_t input = Automaton::get_input(cell);
 
 	// Perform collision resolution using masks
-	if ((input & UP_DOWN_MASK) == UP_DOWN_MASK && (input & ~UP_DOWN_MASK) == 0)
+	if (input == UP_DOWN_MASK)
 	{
 		// Flip UP and DOWN to LEFT and RIGHT
 		input = LEFT_RIGHT_MASK;
 	}
-	else if ((input & LEFT_RIGHT_MASK) == LEFT_RIGHT_MASK && (input & ~LEFT_RIGHT_MASK) == 0)
+	else if (input == LEFT_RIGHT_MASK)
 	{
 		// Flip LEFT and RIGHT to UP and DOWN
 		input = UP_DOWN_MASK;
@@ -355,7 +355,7 @@ void AutomatonCUDA::combine_local_neighbours(uint16_t* h_cells, uint16_t* h_inpu
 		uint8_t input = Automaton::get_input(cell);
 		uint8_t output = Automaton::get_output(cell);
 
-		if (input != 0 || output != 0)
+		if (input || output)
 		{
 			cell = Automaton::set_state(cell, Automaton::GAS);
 		}
@@ -368,4 +368,3 @@ void AutomatonCUDA::combine_local_neighbours(uint16_t* h_cells, uint16_t* h_inpu
 		h_cells[i] = cell;
 	}
 }
-
