@@ -106,7 +106,6 @@ void Automaton::generate_random(float probability)
 void Automaton::update_cpu()
 {
     // 1. Collisiion
-
     // Masks
     uint8_t up_down_mask = (1 << Automaton::UP) | (1 << Automaton::DOWN);
     uint8_t left_right_mask = (1 << Automaton::LEFT) | (1 << Automaton::RIGHT);
@@ -142,7 +141,7 @@ void Automaton::update_cpu()
             cell = set_output(cell, input);
 
             // Clear the input
-            cell = set_input(cell, 0);  // Dangerous! I don't know if this will work!
+            cell = set_input(cell, 0);
 
             // Add the cell to the copy array
             updated_cells[cell_id] = cell;

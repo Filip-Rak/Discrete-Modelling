@@ -186,7 +186,7 @@ void Controller::initialize_ui()
 			paused = true;
 			automaton.reset();
 			pause_button->setText("Start");
-			visualization.manage_grid_update(automaton.get_cells());
+			visualization.manage_grid_update(automaton.get_cells(), true);
 
 			// Debug output
 			print_flag_status("paused", paused);
@@ -197,7 +197,7 @@ void Controller::initialize_ui()
 			// Regenrate cells
 			float probability_value = std::stof(probability_text_area->getText().toStdString()) / 100.f;
 			automaton.generate_random(probability_value);
-			visualization.manage_grid_update(automaton.get_cells());
+			visualization.manage_grid_update(automaton.get_cells(), true);
 
 			// Pause
 			paused = true;

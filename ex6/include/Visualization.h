@@ -53,7 +53,7 @@ public:
 	/* Public Methods */
 	void process_window_events();
 	void init_grid();
-	void manage_grid_update(uint16_t* cells);
+	void manage_grid_update(uint16_t* cells, bool force_full_update = false);
 	void update_grid_cell(uint16_t* cells, int cell_x, int cell_y);
 	void draw_grid(bool draw_grid_lines);
 	void init_ui();

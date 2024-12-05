@@ -144,9 +144,9 @@ void Visualization::init_grid()
     grid_background.setFillColor(sf::Color(173, 216, 230)); // Light blue
 }
 
-void Visualization::manage_grid_update(uint16_t* cells)
+void Visualization::manage_grid_update(uint16_t* cells, bool force_full_update)
 {
-    if (first_iteration)
+    if (first_iteration || force_full_update)
         update_whole_grid(cells);
     else
         update_grid_cells(cells);
