@@ -144,85 +144,65 @@ void Visualization::init_grid()
     grid_background.setFillColor(sf::Color(173, 216, 230)); // Light blue
 }
 
-void Visualization::manage_grid_update(uint16_t* cells, bool force_full_update)
+void Visualization::manage_grid_update(Automaton::Grid* grid, bool force_full_update)
 {
     if (first_iteration || force_full_update)
-        update_whole_grid(cells);
+        update_whole_grid(grid);
     else
-        update_grid_cells(cells);
+        update_grid_cells(grid);
 }
 
-void Visualization::update_whole_grid(uint16_t* cells)
+void Visualization::update_whole_grid(Automaton::Grid* grid)
 {
     // Update the color of each cell in the vertex array
     for (int i = 0; i < grid_width; i++) 
     {
         for (int j = 0; j < grid_height; j++) 
         {
-            int cell_id = j * grid_width + i;
-
-            /*
-            Automaton::State cell_state = Automaton::get_state(cells[cell_id]);
-            sf::Color cell_color = state_to_color(cell_state);
-
-            sf::Vertex* quad = &grid_vertices[cell_id * 4];
-            quad[0].color = cell_color;
-            quad[1].color = cell_color;
-            quad[2].color = cell_color;
-            quad[3].color = cell_color;
-            */
+            update_grid_cell(grid, i, j);
         }
     }
 
     first_iteration = false;
 }
 
-void Visualization::update_grid_cells(uint16_t* cells)
+void Visualization::update_grid_cells(Automaton::Grid* grid)
 {
     for (int i = 0; i < grid_width; i++)
     {
         for (int j = 0; j < grid_height; j++)
         {
-            int cell_id = j * grid_width + i;
-
-            // Check if cell state has changed before updating
-            if (cells[cell_id] != previous_cells[cell_id])
-            {
-                /*
-                Automaton::State current_state = Automaton::get_state(cells[cell_id]);
-                sf::Color cell_color = state_to_color(current_state);
-
-                sf::Vertex* quad = &grid_vertices[cell_id * 4];
-                quad[0].color = cell_color;
-                quad[1].color = cell_color;
-                quad[2].color = cell_color;
-                quad[3].color = cell_color;
-
-                // Update previous cell
-                previous_cells[cell_id] = cells[cell_id];
-                */
-            }
+            update_grid_cell(grid, i, j);
         }
     }
 }
 
-void Visualization::update_grid_cell(uint16_t* cells, int cell_x, int cell_y)
+void Visualization::update_grid_cell(Automaton::Grid* grid, int cell_x, int cell_y)
 {
     // Calculate cell ID in row-major order
     int cell_id = cell_y * grid_width + cell_x;
 
-    // Get the updated cell state and color
-    /*
-    Automaton::State cell_state = Automaton::get_state(cells[cell_id]);
-    sf::Color cell_color = state_to_color(cell_state);
+    // Check if the cell requires updating
+    // if
+    //  return
 
-    // Update the vertex colors for this cell
+    // Decide on the colour
+    sf::Color cell_color = EMPTY_CELL_COLOR;
+
+    if (grid->is_wall[cell_id])
+        cell_color = WALL_CELL_COLOR;
+
+    else if (grid->concentration[cell_id] > 1e-6)
+        cell_color = GAS_CELL_COLOR;
+
+    // Apply the colour
     sf::Vertex* quad = &grid_vertices[cell_id * 4];
     quad[0].color = cell_color;
     quad[1].color = cell_color;
     quad[2].color = cell_color;
     quad[3].color = cell_color;
-    */
+
+    // Mark the cell as recently updated
 }
 
 void Visualization::draw_grid(bool draw_grid_lines)

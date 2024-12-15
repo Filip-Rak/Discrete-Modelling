@@ -28,6 +28,11 @@ private:
 	int grid_height;
 	std::function<void(int, int)> cell_click_callback;
 
+	// Colours
+	const sf::Color EMPTY_CELL_COLOR = sf::Color::White;
+	const sf::Color GAS_CELL_COLOR = sf::Color(0, 0, 255);
+	const sf::Color WALL_CELL_COLOR = sf::Color(139, 69, 19);
+
 	// Precomputed
 	sf::VertexArray grid_vertices;
 	sf::VertexArray grid_lines;
@@ -36,7 +41,7 @@ private:
 	sf::RectangleShape ui_background;
 
 	// Cells from previous frame
-	uint16_t* previous_cells;
+	uint16_t* previous_cells;	// Not currently used
 	bool first_iteration;
 	
 public:
@@ -47,8 +52,8 @@ public:
 	/* Public Methods */
 	void process_window_events();
 	void init_grid();
-	void manage_grid_update(uint16_t* cells, bool force_full_update = false);
-	void update_grid_cell(uint16_t* cells, int cell_x, int cell_y);
+	void manage_grid_update(Automaton::Grid* grid, bool force_full_update = false);
+	void update_grid_cell(Automaton::Grid* grid, int cell_x, int cell_y);
 	void draw_grid(bool draw_grid_lines);
 	void init_ui();
 	void draw_ui();
@@ -66,8 +71,8 @@ public:
 
 private:
 	/* Private Methods */
-	void update_whole_grid(uint16_t* cells);
-	void update_grid_cells(uint16_t* cells);
+	void update_whole_grid(Automaton::Grid* grid);
+	void update_grid_cells(Automaton::Grid* grid);
 	void find_grid_dimensions();
 	void update_views();
 	void handle_mouse_click(int mouse_x, int mouse_y);
