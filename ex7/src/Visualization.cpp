@@ -144,7 +144,7 @@ void Visualization::init_grid()
     grid_background.setFillColor(sf::Color(173, 216, 230)); // Light blue
 }
 
-void Visualization::manage_grid_update(Automaton::Grid* grid, bool force_full_update)
+void Visualization::manage_grid_update(Grid* grid, bool force_full_update)
 {
     force_full_update = true;   // Overwrite for debugging
     if (first_iteration || force_full_update)
@@ -153,7 +153,7 @@ void Visualization::manage_grid_update(Automaton::Grid* grid, bool force_full_up
         update_grid_cells(grid);
 }
 
-void Visualization::update_whole_grid(Automaton::Grid* grid)
+void Visualization::update_whole_grid(Grid* grid)
 {
     // Update the color of each cell in the vertex array
     for (int i = 0; i < grid_width; i++) 
@@ -167,7 +167,7 @@ void Visualization::update_whole_grid(Automaton::Grid* grid)
     first_iteration = false;
 }
 
-void Visualization::update_grid_cells(Automaton::Grid* grid)
+void Visualization::update_grid_cells(Grid* grid)
 {
     for (int i = 0; i < grid_width; i++)
     {
@@ -178,11 +178,8 @@ void Visualization::update_grid_cells(Automaton::Grid* grid)
     }
 }
 
-void Visualization::update_grid_cell(Automaton::Grid* grid, int cell_x, int cell_y)
+void Visualization::update_grid_cell(Grid* grid, int cell_x, int cell_y)
 {
-    // Calculate cell ID in row-major order
-    int cell_id = cell_y * grid_width + cell_x;
-
     // Check if the cell requires updating
     // if
     //  return
@@ -190,13 +187,15 @@ void Visualization::update_grid_cell(Automaton::Grid* grid, int cell_x, int cell
     // Decide on the colour
     sf::Color cell_color = EMPTY_CELL_COLOR;
 
-    if (grid->is_wall[cell_id])
+    if (grid->get_cell_is_wall(cell_x, cell_y))
         cell_color = WALL_CELL_COLOR;
 
-    else if (grid->concentration[cell_id] > 1e-6)
+    else if (grid->get_cell_concetration(cell_x, cell_y) > 1e-6)
         cell_color = GAS_CELL_COLOR;
 
     // Apply the colour
+    int cell_id = cell_y * grid_width + cell_x;
+
     sf::Vertex* quad = &grid_vertices[cell_id * 4];
     quad[0].color = cell_color;
     quad[1].color = cell_color;

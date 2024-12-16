@@ -3,7 +3,8 @@
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp>
 #include <cstdint>
-#include "Automaton.h"
+#include "Automaton.h"	// Replace with grid
+#include "Grid.h"
 
 class Visualization
 {
@@ -61,8 +62,8 @@ public:
 	/* Public Methods */
 	void process_window_events();
 	void init_grid();
-	void manage_grid_update(Automaton::Grid* grid, bool force_full_update = false);
-	void update_grid_cell(Automaton::Grid* grid, int cell_x, int cell_y);
+	void manage_grid_update(Grid* grid, bool force_full_update = false);
+	void update_grid_cell(Grid* grid, int cell_x, int cell_y);
 	void draw_grid(bool draw_grid_lines);
 	void init_ui();
 	void draw_ui();
@@ -80,8 +81,8 @@ public:
 
 private:
 	/* Private Methods */
-	void update_whole_grid(Automaton::Grid* grid);
-	void update_grid_cells(Automaton::Grid* grid);
+	void update_whole_grid(Grid* grid);
+	void update_grid_cells(Grid* grid);
 	void find_grid_dimensions();
 	void update_views();
 	void handle_mouse_click(int mouse_x, int mouse_y);

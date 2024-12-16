@@ -35,14 +35,15 @@ void Controller::update_clicked_cell(int cell_x, int cell_y)
 {
 	std::cout << "Update cell (" << cell_x << ", " << cell_y << ") to state: " << selected_cell_state << "\n";
 
-	// Update the cell within the automaton
-	
+	// Update the cell within the automaton's grid
+	Grid* grid = automaton.get_grid();
+
 	if (selected_cell_state == Visualization::EMPTY)
-		automaton.set_cell_as_inactive(cell_x, cell_y);
+		grid->set_cell_as_inactive(cell_x, cell_y);
 	else if (selected_cell_state == Visualization::GAS)
-		automaton.set_cell_as_active(cell_x, cell_y);
+		grid->set_cell_as_active(cell_x, cell_y);
 	else if (selected_cell_state == Visualization::WALL)
-		automaton.set_cell_as_wall(cell_x, cell_y);
+		grid->set_cell_as_wall(cell_x, cell_y);
 	else
 		std::cerr << "ERROR: Controller::update_clicked_cell() -> Update invalid: cell state undefined\n";
 
