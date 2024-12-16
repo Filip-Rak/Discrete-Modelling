@@ -32,7 +32,21 @@ void Controller::run()
 
 void Controller::update_clicked_cell(int cell_x, int cell_y)
 {
-	std::cout << "Update cell (" << cell_x << ", " << cell_y << ") state\n";
+	std::cout << "Update cell (" << cell_x << ", " << cell_y << ") to state: " << selected_cell_state << "\n";
+
+	// Update the cell within the automaton
+	
+	if (selected_cell_state == Visualization::EMPTY)
+		automaton.set_cell_as_inactive(cell_x, cell_y);
+	else if (selected_cell_state == Visualization::GAS)
+		automaton.set_cell_as_active(cell_x, cell_y);
+	else if (selected_cell_state == Visualization::WALL)
+		automaton.set_cell_as_wall(cell_x, cell_y);
+	else
+		std::cerr << "ERROR: Controller::update_clicked_cell() -> Update invalid: cell state undefined\n";
+
+	// Update the cell in the visualization
+	visualization.update_grid_cell(automaton.get_grid(), cell_x, cell_y);
 
 	// Replace the cell
 	// uint16_t new_cell = 0;
@@ -244,20 +258,20 @@ void Controller::initialize_ui()
 	// State tools
 	air_button->onPress([this]
 		{
-			// selected_state = Automaton::State::EMPTY;
-			std::cout << "Select: Air\n";
+			selected_cell_state = Visualization::CellVisualState::EMPTY;
+			std::cout << "Select cell state: " << selected_cell_state << "\n";
 		});	
 
 	gas_button->onPress([this]
 		{
-			// selected_state = Automaton::State::GAS;
-			std::cout << "Select: Gas\n";
+			selected_cell_state = Visualization::CellVisualState::GAS;
+			std::cout << "Select cell state: " << selected_cell_state << "\n";
 		});	
 
 	wall_button->onPress([this]
 		{
-			// selected_state = Automaton::State::WALL;
-			std::cout << "Select: Wall\n";
+			selected_cell_state = Visualization::CellVisualState::WALL;
+			std::cout << "Select cell state: " << selected_cell_state << "\n";
 		});
 
 	probability_text_area->setText(std::to_string((int)(probability * 100.f)));

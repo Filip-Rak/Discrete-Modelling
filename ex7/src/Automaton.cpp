@@ -54,4 +54,69 @@ Automaton::~Automaton()
 /* Public Methods */
 void Automaton::generate_random()
 {
+	return;
+}
+
+/* Getters */
+Automaton::Grid* Automaton::get_grid()
+{
+	return &grid;
+}
+
+/* Setters */
+void Automaton::set_cell_as_active(int x, int y)
+{
+	// Get the cell's index
+	int cell_id = y * grid.width + x;
+
+	// Set cell's properties
+	grid.is_wall[cell_id] = false;
+
+	double input_sum = 0.f;
+	for (int j = 0; j < direction_num; j++)
+	{
+		double addition = 1.f;	// Work on this var to change the state of activation
+		grid.f_in[j][cell_id] = addition;
+		input_sum += addition;
+
+		// Zero other arrays
+		grid.f_eq[j][cell_id];
+		grid.f_out[j][cell_id];
+	}
+
+	grid.concentration[cell_id] = input_sum / (double)direction_num;
+}
+
+void Automaton::set_cell_as_inactive(int x, int y)
+{
+	// Get the cell's index
+	int cell_id = y * grid.width + x;
+
+	// Set cell's properties
+	grid.concentration[cell_id] = 0.f;
+	grid.is_wall[cell_id] = false;
+
+	for (int j = 0; j < direction_num; j++)
+	{
+		grid.f_in[j][cell_id] = 0.f;
+		grid.f_eq[j][cell_id] = 0.f;
+		grid.f_out[j][cell_id] = 0.f;
+	}
+}
+
+void Automaton::set_cell_as_wall(int x, int y)
+{
+	// Get the cell's index
+	int cell_id = y * grid.width + x;
+
+	// Set cell's properties
+	grid.concentration[cell_id] = 0.f;
+	grid.is_wall[cell_id] = true;
+	
+	for (int j = 0; j < direction_num; j++)
+	{
+		grid.f_in[j][cell_id] = 0.f;
+		grid.f_eq[j][cell_id] = 0.f;
+		grid.f_out[j][cell_id] = 0.f;
+	}
 }

@@ -7,6 +7,15 @@
 
 class Visualization
 {
+public:
+	/* Enums */
+	enum CellVisualState
+	{
+		EMPTY,
+		GAS, 
+		WALL
+	};
+
 private:
 	/* Attributes */
 
@@ -31,7 +40,7 @@ private:
 	// Colours
 	const sf::Color EMPTY_CELL_COLOR = sf::Color::White;
 	const sf::Color GAS_CELL_COLOR = sf::Color(0, 0, 255);
-	const sf::Color WALL_CELL_COLOR = sf::Color(139, 69, 19);
+	const sf::Color WALL_CELL_COLOR = sf::Color(60, 30, 19);
 
 	// Precomputed
 	sf::VertexArray grid_vertices;

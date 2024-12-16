@@ -98,12 +98,12 @@ void Visualization::init_grid()
             quad[2].position = sf::Vector2f(x + cell_size, y + cell_size);
             quad[3].position = sf::Vector2f(x, y + cell_size);
 
-            // Initial color (default, can be updated later)
-            // sf::Color initial_color = state_to_color(Automaton::EMPTY);
-            // quad[0].color = initial_color;
-            // quad[1].color = initial_color;
-            // quad[2].color = initial_color;
-            // quad[3].color = initial_color;
+            // Initial color
+            sf::Color initial_color = EMPTY_CELL_COLOR;
+            quad[0].color = initial_color;
+            quad[1].color = initial_color;
+            quad[2].color = initial_color;
+            quad[3].color = initial_color;
         }
     }
 

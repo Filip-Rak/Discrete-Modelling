@@ -18,7 +18,7 @@ private:
 	bool use_gpu = false;
 	bool paused = true;
 	bool text_input_in_use = false;
-	// Automaton::State selected_state = Automaton::GAS;
+	Visualization::CellVisualState selected_cell_state = Visualization::GAS;
 
 	// Update speed
 	const float UPDATE_SPEED_MAX = 300;

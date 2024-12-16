@@ -33,7 +33,6 @@ public:
 		double* f_out[direction_num];	// Output functions
 	};
 
-
 private:
 	/* Attributes */
 
@@ -49,4 +48,12 @@ public:
 	/* Public Methods */
 	void generate_random();
 	void reset();
+
+	/* Getters */
+	Grid* get_grid();
+	
+	/* Setters */
+	void set_cell_as_active(int x, int y);
+	void set_cell_as_inactive(int x, int y);
+	void set_cell_as_wall(int x, int y);
 };
