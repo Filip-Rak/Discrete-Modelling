@@ -146,6 +146,7 @@ void Visualization::init_grid()
 
 void Visualization::manage_grid_update(Automaton::Grid* grid, bool force_full_update)
 {
+    force_full_update = true;   // Overwrite for debugging
     if (first_iteration || force_full_update)
         update_whole_grid(grid);
     else

@@ -42,7 +42,7 @@ private:
 	// Generation
 	float MIN_PROBABILITY = 0.f;
 	float MAX_PROBABILITY = 1.f;
-	float probability = 0.1f;
+	float probability = MAX_PROBABILITY;
 	// float probability = (MIN_PROBABILITY + MAX_PROBABILITY) / 2.f;
 
 	// Visuals

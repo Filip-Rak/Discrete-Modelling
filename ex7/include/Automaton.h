@@ -39,6 +39,7 @@ private:
 	// Components
 	AutomatonCUDA cuda_helper;
 	Grid grid;
+	Grid grid_fallback;
 
 public:
 	/* Constructor & Destructor */
@@ -46,7 +47,7 @@ public:
 	~Automaton();
 
 	/* Public Methods */
-	void generate_random();
+	void generate_random(double probability = 1.f);
 	void reset();
 
 	/* Getters */

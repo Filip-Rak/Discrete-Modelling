@@ -52,9 +52,50 @@ Automaton::~Automaton()
 }
 
 /* Public Methods */
-void Automaton::generate_random()
+void Automaton::generate_random(double probability)
 {
-	return;
+	int wall_position = this->grid.width / 3; // Adjust proportion for wall position
+	int gas_end = wall_position;        // End of gas region
+	int wall_start = wall_position;     // Start of wall region
+	int wall_end = wall_start + 1;      // End of wall region (1-cell wide)
+
+	for (int y = 0; y < this->grid.height; ++y)
+	{
+		for (int x = 0; x < this->grid.width; ++x)
+		{
+			if (x < gas_end) // Gas-filled region
+			{
+				float rand_val = static_cast<float>(rand()) / RAND_MAX;
+
+				if (rand_val < probability || probability == 1.f)
+				{
+					set_cell_as_active(x, y);
+				}
+				else
+				{
+					set_cell_as_inactive(x, y);
+				}
+			}
+			else if (x >= wall_start && x < wall_end) // Wall region
+			{
+				set_cell_as_wall(x, y);
+			}
+			else // Empty region
+			{
+				set_cell_as_inactive(x, y);
+			}
+
+		}
+	}
+
+	// Save the copy of the grid
+	// (...)
+	std::cout << "ERROR: Automaton::generate_random() -> Function does not handle grid copy for fallback\n";
+}
+
+void Automaton::reset()
+{
+	std::cout << "ERROR: Automaton::reset() -> No function definition\n";
 }
 
 /* Getters */
