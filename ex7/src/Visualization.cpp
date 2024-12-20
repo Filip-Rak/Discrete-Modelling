@@ -194,7 +194,7 @@ void Visualization::update_grid_cell(Grid* grid, int cell_x, int cell_y)
         cell_color = WALL_CELL_COLOR;
 
     else if (grid->get_cell_concetration(cell_id) > 1e-6)
-        cell_color = GAS_CELL_COLOR;
+        cell_color = adjust_gas_color(grid->get_cell_concetration(cell_id));
 
     // Apply the colour
     sf::Vertex* quad = &grid_vertices[cell_id * 4];
@@ -204,6 +204,7 @@ void Visualization::update_grid_cell(Grid* grid, int cell_x, int cell_y)
     quad[3].color = cell_color;
 
     // Mark the cell as recently updated
+    // (...)
 }
 
 void Visualization::draw_grid(bool draw_grid_lines)
@@ -309,4 +310,18 @@ void Visualization::handle_mouse_click(int mouse_x, int mouse_y)
     // Check if the click happened inside the grid
     if (cell_x >= 0 && cell_x < grid_width && cell_y >= 0 && cell_y < grid_height)
         cell_click_callback(cell_x, cell_y);
+}
+
+sf::Color Visualization::adjust_gas_color(double concentration)
+{
+    // Normalize concentration (0 to 1)
+    double normalized_conc = std::min(1.0, concentration / (double)Grid::direction_num);
+
+    // Linear interpolation for each color channel
+    sf::Color cell_color = EMPTY_CELL_COLOR;
+    cell_color.r = static_cast<sf::Uint8>(EMPTY_CELL_COLOR.r + normalized_conc * (GAS_CELL_COLOR.r - EMPTY_CELL_COLOR.r));
+    cell_color.g = static_cast<sf::Uint8>(EMPTY_CELL_COLOR.g + normalized_conc * (GAS_CELL_COLOR.g - EMPTY_CELL_COLOR.g));
+    cell_color.b = static_cast<sf::Uint8>(EMPTY_CELL_COLOR.b + normalized_conc * (GAS_CELL_COLOR.b - EMPTY_CELL_COLOR.b));
+
+    return cell_color;
 }

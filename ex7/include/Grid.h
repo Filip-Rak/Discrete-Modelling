@@ -5,7 +5,7 @@
 /* Structs */
 class Grid
 {
-private:
+public:
 	/* Statics & Constants */
 	static constexpr int direction_num = 4;	// Left, Top, Right, Down
 	static constexpr int directions_x[direction_num] = { -1, 0, 1, 0 };
@@ -13,13 +13,14 @@ private:
 	static constexpr int opposite_directions[direction_num] = { 2, 3, 0, 1 };
 	static constexpr double weights[direction_num] = { 0.25, 0.25, 0.25, 0.25 };
 
+private:
 	/* Attributes */
 	// Dimensions
 	int width;
 	int height;
 
 	// Modifiers
-	double tau = 1.f;
+	double tau = 1.5f;
 
 	// Arrays for cell data
 	double* concentration;	// 0.0 - 1.0

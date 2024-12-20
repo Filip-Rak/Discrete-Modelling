@@ -39,9 +39,9 @@ private:
 	std::function<void(int, int)> cell_click_callback;
 
 	// Colours
-	const sf::Color EMPTY_CELL_COLOR = sf::Color::White;
-	const sf::Color GAS_CELL_COLOR = sf::Color(0, 0, 255);
-	const sf::Color WALL_CELL_COLOR = sf::Color(60, 30, 19);
+	const sf::Color EMPTY_CELL_COLOR = sf::Color(255, 255, 255);
+	const sf::Color GAS_CELL_COLOR = sf::Color(0, 0, 0);
+	const sf::Color WALL_CELL_COLOR = sf::Color(60, 30, 255);
 
 	// Precomputed
 	sf::VertexArray grid_vertices;
@@ -86,4 +86,5 @@ private:
 	void find_grid_dimensions();
 	void update_views();
 	void handle_mouse_click(int mouse_x, int mouse_y);
+	sf::Color adjust_gas_color(double concentration);
 };
