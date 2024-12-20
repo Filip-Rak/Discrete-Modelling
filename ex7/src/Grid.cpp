@@ -89,7 +89,7 @@ void Grid::set_cell_as_active(int cell_id)
 		f_out[j][cell_id];
 	}
 
-	concentration[cell_id] = input_sum / (double)direction_num;
+	concentration[cell_id] = input_sum; // / (double)direction_num;
 }
 
 void Grid::set_cell_as_inactive(int x, int y)

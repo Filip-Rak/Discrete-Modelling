@@ -66,7 +66,72 @@ void Automaton::update(bool use_gpu)
 /* Private Methods */
 void Automaton::update_cpu()
 {
-	
+	// X-axis loop
+	for (int x = 0; x < width; x++)
+	{
+		// Y-axis loop
+		for (int y = 0; y < height; y++)
+		{
+			// Get this cell's id
+			int cell_id = grid.get_id(x, y);
+
+			// Skip if cell is a wall
+			if (grid.is_wall[cell_id])
+				continue;
+
+			// Update functions of this cell
+			for (int direction = 0; direction < grid.direction_num; direction++)
+			{
+				// 1. Collision
+				// Equlibrium function
+				grid.f_eq[direction][cell_id] = grid.weights[direction] * grid.concentration[cell_id];
+
+				// Output function
+				grid.f_out[direction][cell_id] = grid.f_in[direction][cell_id] + 1.0 / grid.tau * (grid.f_eq[direction][cell_id] - grid.f_in[direction][cell_id]);
+
+				// 2. Streaming
+				// Find the neighbour position
+				int offset_x = grid.directions_x[direction];
+				int offset_y = grid.directions_y[direction];
+
+				int neighbour_x = x + offset_x;
+				int neighbour_y = y + offset_y;
+
+				// Check if the neighbour is out of bounds or a wall
+				int neighbour_id = grid.get_id(neighbour_x, neighbour_y);
+				if (neighbour_x < 0 || neighbour_x >= grid.width ||
+					neighbour_y < 0 || neighbour_y >= grid.height ||
+					grid.is_wall[neighbour_id])
+
+				{	// Bounce Back
+					int opposite_dir = grid.opposite_directions[direction];
+					grid.f_in[opposite_dir][cell_id] = grid.f_out[direction][cell_id];
+				}
+				else // Within bounds
+				{
+					grid.f_in[direction][neighbour_id] = grid.f_out[direction][cell_id];
+				}
+			}
+		}
+	}
+
+	// Calculate Concentration for each cell
+	for (int i = 0; i < width * height; i++)
+	{
+		if (grid.is_wall[i])
+		{
+			grid.concentration[i] = 0.f;
+			continue;
+		}
+
+		// Get the sum of all input directions
+		double input_sum = 0.f;
+		for (int dir = 0; dir < Grid::direction_num; dir++)
+			input_sum += grid.f_in[dir][i];
+
+		// Set the concetration of this cell
+		grid.concentration[i] = input_sum; // / (double)Grid::direction_num;
+	}
 }
 
 void Automaton::update_gpu()

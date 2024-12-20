@@ -7,13 +7,19 @@ class Grid
 {
 private:
 	/* Statics & Constants */
-	static const int direction_num = 4;
+	static constexpr int direction_num = 4;	// Left, Top, Right, Down
+	static constexpr int directions_x[direction_num] = { -1, 0, 1, 0 };
+	static constexpr int directions_y[direction_num] = { 0, 1, 0, -1 };
+	static constexpr int opposite_directions[direction_num] = { 2, 3, 0, 1 };
+	static constexpr double weights[direction_num] = { 0.25, 0.25, 0.25, 0.25 };
 
 	/* Attributes */
-
 	// Dimensions
 	int width;
 	int height;
+
+	// Modifiers
+	double tau = 1.f;
 
 	// Arrays for cell data
 	double* concentration;	// 0.0 - 1.0
