@@ -113,7 +113,7 @@ void Controller::update()
 			time_since_update -= time_between_updates;
 
 			// Update the automaton
-			// automaton.update(use_gpu);
+			automaton.update(use_gpu);
 
 			// Update the visualization after grid changes
 			visualization.manage_grid_update(automaton.get_grid());

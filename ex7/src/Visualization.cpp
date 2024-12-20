@@ -184,18 +184,19 @@ void Visualization::update_grid_cell(Grid* grid, int cell_x, int cell_y)
     // if
     //  return
 
+    // Find the id
+    int cell_id = grid->get_id(cell_x, cell_y);
+
     // Decide on the colour
     sf::Color cell_color = EMPTY_CELL_COLOR;
 
-    if (grid->get_cell_is_wall(cell_x, cell_y))
+    if (grid->get_cell_is_wall(cell_id))
         cell_color = WALL_CELL_COLOR;
 
-    else if (grid->get_cell_concetration(cell_x, cell_y) > 1e-6)
+    else if (grid->get_cell_concetration(cell_id) > 1e-6)
         cell_color = GAS_CELL_COLOR;
 
     // Apply the colour
-    int cell_id = cell_y * grid_width + cell_x;
-
     sf::Vertex* quad = &grid_vertices[cell_id * 4];
     quad[0].color = cell_color;
     quad[1].color = cell_color;

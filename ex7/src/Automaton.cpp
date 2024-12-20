@@ -55,6 +55,25 @@ void Automaton::reset()
 	new (&grid) Grid(grid_fallback);	// Reconstruct
 }
 
+void Automaton::update(bool use_gpu)
+{
+	if (use_gpu)
+		update_gpu();
+	else
+		update_cpu();
+}
+
+/* Private Methods */
+void Automaton::update_cpu()
+{
+	
+}
+
+void Automaton::update_gpu()
+{
+	
+}
+
 /* Getters */
 Grid* Automaton::get_grid()
 {

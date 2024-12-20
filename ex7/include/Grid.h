@@ -37,12 +37,23 @@ public:
 	/* Destructor */
 	~Grid();
 
+	/* Static Methods */
+	int get_id(int x_pos, int y_pos);
+
 	/* Setters */
 	void set_cell_as_active(int x, int y);
+	void set_cell_as_active(int cell_id);
+
 	void set_cell_as_inactive(int x, int y);
+	void set_cell_as_inactive(int cell_id);
+
 	void set_cell_as_wall(int x, int y);
+	void set_cell_as_wall(int cell_id);
 
 	/* Getters */
 	double get_cell_concetration(int x, int y);
+	double get_cell_concetration(int cell_id);
+
 	bool get_cell_is_wall(int x, int y);
+	bool get_cell_is_wall(int cell_id);
 };

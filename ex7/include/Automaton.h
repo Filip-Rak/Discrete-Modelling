@@ -28,7 +28,14 @@ public:
 	/* Public Methods */
 	void generate_random(double probability = 1.f);
 	void reset();
+	void update(bool use_gpu);
 
+private:
+	/* Private Methods */
+	void update_cpu();
+	void update_gpu();
+
+public:
 	/* Getters */
 	Grid* get_grid();
 };

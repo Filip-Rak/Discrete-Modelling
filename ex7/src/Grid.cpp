@@ -55,11 +55,25 @@ Grid::~Grid()
 	}
 }
 
+/* Static Methods */
+int Grid::get_id(int x_pos, int y_pos)
+{
+	// Return the cell's index in the array
+	return y_pos * width + x_pos;
+}
+
+/* Setters */
 void Grid::set_cell_as_active(int x, int y)
 {
 	// Get the cell's index
-	int cell_id = y * width + x;
+	int cell_id = get_id(x, y);
 
+	// Call the setter
+	set_cell_as_active(cell_id);
+}
+
+void Grid::set_cell_as_active(int cell_id)
+{
 	// Set cell's properties
 	is_wall[cell_id] = false;
 
@@ -81,8 +95,14 @@ void Grid::set_cell_as_active(int x, int y)
 void Grid::set_cell_as_inactive(int x, int y)
 {
 	// Get the cell's index
-	int cell_id = y * width + x;
+	int cell_id = get_id(x, y);
 
+	// Call the setter
+	set_cell_as_inactive(cell_id);
+}
+
+void Grid::set_cell_as_inactive(int cell_id)
+{
 	// Set cell's properties
 	concentration[cell_id] = 0.f;
 	is_wall[cell_id] = false;
@@ -98,8 +118,14 @@ void Grid::set_cell_as_inactive(int x, int y)
 void Grid::set_cell_as_wall(int x, int y)
 {
 	// Get the cell's index
-	int cell_id = y * width + x;
+	int cell_id = get_id(x, y);
 
+	// Call the setter
+	set_cell_as_wall(cell_id);
+}
+
+void Grid::set_cell_as_wall(int cell_id)
+{
 	// Set cell's properties
 	concentration[cell_id] = 0.f;
 	is_wall[cell_id] = true;
@@ -112,20 +138,31 @@ void Grid::set_cell_as_wall(int x, int y)
 	}
 }
 
+/* Getters */
 double Grid::get_cell_concetration(int x, int y)
 {
 	// Get the cell's index
-	int cell_id = y * width + x;
+	int cell_id = get_id(x, y);
 
-	// Return value
+	// Call the getter
+	return get_cell_concetration(cell_id);
+}
+
+double Grid::get_cell_concetration(int cell_id)
+{
 	return concentration[cell_id];
 }
 
 bool Grid::get_cell_is_wall(int x, int y)
 {
 	// Get the cell's index
-	int cell_id = y * width + x;
+	int cell_id = get_id(x, y);
 
 	// Return value
+	return get_cell_is_wall(cell_id);
+}
+
+bool Grid::get_cell_is_wall(int cell_id)
+{
 	return is_wall[cell_id];
 }
