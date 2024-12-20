@@ -21,7 +21,7 @@ private:
 	Visualization::CellVisualState selected_cell_state = Visualization::GAS;
 
 	// Update speed
-	const float UPDATE_SPEED_MAX = 300;
+	const float UPDATE_SPEED_MAX = 600;
 	const float UPDATE_SPEED_MIN = 1;
 	const float STANDARD_SPEED_CHANGE = 10;
 	const float HIGH_SPEED_CHANGE = 50;
