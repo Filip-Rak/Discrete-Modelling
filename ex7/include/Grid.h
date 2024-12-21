@@ -11,7 +11,7 @@ public:
 	static constexpr int directions_x[direction_num] = { -1, 0, 1, 0 };
 	static constexpr int directions_y[direction_num] = { 0, 1, 0, -1 };
 	static constexpr int opposite_directions[direction_num] = { 2, 3, 0, 1 };
-	static constexpr double weights[direction_num] = { 0.25, 0.25, 0.25, 0.25 };
+	static constexpr double weights[direction_num] = { 0.25f, 0.25f, 0.25f, 0.25f };
 
 private:
 	/* Attributes */

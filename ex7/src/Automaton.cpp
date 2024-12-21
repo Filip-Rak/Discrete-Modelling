@@ -51,6 +51,19 @@ void Automaton::generate_random(double probability)
 
 void Automaton::reset()
 {
+	// Debug Print the total amount of gas in the system
+	double sum_in = 0;
+	double sum_c = 0;
+	for (int i = 0; i < grid.width * grid.height; i++)
+	{
+		for (int j = 0; j < 4; j++)
+			sum_in += grid.f_in[j][i];
+
+		sum_c += grid.concentration[i];
+	}
+
+	// std::cout << "Total gas in the system:\n\tC: " << sum_c << "\n\tIn: " << sum_in << "\n";
+
 	grid.~Grid();	// Destruct
 	new (&grid) Grid(grid_fallback);	// Reconstruct
 }
@@ -79,7 +92,7 @@ void Automaton::update_cpu()
 			if (grid.is_wall[cell_id])
 				continue;
 
-			// Update functions of this cell
+			// Loop over all directions
 			for (int direction = 0; direction < grid.direction_num; direction++)
 			{
 				// 1. Collision
@@ -97,7 +110,7 @@ void Automaton::update_cpu()
 				int neighbour_x = x + offset_x;
 				int neighbour_y = y + offset_y;
 
-				// Check if the neighbour is out of bounds or a wall
+				// Check if the neighbour is either out of bounds or a wall
 				int neighbour_id = grid.get_id(neighbour_x, neighbour_y);
 				if (neighbour_x < 0 || neighbour_x >= grid.width ||
 					neighbour_y < 0 || neighbour_y >= grid.height ||
@@ -105,7 +118,8 @@ void Automaton::update_cpu()
 
 				{	// Bounce Back
 					int opposite_dir = grid.opposite_directions[direction];
-					grid.f_in[opposite_dir][cell_id] = f_out;
+					grid.f_in[opposite_dir][cell_id] += f_out;
+					grid.f_in[opposite_dir][cell_id] /= 2.f;
 				}
 				else // Within bounds
 				{
@@ -115,7 +129,7 @@ void Automaton::update_cpu()
 		}
 	}
 
-	// Calculate Concentration for each cell
+	// Update Concentration for each cell
 	for (int i = 0; i < width * height; i++)
 	{
 		if (grid.is_wall[i])
@@ -130,7 +144,7 @@ void Automaton::update_cpu()
 			input_sum += grid.f_in[dir][i];
 
 		// Set the concetration of this cell
-		grid.concentration[i] = input_sum; // / (double)Grid::direction_num;
+		grid.concentration[i] = input_sum;
 	}
 }
 
