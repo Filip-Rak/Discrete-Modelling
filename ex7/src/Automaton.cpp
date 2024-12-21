@@ -10,7 +10,7 @@ Automaton::~Automaton()
 /* Public Methods */
 void Automaton::generate_random(double probability)
 {
-	int wall_position = this->width / 3; // Adjust proportion for wall position
+	int wall_position = this->width / 2; // Adjust proportion for wall position
 	int gas_end = wall_position;        // End of gas region
 	int wall_start = wall_position;     // Start of wall region
 	int wall_end = wall_start + 1;      // End of wall region (1-cell wide)

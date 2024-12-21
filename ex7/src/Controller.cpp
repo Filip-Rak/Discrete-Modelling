@@ -228,10 +228,10 @@ void Controller::initialize_ui()
 		{
 			outline_enabled = !outline_enabled;
 
-			if (outline_enabled)
-				outline_button->setText("Show Grid");
+			if (!outline_enabled)
+				outline_button->setText("Grid: Hide");
 			else
-				outline_button->setText("Hide Grid");
+				outline_button->setText("Grid: Show");
 
 			// Debug output
 			print_flag_status("outline_enabled", outline_enabled);

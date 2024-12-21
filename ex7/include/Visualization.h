@@ -41,7 +41,7 @@ private:
 	// Colours
 	const sf::Color EMPTY_CELL_COLOR = sf::Color(255, 255, 255);
 	const sf::Color GAS_CELL_COLOR = sf::Color(0, 0, 0);
-	const sf::Color WALL_CELL_COLOR = sf::Color(60, 30, 255);
+	const sf::Color WALL_CELL_COLOR = sf::Color(255, 92, 0);
 
 	// Precomputed
 	sf::VertexArray grid_vertices;
