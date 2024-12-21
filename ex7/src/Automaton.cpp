@@ -84,10 +84,10 @@ void Automaton::update_cpu()
 			{
 				// 1. Collision
 				// Equlibrium function
-				grid.f_eq[direction][cell_id] = grid.weights[direction] * grid.concentration[cell_id];
+				double f_eq = grid.weights[direction] * grid.concentration[cell_id];
 
 				// Output function
-				grid.f_out[direction][cell_id] = grid.f_in[direction][cell_id] + 1.0 / grid.tau * (grid.f_eq[direction][cell_id] - grid.f_in[direction][cell_id]);
+				double f_out = grid.f_in[direction][cell_id] + 1.0 / grid.tau * (f_eq - grid.f_in[direction][cell_id]);
 
 				// 2. Streaming
 				// Find the neighbour position
@@ -105,11 +105,11 @@ void Automaton::update_cpu()
 
 				{	// Bounce Back
 					int opposite_dir = grid.opposite_directions[direction];
-					grid.f_in[opposite_dir][cell_id] = grid.f_out[direction][cell_id];
+					grid.f_in[opposite_dir][cell_id] = f_out;
 				}
 				else // Within bounds
 				{
-					grid.f_in[direction][neighbour_id] = grid.f_out[direction][cell_id];
+					grid.f_in[direction][neighbour_id] = f_out;
 				}
 			}
 		}

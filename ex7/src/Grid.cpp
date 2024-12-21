@@ -13,8 +13,6 @@ Grid::Grid(int w, int h)
 	for (int i = 0; i < direction_num; ++i) 
 	{
 		f_in[i] = new double[total_cells]();
-		f_eq[i] = new double[total_cells]();
-		f_out[i] = new double[total_cells]();
 	}
 }
 
@@ -33,12 +31,6 @@ Grid::Grid(const Grid& other)
 	{
 		f_in[i] = new double[total_cells];
 		std::memcpy(f_in[i], other.f_in[i], total_cells * sizeof(double));
-
-		f_eq[i] = new double[total_cells];
-		std::memcpy(f_eq[i], other.f_eq[i], total_cells * sizeof(double));
-
-		f_out[i] = new double[total_cells];
-		std::memcpy(f_out[i], other.f_out[i], total_cells * sizeof(double));
 	}
 }
 
@@ -50,8 +42,6 @@ Grid::~Grid()
 	for (int i = 0; i < direction_num; ++i)
 	{
 		delete[] f_in[i];
-		delete[] f_eq[i];
-		delete[] f_out[i];
 	}
 }
 
@@ -83,10 +73,6 @@ void Grid::set_cell_as_active(int cell_id)
 		double addition = 1.f;	// Work on this var to change the state of activation
 		f_in[j][cell_id] = addition;
 		input_sum += addition;
-
-		// Zero other arrays
-		f_eq[j][cell_id];
-		f_out[j][cell_id];
 	}
 
 	concentration[cell_id] = input_sum; // / (double)direction_num;
@@ -110,8 +96,6 @@ void Grid::set_cell_as_inactive(int cell_id)
 	for (int j = 0; j < direction_num; j++)
 	{
 		f_in[j][cell_id] = 0.f;
-		f_eq[j][cell_id] = 0.f;
-		f_out[j][cell_id] = 0.f;
 	}
 }
 
@@ -133,8 +117,6 @@ void Grid::set_cell_as_wall(int cell_id)
 	for (int j = 0; j < direction_num; j++)
 	{
 		f_in[j][cell_id] = 0.f;
-		f_eq[j][cell_id] = 0.f;
-		f_out[j][cell_id] = 0.f;
 	}
 }
 

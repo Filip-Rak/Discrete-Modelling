@@ -23,13 +23,11 @@ private:
 	double tau = 1.5f;
 
 	// Arrays for cell data
-	double* concentration;	// 0.0 - 1.0
+	double* concentration;	// 0.0 - (double)direction_num
 	bool* is_wall;			// Treated as impassable by gas
 
 	// Indexing: [direction][cell_num]
 	double* f_in[direction_num];	// Input functions
-	double* f_eq[direction_num];	// Equlibrium distibution functions
-	double* f_out[direction_num];	// Output functions
 
 public:
 	/* Frenship Declaration */
