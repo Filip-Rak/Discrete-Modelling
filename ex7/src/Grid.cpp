@@ -101,6 +101,9 @@ void Grid::set_cell_as_active(int cell_id)
 
 		// Initialize f_in as equlibrium function
 		f_in[j][cell_id] = f_eq;
+			
+		// Clear the function buffer as preparation for update
+		f_buffer[j][cell_id] = 0.f;
 	}
 }
 

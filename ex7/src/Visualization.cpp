@@ -315,7 +315,8 @@ void Visualization::handle_mouse_click(int mouse_x, int mouse_y)
 sf::Color Visualization::adjust_gas_color(double concentration)
 {
     // Normalize concentration (0 to 1)
-    double normalized_conc = std::min(1.0, concentration / (double)Grid::direction_num);
+    // double normalized_conc = std::min(1.0, concentration / (double)Grid::direction_num);
+    double normalized_conc = std::min(1.0, concentration);
 
     // Linear interpolation for each color channel
     sf::Color cell_color = EMPTY_CELL_COLOR;

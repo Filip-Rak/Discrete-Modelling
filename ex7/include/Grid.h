@@ -10,7 +10,7 @@ public:
     static constexpr int direction_num = 9; // D2Q9 model
     static constexpr int directions_x[direction_num] = { 0, 1, -1, 0, 0, 1, -1, -1, 1 };
     static constexpr int directions_y[direction_num] = { 0, 0, 0, 1, -1, 1, 1, -1, -1 };
-    static constexpr int opposite_directions[direction_num] = { 0, 2, 1, 4, 3, 6, 5, 8, 7 };
+    static constexpr int opposite_directions[direction_num] = { 0, 2, 1, 4, 3, 7, 8, 5, 6 };
     static constexpr double weights[direction_num] = { 4.0 / 9.0, 1.0 / 9.0, 1.0 / 9.0,
                                                         1.0 / 9.0, 1.0 / 9.0, 1.0 / 36.0,
                                                         1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0 };

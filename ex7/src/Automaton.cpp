@@ -105,10 +105,14 @@ void Automaton::update_cpu()
 					grid.velocity_y[cell_id] * grid.velocity_y[cell_id];
 
 				// Prevents bubbles
-				if (u_square > 0.1) 
+				if (u_square > 0.1f) 
 				{
-					grid.velocity_x[cell_id] *= 0.1 / sqrt(u_square);
-					grid.velocity_y[cell_id] *= 0.1 / sqrt(u_square);
+					double scale = 0.1 / sqrt(u_square);
+					grid.velocity_x[cell_id] *= scale;
+					grid.velocity_y[cell_id] *= scale;
+					u_square = 0.1 * 0.1;
+					ci_dot_u = grid.directions_x[direction] * grid.velocity_x[cell_id] +
+						grid.directions_y[direction] * grid.velocity_y[cell_id];
 				}
 
 				// Equlibrium function
@@ -135,17 +139,20 @@ void Automaton::update_cpu()
 
 				{	// Bounce Back
 					int opposite_dir = grid.opposite_directions[direction];
-					grid.f_in[opposite_dir][cell_id] = f_out;
+					grid.f_buffer[opposite_dir][cell_id] += f_out;
 				}
 				else // Within bounds
 				{
-					grid.f_in[direction][neighbour_id] = f_out;
+					grid.f_buffer[direction][neighbour_id] += f_out;
 				}
 			}
 		}
 	}
 
-	// Update Concentration for each cell
+	// Swap the buffer with f_in
+	std::swap(grid.f_in, grid.f_buffer);
+
+	// Update prperties of each cell and zero the buffer
 	for (int i = 0; i < width * height; i++)
 	{
 		if (grid.is_wall[i])
@@ -171,6 +178,9 @@ void Automaton::update_cpu()
 			// Accumulate momentum components
 			momentum_x += input_val * grid.directions_x[dir];
 			momentum_y += input_val * grid.directions_y[dir];
+
+			// Zero the buffer
+			grid.f_buffer[dir][i] = 0.f;
 		}
 
 		// Set the density of this cell
