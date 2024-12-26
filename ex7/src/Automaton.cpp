@@ -59,10 +59,10 @@ void Automaton::reset()
 		for (int j = 0; j < 4; j++)
 			sum_in += grid.f_in[j][i];
 
-		sum_c += grid.concentration[i];
+		sum_c += grid.density[i];
 	}
 
-	// std::cout << "Total gas in the system:\n\tC: " << sum_c << "\n\tIn: " << sum_in << "\n";
+	std::cout << "Total gas in the system:\n\tC: " << sum_c << "\n\tIn: " << sum_in << "\n";
 
 	grid.~Grid();	// Destruct
 	new (&grid) Grid(grid_fallback);	// Reconstruct
@@ -96,11 +96,28 @@ void Automaton::update_cpu()
 			for (int direction = 0; direction < grid.direction_num; direction++)
 			{
 				// 1. Collision
+				// Compute dot product of velocity and direction vector
+				double ci_dot_u = grid.directions_x[direction] * grid.velocity_x[cell_id] +
+					grid.directions_y[direction] * grid.velocity_y[cell_id];
+
+				// Compute square of velocity magnitude
+				double u_square = grid.velocity_x[cell_id] * grid.velocity_x[cell_id] +
+					grid.velocity_y[cell_id] * grid.velocity_y[cell_id];
+
+				// Prevents bubbles
+				if (u_square > 0.1) 
+				{
+					grid.velocity_x[cell_id] *= 0.1 / sqrt(u_square);
+					grid.velocity_y[cell_id] *= 0.1 / sqrt(u_square);
+				}
+
 				// Equlibrium function
-				double f_eq = grid.weights[direction] * grid.concentration[cell_id];
+				double f_eq = grid.weights[direction] * grid.density[cell_id] *
+					(1.0 + 3.0 * ci_dot_u + 4.5 * ci_dot_u * ci_dot_u - 1.5 * u_square);
 
 				// Output function
-				double f_out = grid.f_in[direction][cell_id] + 1.0 / grid.tau * (f_eq - grid.f_in[direction][cell_id]);
+				double f_out = grid.f_in[direction][cell_id] +
+					(1.0 / grid.tau) * (f_eq - grid.f_in[direction][cell_id]);
 
 				// 2. Streaming
 				// Find the neighbour position
@@ -118,8 +135,7 @@ void Automaton::update_cpu()
 
 				{	// Bounce Back
 					int opposite_dir = grid.opposite_directions[direction];
-					grid.f_in[opposite_dir][cell_id] += f_out;
-					grid.f_in[opposite_dir][cell_id] /= 2.f;
+					grid.f_in[opposite_dir][cell_id] = f_out;
 				}
 				else // Within bounds
 				{
@@ -134,17 +150,43 @@ void Automaton::update_cpu()
 	{
 		if (grid.is_wall[i])
 		{
-			grid.concentration[i] = 0.f;
+			grid.density[i] = 0.f;
+			grid.velocity_x[i] = 0.f;
+			grid.velocity_y[i] = 0.f;
 			continue;
 		}
 
 		// Get the sum of all input directions
-		double input_sum = 0.f;
-		for (int dir = 0; dir < Grid::direction_num; dir++)
-			input_sum += grid.f_in[dir][i];
+		double density = 0.f;
+		double momentum_x = 0.f;
+		double momentum_y = 0.f;
 
-		// Set the concetration of this cell
-		grid.concentration[i] = input_sum;
+		for (int dir = 0; dir < Grid::direction_num; dir++)
+		{
+			double input_val = grid.f_in[dir][i];
+
+			// Accumulate density
+			density += input_val;
+
+			// Accumulate momentum components
+			momentum_x += input_val * grid.directions_x[dir];
+			momentum_y += input_val * grid.directions_y[dir];
+		}
+
+		// Set the density of this cell
+		grid.density[i] = density;
+
+		// Avoid division by 0 
+		if (density > 0.f)
+		{
+			grid.velocity_x[i] = momentum_x / density;
+			grid.velocity_y[i] = momentum_y / density;
+		}
+		else
+		{
+			grid.velocity_x[i] = 0.f;
+			grid.velocity_y[i] = 0.f;
+		}
 	}
 }
 

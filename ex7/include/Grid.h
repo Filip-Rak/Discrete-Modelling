@@ -7,11 +7,13 @@ class Grid
 {
 public:
 	/* Statics & Constants */
-	static constexpr int direction_num = 4;	// Left, Top, Right, Down
-	static constexpr int directions_x[direction_num] = { -1, 0, 1, 0 };
-	static constexpr int directions_y[direction_num] = { 0, 1, 0, -1 };
-	static constexpr int opposite_directions[direction_num] = { 2, 3, 0, 1 };
-	static constexpr double weights[direction_num] = { 0.25f, 0.25f, 0.25f, 0.25f };
+    static constexpr int direction_num = 9; // D2Q9 model
+    static constexpr int directions_x[direction_num] = { 0, 1, -1, 0, 0, 1, -1, -1, 1 };
+    static constexpr int directions_y[direction_num] = { 0, 0, 0, 1, -1, 1, 1, -1, -1 };
+    static constexpr int opposite_directions[direction_num] = { 0, 2, 1, 4, 3, 6, 5, 8, 7 };
+    static constexpr double weights[direction_num] = { 4.0 / 9.0, 1.0 / 9.0, 1.0 / 9.0,
+                                                        1.0 / 9.0, 1.0 / 9.0, 1.0 / 36.0,
+                                                        1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0 };
 
 private:
 	/* Attributes */
@@ -23,11 +25,14 @@ private:
 	double tau = 1.5f;
 
 	// Arrays for cell data
-	double* concentration;	// 0.0 - (double)direction_num
+	double* density;
+	double* velocity_x;
+	double* velocity_y;
 	bool* is_wall;			// Treated as impassable by gas
 
 	// Indexing: [direction][cell_num]
 	double* f_in[direction_num];	// Input functions
+	double* f_buffer[direction_num];	// Buffer for temporary functions
 
 public:
 	/* Frenship Declaration */
