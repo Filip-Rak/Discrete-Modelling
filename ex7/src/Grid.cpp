@@ -60,6 +60,29 @@ Grid::~Grid()
 	}
 }
 
+void Grid::print_cell_data(int cell_id)
+{
+	std::ostringstream output;
+
+	output << "------ Print Cell ------\n";
+	output << "Id: " << cell_id << "\n";
+	output << "Density: " << density[cell_id] << "\n";
+	output << "Velocity X: " << velocity_x[cell_id] << "\n";
+	output << "Velocity Y: " << velocity_y[cell_id] << "\n";
+	output << "Is wall: " << is_wall[cell_id] << "\n";
+
+	output << "F_in:\n";
+	for (int i = 0; i < direction_num; i++)
+		output << "\t" << i << ": " << f_in[i][cell_id] << "\n";
+
+	// Always zero
+	// output << "F_buffer:\n";
+	// for (int i = 0; i < direction_num; i++)
+		// output << "\t" << i << ": " << f_buffer[i][cell_id] << "\n";
+
+	std::cout << output.str();
+}
+
 /* Static Methods */
 int Grid::get_id(int x_pos, int y_pos)
 {

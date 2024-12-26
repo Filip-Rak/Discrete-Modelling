@@ -51,10 +51,11 @@ void UI::initialize(float ui_offset_x, float ui_width, float ctrl_speed, float s
         {"desc_label", "label", desc_label_text, very_small_text_size, ui_width, -basic_margin, true, -30},
         {"slower", "button", "<", basic_text_size, half_button_width, 0,  true, -20},
         {"faster", "button", ">", basic_text_size, half_button_width, half_button_width + basic_margin, false, 0},
-        {"outline", "button", "Grid: Hide", very_small_text_size, basic_width, 0, true, 0},
+        {"outline", "button", "Grid: Hidden", very_small_text_size, basic_width, 0, true, 0},
         {"toggle_pu", "button", "not set", very_small_text_size, basic_width, 0, true, 0},
-        {"air_button", "button", "Air", basic_text_size, basic_width, 0, true, 40},
-        {"gas_button", "button", "Gas", basic_text_size, basic_width, 0, true, 0},
+        {"cell_log_button", "button", "Unlock cell log", very_small_text_size / 1.2, basic_width, 0, true, 0},
+        {"air_button", "button", "Air", basic_text_size, basic_width, 0, true, 25},
+        {"gas_button", "button", "Fluid", basic_text_size, basic_width, 0, true, 0},
         {"wall_button", "button", "Wall", basic_text_size, basic_width, 0, true, 0},
     };
 

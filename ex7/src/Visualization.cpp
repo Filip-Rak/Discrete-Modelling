@@ -61,14 +61,18 @@ void Visualization::process_window_events()
         {
             if (event.mouseButton.button == sf::Mouse::Left) 
             {
-                handle_mouse_click(event.mouseButton.x, event.mouseButton.y);
+                handle_mouse_click(event.mouseButton.x, event.mouseButton.y, true);
+            }
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+            {
+                handle_mouse_click(event.mouseButton.x, event.mouseButton.y, false);
             }
         }
         if (event.type == sf::Event::MouseMoved) 
         {
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) 
             {
-                handle_mouse_click(event.mouseMove.x, event.mouseMove.y);
+                handle_mouse_click(event.mouseMove.x, event.mouseMove.y, true);
             }
         }
        
@@ -274,9 +278,14 @@ tgui::Gui& Visualization::get_gui()
 }
 
 /* Setters */
-void Visualization::set_cell_click_callback(std::function<void(int, int)> callback)
+void Visualization::set_cell_modify_callback(std::function<void(int, int)> callback)
 {
-    this->cell_click_callback = callback;
+    this->cell_modify_callback = callback;
+}
+
+void Visualization::set_cell_follow_callback(std::function<void(int, int)> callback)
+{
+    this->cell_follow_callback = callback;
 }
 
 /* Private Methods */
@@ -298,7 +307,7 @@ void Visualization::update_views()
     find_grid_dimensions();
 }
 
-void Visualization::handle_mouse_click(int mouse_x, int mouse_y)
+void Visualization::handle_mouse_click(int mouse_x, int mouse_y, bool left_button)
 {
     // Convert window coords into grid coords
     sf::Vector2f world_coords = window.mapPixelToCoords(sf::Vector2i(mouse_x, mouse_y), grid_view);
@@ -309,7 +318,12 @@ void Visualization::handle_mouse_click(int mouse_x, int mouse_y)
 
     // Check if the click happened inside the grid
     if (cell_x >= 0 && cell_x < grid_width && cell_y >= 0 && cell_y < grid_height)
-        cell_click_callback(cell_x, cell_y);
+    {
+        if (left_button)
+            cell_modify_callback(cell_x, cell_y);
+        else
+            cell_follow_callback(cell_x, cell_y);
+    }
 }
 
 sf::Color Visualization::adjust_gas_color(double concentration)

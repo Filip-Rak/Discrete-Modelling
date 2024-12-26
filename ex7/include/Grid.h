@@ -1,6 +1,8 @@
 #pragma once
 
 #include <cstring>
+#include <iostream>
+#include <sstream>
 
 /* Structs */
 class Grid
@@ -14,7 +16,6 @@ public:
     static constexpr double weights[direction_num] = { 4.0 / 9.0, 1.0 / 9.0, 1.0 / 9.0,
                                                         1.0 / 9.0, 1.0 / 9.0, 1.0 / 36.0,
                                                         1.0 / 36.0, 1.0 / 36.0, 1.0 / 36.0 };
-
 private:
 	/* Attributes */
 	// Dimensions
@@ -46,6 +47,9 @@ public:
 
 	/* Destructor */
 	~Grid();
+
+	/* Public Methods */
+	void print_cell_data(int cell_id);
 
 	/* Static Methods */
 	int get_id(int x_pos, int y_pos);

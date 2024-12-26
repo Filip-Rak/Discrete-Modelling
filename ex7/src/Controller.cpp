@@ -13,9 +13,14 @@ Controller::Controller(int window_width, int window_height, int grid_width, int 
 	automaton.generate_random();
 	visualization.manage_grid_update(automaton.get_grid(), true);
 
-	visualization.set_cell_click_callback([this](int cell_x, int cell_y)
+	visualization.set_cell_modify_callback([this](int cell_x, int cell_y)
 		{
-			update_clicked_cell(cell_x, cell_y);
+			modify_clicked_cell(cell_x, cell_y);
+		});
+
+	visualization.set_cell_follow_callback([this](int cell_x, int cell_y)
+		{
+			follow_clicked_cell(cell_x, cell_y);
 		});
 }
 
@@ -31,7 +36,7 @@ void Controller::run()
 	}
 }
 
-void Controller::update_clicked_cell(int cell_x, int cell_y)
+void Controller::modify_clicked_cell(int cell_x, int cell_y)
 {
 	std::cout << "Update cell (" << cell_x << ", " << cell_y << ") to state: " << selected_cell_state << "\n";
 
@@ -40,7 +45,7 @@ void Controller::update_clicked_cell(int cell_x, int cell_y)
 
 	if (selected_cell_state == Visualization::EMPTY)
 		grid->set_cell_as_inactive(cell_x, cell_y);
-	else if (selected_cell_state == Visualization::GAS)
+	else if (selected_cell_state == Visualization::FLUID)
 		grid->set_cell_as_active(cell_x, cell_y);
 	else if (selected_cell_state == Visualization::WALL)
 		grid->set_cell_as_wall(cell_x, cell_y);
@@ -66,6 +71,22 @@ void Controller::update_clicked_cell(int cell_x, int cell_y)
 
 	// Update the cell within the grid
 	// visualization.update_grid_cell(automaton.get_cells(), cell_x, cell_y);
+}
+
+void Controller::follow_clicked_cell(int cell_x, int cell_y)
+{
+	// Calculate cell's id and save it
+	int cell_id = automaton.get_grid()->get_id(cell_x, cell_y);
+	followed_cell = cell_id;
+
+	// I think it's fine to search and cast it each time because this action won't be common
+	auto cell_log_button = ui.get_widget_as<tgui::Button>("cell_log_button");
+
+	// Enable the button
+	cell_log_button->setEnabled(true);
+
+	// Log the change
+	automaton.get_grid()->print_cell_data(cell_id);
 }
 
 // Private Methods
@@ -117,6 +138,12 @@ void Controller::update()
 
 			// Update the visualization after grid changes
 			visualization.manage_grid_update(automaton.get_grid());
+
+			// If a cell is followed then log the new state
+			if (followed_cell != -1)
+			{
+				automaton.get_grid()->print_cell_data(this->followed_cell);
+			}
 		}
 
 	}
@@ -155,6 +182,7 @@ void Controller::initialize_ui()
 	auto faster_button = ui.get_widget_as<tgui::Button>("faster");
 	auto outline_button = ui.get_widget_as<tgui::Button>("outline");
 	auto toggle_pu = ui.get_widget_as<tgui::Button>("toggle_pu");
+	auto cell_log_button = ui.get_widget_as<tgui::Button>("cell_log_button");
 
 	auto air_button = ui.get_widget_as<tgui::Button>("air_button");
 	auto gas_button = ui.get_widget_as<tgui::Button>("gas_button");
@@ -229,9 +257,9 @@ void Controller::initialize_ui()
 			outline_enabled = !outline_enabled;
 
 			if (!outline_enabled)
-				outline_button->setText("Grid: Hide");
+				outline_button->setText("Grid: Hidden");
 			else
-				outline_button->setText("Grid: Show");
+				outline_button->setText("Grid: Shown");
 
 			// Debug output
 			print_flag_status("outline_enabled", outline_enabled);
@@ -257,6 +285,19 @@ void Controller::initialize_ui()
 			print_flag_status("use_gpu", use_gpu);
 		});
 
+	cell_log_button->setEnabled(false);
+	cell_log_button->onPress([this, cell_log_button]
+		{
+			// Unlock cell from following
+			followed_cell = -1;
+
+			// Disable the button
+			cell_log_button->setEnabled(false);
+
+			// Debug output
+			print_flag_status("follow_cell", use_gpu);
+		});
+
 	// State tools
 	air_button->onPress([this]
 		{
@@ -266,7 +307,7 @@ void Controller::initialize_ui()
 
 	gas_button->onPress([this]
 		{
-			selected_cell_state = Visualization::CellVisualState::GAS;
+			selected_cell_state = Visualization::CellVisualState::FLUID;
 			std::cout << "Select cell state: " << selected_cell_state << "\n";
 		});	
 

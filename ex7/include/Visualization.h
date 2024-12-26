@@ -13,7 +13,7 @@ public:
 	enum CellVisualState
 	{
 		EMPTY,
-		GAS, 
+		FLUID, 
 		WALL
 	};
 
@@ -36,11 +36,12 @@ private:
 	float cell_size;
 	int grid_width;
 	int grid_height;
-	std::function<void(int, int)> cell_click_callback;
+	std::function<void(int, int)> cell_modify_callback;
+	std::function<void(int, int)> cell_follow_callback;
 
 	// Colours
 	const sf::Color EMPTY_CELL_COLOR = sf::Color(255, 255, 255);
-	const sf::Color GAS_CELL_COLOR = sf::Color(0, 0, 0);
+	const sf::Color GAS_CELL_COLOR = sf::Color(0, 0, 255);
 	const sf::Color WALL_CELL_COLOR = sf::Color(255, 92, 0);
 
 	// Precomputed
@@ -77,7 +78,8 @@ public:
 	tgui::Gui& get_gui();
 
 	/* Setters */
-	void set_cell_click_callback(std::function<void(int, int)> callback);
+	void set_cell_modify_callback(std::function<void(int, int)> callback);
+	void set_cell_follow_callback(std::function<void(int, int)> callback);
 
 private:
 	/* Private Methods */
@@ -85,6 +87,6 @@ private:
 	void update_grid_cells(Grid* grid);
 	void find_grid_dimensions();
 	void update_views();
-	void handle_mouse_click(int mouse_x, int mouse_y);
+	void handle_mouse_click(int mouse_x, int mouse_y, bool left_mouse);
 	sf::Color adjust_gas_color(double concentration);
 };

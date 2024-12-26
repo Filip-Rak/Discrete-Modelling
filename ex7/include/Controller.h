@@ -18,7 +18,8 @@ private:
 	bool use_gpu = false;
 	bool paused = true;
 	bool text_input_in_use = false;
-	Visualization::CellVisualState selected_cell_state = Visualization::GAS;
+	int followed_cell = -1;
+	Visualization::CellVisualState selected_cell_state = Visualization::FLUID;
 
 	// Update speed
 	const float UPDATE_SPEED_MAX = 600;
@@ -54,7 +55,8 @@ public:
 
 	// Main loop
 	void run();
-	void update_clicked_cell(int cell_x, int cell_y);
+	void modify_clicked_cell(int cell_x, int cell_y);
+	void follow_clicked_cell(int cell_x, int cell_y);
 
 private:
 	void process_events();

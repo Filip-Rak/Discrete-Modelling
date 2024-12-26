@@ -62,7 +62,7 @@ void Automaton::reset()
 		sum_c += grid.density[i];
 	}
 
-	std::cout << "Total gas in the system:\n\tC: " << sum_c << "\n\tIn: " << sum_in << "\n";
+	// std::cout << "Total gas in the system:\n\tC: " << sum_c << "\n\tIn: " << sum_in << "\n";
 
 	grid.~Grid();	// Destruct
 	new (&grid) Grid(grid_fallback);	// Reconstruct
@@ -104,7 +104,7 @@ void Automaton::update_cpu()
 				double u_square = grid.velocity_x[cell_id] * grid.velocity_x[cell_id] +
 					grid.velocity_y[cell_id] * grid.velocity_y[cell_id];
 
-				// Prevents bubbles
+				// Limit the speed to avoid numerical errors
 				if (u_square > 0.1f) 
 				{
 					double scale = 0.1 / sqrt(u_square);
@@ -139,11 +139,11 @@ void Automaton::update_cpu()
 
 				{	// Bounce Back
 					int opposite_dir = grid.opposite_directions[direction];
-					grid.f_buffer[opposite_dir][cell_id] += f_out;
+					grid.f_buffer[opposite_dir][cell_id] = f_out;
 				}
 				else // Within bounds
 				{
-					grid.f_buffer[direction][neighbour_id] += f_out;
+					grid.f_buffer[direction][neighbour_id] = f_out;
 				}
 			}
 		}
