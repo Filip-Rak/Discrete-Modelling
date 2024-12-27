@@ -28,8 +28,12 @@ private:
 	sf::View grid_view;
 	sf::View ui_view;
 
+	// Flags
+	bool vx_window_visible;
+	bool vy_window_visible;
+
 	// Constants
-	const float UI_VIEW_PORTION = 0.2f;
+	const float UI_VIEW_PORTION = 0.25f;
 	const float GRID_PADDING = 20.f;
 
 	// Settings

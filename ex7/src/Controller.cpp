@@ -257,18 +257,18 @@ void Controller::initialize_ui()
 			outline_enabled = !outline_enabled;
 
 			if (!outline_enabled)
-				outline_button->setText("Grid: Hidden");
+				outline_button->setText("Grid: Off");
 			else
-				outline_button->setText("Grid: Shown");
+				outline_button->setText("Grid: On");
 
 			// Debug output
 			print_flag_status("outline_enabled", outline_enabled);
 		});
 	
 	if (use_gpu)
-		toggle_pu->setText("Using: GPU");
+		toggle_pu->setText("GPU");
 	else
-		toggle_pu->setText("Using: CPU");
+		toggle_pu->setText("CPU");
 
 	toggle_pu->onPress([this, toggle_pu]()
 		{
@@ -277,9 +277,9 @@ void Controller::initialize_ui()
 
 			// Update the text
 			if (use_gpu)
-				toggle_pu->setText("Using: GPU");
+				toggle_pu->setText("GPU");
 			else 
-				toggle_pu->setText("Using: CPU");
+				toggle_pu->setText("CPU");
 
 			// Debug output
 			print_flag_status("use_gpu", use_gpu);

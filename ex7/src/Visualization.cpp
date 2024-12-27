@@ -38,8 +38,11 @@ Visualization::Visualization(int window_width, int window_height, int grid_width
 
     /* Sub Windows */
     // Set Attributes
-    sub_window_vx.setVisible(false);
-    sub_window_vy.setVisible(false);
+    vx_window_visible = false;
+    vy_window_visible = false;
+
+    sub_window_vx.setVisible(vx_window_visible);
+    sub_window_vy.setVisible(vy_window_visible);
 
     sf::Vector2u size(grid_width * cell_size, grid_height * cell_size);
     sub_window_vx.setSize(size);
@@ -273,8 +276,11 @@ void Visualization::clear()
     main_window.clear(sf::Color::Black);
 
     // Clear the sub windows
-    sub_window_vx.clear(sf::Color::Black);
-    sub_window_vy.clear(sf::Color::Blue);
+    if (vx_window_visible)
+        sub_window_vx.clear(sf::Color::Black);
+
+    if (vy_window_visible)
+        sub_window_vy.clear(sf::Color::Blue);
 }
 
 void Visualization::display()
@@ -283,8 +289,11 @@ void Visualization::display()
     main_window.display();
 
     // Display the sub windows
-    sub_window_vx.display();
-    sub_window_vy.display();
+    if (vx_window_visible)
+        sub_window_vx.display();
+
+    if (vy_window_visible)
+        sub_window_vy.display();
 }
 
 /* Getters */
@@ -323,12 +332,14 @@ void Visualization::set_cell_follow_callback(std::function<void(int, int)> callb
 
 void Visualization::set_vx_window_visibility(bool value)
 {
-    sub_window_vx.setVisible(value);
+    vx_window_visible = value;
+    sub_window_vx.setVisible(vx_window_visible);
 }
 
 void Visualization::set_vy_window_visibility(bool value)
 {
-    sub_window_vy.setVisible(value);
+    vy_window_visible = value;
+    sub_window_vy.setVisible(vy_window_visible);
 }
 
 /* Private Methods */

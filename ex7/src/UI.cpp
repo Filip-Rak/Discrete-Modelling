@@ -8,15 +8,19 @@ UI::UI(tgui::Gui& gui) : gui_ref(gui) {}
 void UI::initialize(float ui_offset_x, float ui_width, float ctrl_speed, float shift_speed)
 {
     // Layout configuration
-    const float basic_margin = ui_width * 0.15;
+    const float basic_margin = ui_width * 0.10;
     const float basic_width = ui_width - basic_margin * 2;
+    const float half_button_gap = basic_margin * 0.5;
+    const float half_button_width = basic_width / 2.f - half_button_gap * 0.5f;
     const float basic_height = 40;
     const float basic_text_size = 30;
     const float small_text_size = 26;
     const float very_small_text_size = 22;
+    const float tiny_text_size = 20;
+    const float tinier_text_size = 16;
     const float top_margin = 20;
 
-    const float half_button_width = (basic_width - basic_margin) / 2;
+    const float small_half_button_width = (basic_width - basic_margin) / 2;
     const float total_x_offset = ui_offset_x + basic_margin;
 
     float y_index = 0;
@@ -42,21 +46,23 @@ void UI::initialize(float ui_offset_x, float ui_width, float ctrl_speed, float s
     // UI element definitions
     std::vector<UIElementConfig> element_configs = 
     {
-        {"pause", "button", "Start", basic_text_size, basic_width, 0, true, 0},
-        {"reset", "button", "Reset", basic_text_size, basic_width, 0, true, 0},
-        {"prob_input", "text_area", "not set", small_text_size, basic_width / 2, basic_width / 4, true, 0},
-        {"generate", "button", "Generate", basic_text_size, basic_width, 0, true, 0},
-        {"fps_label", "label", "not set", small_text_size, ui_width, -basic_margin, true, -10},
-        {"speed_label", "label", "not set", small_text_size, ui_width, -basic_margin, true, -20},
-        {"desc_label", "label", desc_label_text, very_small_text_size, ui_width, -basic_margin, true, -30},
-        {"slower", "button", "<", basic_text_size, half_button_width, 0,  true, -20},
-        {"faster", "button", ">", basic_text_size, half_button_width, half_button_width + basic_margin, false, 0},
-        {"outline", "button", "Grid: Hidden", very_small_text_size, basic_width, 0, true, 0},
-        {"toggle_pu", "button", "not set", very_small_text_size, basic_width, 0, true, 0},
-        {"cell_log_button", "button", "Unlock cell log", very_small_text_size / 1.2, basic_width, 0, true, 0},
-        {"air_button", "button", "Air", basic_text_size, basic_width, 0, true, 25},
-        {"gas_button", "button", "Fluid", basic_text_size, basic_width, 0, true, 0},
-        {"wall_button", "button", "Wall", basic_text_size, basic_width, 0, true, 0},
+        {"pause", "button", "Start", very_small_text_size, half_button_width, 0, true, 0},
+        {"reset", "button", "Reset", very_small_text_size, half_button_width, half_button_width + half_button_gap, false, 0},
+        {"prob_input", "text_area", "not set", small_text_size, half_button_width * 0.8f, 0, true, 0},
+        {"generate", "button", "Generate", very_small_text_size, half_button_width * 1.2f, half_button_width * 0.8f + half_button_gap, false, 0},
+        {"fps_label", "label", "not set", very_small_text_size, ui_width, -basic_margin, true, -15},
+        {"speed_label", "label", "not set", very_small_text_size, ui_width, -basic_margin, true, -35},
+        {"desc_label", "label", desc_label_text, very_small_text_size, ui_width, -basic_margin, true, -40},
+        {"slower", "button", "<", basic_text_size, half_button_width, 0,  true, -30},
+        {"faster", "button", ">", basic_text_size, half_button_width, half_button_width + half_button_gap, false, 0},
+        {"outline", "button", "Grid: Off", tiny_text_size,  half_button_width, 0, true, 0},
+        {"toggle_pu", "button", "not set", tiny_text_size,  half_button_width, half_button_width + half_button_gap, false , 0},
+        {"vx_window_button", "button", "Show X\nvelocity", tinier_text_size, half_button_width, 0, true, 0},
+        {"vy_window_button", "button", "Show Y\nvelocity", tinier_text_size, half_button_width, half_button_width + half_button_gap, false, 0},
+        {"air_button", "button", "Air", very_small_text_size, half_button_width, 0, true, 15},
+        {"gas_button", "button", "Fluid", very_small_text_size, half_button_width, half_button_width + half_button_gap, false, 0},
+        {"wall_button", "button", "Wall", very_small_text_size, half_button_width, 0, true, 0},
+        {"cell_log_button", "button", "Unlock log", tinier_text_size, half_button_width, half_button_width + half_button_gap, false, 0},
     };
 
     // Iterate through UI element configs
