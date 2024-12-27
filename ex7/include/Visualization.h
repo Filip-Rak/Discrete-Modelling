@@ -80,6 +80,8 @@ public:
 	bool is_window_open() const;
 	float get_ui_view_offset() const;
 	float get_ui_view_width() const;
+	bool is_vx_visible();
+	bool is_vy_visible();
 	tgui::Gui& get_gui();
 
 	/* Setters */

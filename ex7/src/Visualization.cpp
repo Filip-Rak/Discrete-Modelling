@@ -44,7 +44,7 @@ Visualization::Visualization(int window_width, int window_height, int grid_width
     sub_window_vx.setVisible(vx_window_visible);
     sub_window_vy.setVisible(vy_window_visible);
 
-    sf::Vector2u size(grid_width * cell_size, grid_height * cell_size);
+    sf::Vector2u size(grid_width * cell_size * 0.5f, grid_height * cell_size * 0.5f);
     sub_window_vx.setSize(size);
     sub_window_vy.setSize(size);
 
@@ -310,6 +310,16 @@ float Visualization::get_ui_view_offset() const
 float Visualization::get_ui_view_width() const
 {
     return main_window.getSize().x * ui_view.getViewport().width;
+}
+
+bool Visualization::is_vx_visible()
+{
+    return this->vx_window_visible;
+}
+
+bool Visualization::is_vy_visible()
+{
+    return this->vy_window_visible;
 }
 
 tgui::Gui& Visualization::get_gui()

@@ -183,6 +183,8 @@ void Controller::initialize_ui()
 	auto outline_button = ui.get_widget_as<tgui::Button>("outline");
 	auto toggle_pu = ui.get_widget_as<tgui::Button>("toggle_pu");
 	auto cell_log_button = ui.get_widget_as<tgui::Button>("cell_log_button");
+	auto vx_window_button = ui.get_widget_as<tgui::Button>("vx_window_button");
+	auto vy_window_button = ui.get_widget_as<tgui::Button>("vy_window_button");
 
 	auto air_button = ui.get_widget_as<tgui::Button>("air_button");
 	auto gas_button = ui.get_widget_as<tgui::Button>("gas_button");
@@ -296,6 +298,56 @@ void Controller::initialize_ui()
 
 			// Debug output
 			print_flag_status("follow_cell", use_gpu);
+		});
+
+	if (visualization.is_vx_visible())
+		vx_window_button->setText("Hide X\nvelocity");
+	else 
+		vx_window_button->setText("Show X\nvelocity");
+
+	vx_window_button->onPress([this, vx_window_button] 
+		{
+			if (visualization.is_vx_visible())
+			{
+				// Hide the window
+				visualization.set_vx_window_visibility(false);
+
+				// Update the text
+				vx_window_button->setText("Show X\nvelocity");
+			}
+			else
+			{
+				// Show the window
+				visualization.set_vx_window_visibility(true);
+
+				// Update the text
+				vx_window_button->setText("Hide X\nvelocity");
+			}
+		});
+
+	if (visualization.is_vy_visible())
+		vy_window_button->setText("Hide Y\nvelocity");
+	else 
+		vy_window_button->setText("Show Y\nvelocity");
+
+	vy_window_button->onPress([this, vy_window_button] 
+		{
+			if (visualization.is_vy_visible())
+			{
+				// Hide the window
+				visualization.set_vy_window_visibility(false);
+
+				// Update the text
+				vy_window_button->setText("Show Y\nvelocity");
+			}
+			else
+			{
+				// Show the window
+				visualization.set_vy_window_visibility(true);
+
+				// Update the text
+				vy_window_button->setText("Hide Y\nvelocity");
+			}
 		});
 
 	// State tools
