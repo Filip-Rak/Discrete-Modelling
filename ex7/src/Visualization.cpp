@@ -2,15 +2,18 @@
 
 /* Constructor */
 Visualization::Visualization(int window_width, int window_height, int grid_width, int grid_height):
-	window(sf::VideoMode(window_width, window_height), "LBM", sf::Style::Close),
-	gui(window),
+	main_window(sf::VideoMode(window_width, window_height), "LBM", sf::Style::Close),
+    sub_window_vx(sf::VideoMode(1, 1), "Velocity X-Axis", sf::Style::Close),
+    sub_window_vy(sf::VideoMode(1, 1), "Velocity Y-Axis", sf::Style::Close),
+	gui(main_window),
     cell_size(1),
     grid_width(grid_width),
     grid_height(grid_height)
 {
-    // Set window attributes
-    window.setFramerateLimit(0); // Limit to 120 FPS
-    window.setVerticalSyncEnabled(false);
+    /* Main Window */
+    // Set main window attributes
+    main_window.setFramerateLimit(0); // Disable the limit
+    main_window.setVerticalSyncEnabled(false);
 
     // Set grid view
     const float grid_view_width = (float)(window_width * (1 - UI_VIEW_PORTION));
@@ -33,7 +36,19 @@ Visualization::Visualization(int window_width, int window_height, int grid_width
     init_grid();
     init_ui();
 
+    /* Sub Windows */
+    // Set Attributes
+    sub_window_vx.setVisible(false);
+    sub_window_vy.setVisible(false);
+
+    sf::Vector2u size(grid_width * cell_size, grid_height * cell_size);
+    sub_window_vx.setSize(size);
+    sub_window_vy.setSize(size);
+
+    /* Misc */
+
     // Allocate memory for previous cells
+    // This is literary pointless since the switch to LBM
     previous_cells = new uint16_t[grid_width * grid_height];
     first_iteration = true;
 }
@@ -47,11 +62,11 @@ Visualization::~Visualization()
 void Visualization::process_window_events() 
 {
     sf::Event event;
-    while (window.pollEvent(event)) 
+    while (main_window.pollEvent(event)) 
     {
         if (event.type == sf::Event::Closed) 
         {
-            window.close();
+            main_window.close();
         }
         if (event.type == sf::Event::Resized)
         {
@@ -76,7 +91,6 @@ void Visualization::process_window_events()
             }
         }
        
-
         gui.handleEvent(event); // Process GUI events
     }
 }
@@ -214,17 +228,17 @@ void Visualization::update_grid_cell(Grid* grid, int cell_x, int cell_y)
 void Visualization::draw_grid(bool draw_grid_lines)
 {
     // Change rendering view to the grid
-    window.setView(grid_view);
+    main_window.setView(grid_view);
 
     // Draw grid background
-    window.draw(grid_background);
+    main_window.draw(grid_background);
 
     // Draw the grid cells
-    window.draw(grid_vertices);
+    main_window.draw(grid_vertices);
 
     // Draw grid lines
     if(draw_grid_lines)
-        window.draw(grid_lines);
+        main_window.draw(grid_lines);
 }
 
 void Visualization::init_ui()
@@ -237,39 +251,56 @@ void Visualization::init_ui()
 void Visualization::draw_ui()
 {
     // Change the view to UI section
-    window.setView(ui_view);
+    main_window.setView(ui_view);
 
     // Draw UI background
-    window.draw(ui_background);
+    main_window.draw(ui_background);
 
     // Update the GUI
     gui.draw();
 }
 
+void Visualization::draw_sub_windows()
+{
+    // Nothing to draw yet
+    // sub_window_vx.draw();
+    // sub_window_vy.draw();
+}
+
 void Visualization::clear()
 {
-    window.clear(sf::Color::Black);
+    // Clear the main window
+    main_window.clear(sf::Color::Black);
+
+    // Clear the sub windows
+    sub_window_vx.clear(sf::Color::Black);
+    sub_window_vy.clear(sf::Color::Blue);
 }
 
 void Visualization::display()
 {
-    window.display();
+    // Display the main window
+    main_window.display();
+
+    // Display the sub windows
+    sub_window_vx.display();
+    sub_window_vy.display();
 }
 
 /* Getters */
 bool Visualization::is_window_open() const
 {
-    return window.isOpen();
+    return main_window.isOpen();
 }
 
 float Visualization::get_ui_view_offset() const
 {
-    return window.getSize().x * ui_view.getViewport().left;
+    return main_window.getSize().x * ui_view.getViewport().left;
 }
 
 float Visualization::get_ui_view_width() const
 {
-    return window.getSize().x * ui_view.getViewport().width;
+    return main_window.getSize().x * ui_view.getViewport().width;
 }
 
 tgui::Gui& Visualization::get_gui()
@@ -278,6 +309,8 @@ tgui::Gui& Visualization::get_gui()
 }
 
 /* Setters */
+
+// Callbacks
 void Visualization::set_cell_modify_callback(std::function<void(int, int)> callback)
 {
     this->cell_modify_callback = callback;
@@ -288,11 +321,21 @@ void Visualization::set_cell_follow_callback(std::function<void(int, int)> callb
     this->cell_follow_callback = callback;
 }
 
+void Visualization::set_vx_window_visibility(bool value)
+{
+    sub_window_vx.setVisible(value);
+}
+
+void Visualization::set_vy_window_visibility(bool value)
+{
+    sub_window_vy.setVisible(value);
+}
+
 /* Private Methods */
 // Estimate cell size based on window size, padding and number of cells
 void Visualization::find_grid_dimensions()
 {
-    sf::Vector2u window_size = window.getSize();
+    sf::Vector2u window_size = main_window.getSize();
 
     // Find total space for the grid without padding
     float available_width = grid_view.getSize().x - 2 * GRID_PADDING;
@@ -310,7 +353,7 @@ void Visualization::update_views()
 void Visualization::handle_mouse_click(int mouse_x, int mouse_y, bool left_button)
 {
     // Convert window coords into grid coords
-    sf::Vector2f world_coords = window.mapPixelToCoords(sf::Vector2i(mouse_x, mouse_y), grid_view);
+    sf::Vector2f world_coords = main_window.mapPixelToCoords(sf::Vector2i(mouse_x, mouse_y), grid_view);
 
     // Find the index of the cell
     int cell_x = (world_coords.x - GRID_PADDING) / cell_size;

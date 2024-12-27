@@ -2,8 +2,6 @@
 
 #include <TGUI/Backend/SFML-Graphics.hpp>
 #include <TGUI/TGUI.hpp>
-#include <cstdint>
-#include "Automaton.h"	// Replace with grid
 #include "Grid.h"
 
 class Visualization
@@ -21,7 +19,9 @@ private:
 	/* Attributes */
 
 	// Components
-	sf::RenderWindow window;
+	sf::RenderWindow main_window;
+	sf::RenderWindow sub_window_vx;
+	sf::RenderWindow sub_window_vy;
 	tgui::Gui gui;
 
 	// Views
@@ -66,8 +66,9 @@ public:
 	void manage_grid_update(Grid* grid, bool force_full_update = false);
 	void update_grid_cell(Grid* grid, int cell_x, int cell_y);
 	void draw_grid(bool draw_grid_lines);
-	void init_ui();
 	void draw_ui();
+	void draw_sub_windows();
+	void init_ui();
 	void clear();
 	void display();
 
@@ -78,8 +79,13 @@ public:
 	tgui::Gui& get_gui();
 
 	/* Setters */
+
+	// Callbacks
 	void set_cell_modify_callback(std::function<void(int, int)> callback);
 	void set_cell_follow_callback(std::function<void(int, int)> callback);
+
+	void set_vx_window_visibility(bool value);
+	void set_vy_window_visibility(bool value);
 
 private:
 	/* Private Methods */
