@@ -62,10 +62,16 @@ Grid::~Grid()
 
 void Grid::print_cell_data(int cell_id)
 {
+	// Get x and y positions
+	int x = cell_id % width;
+	int y = cell_id / width;
+
+	// Prepare and store the output
 	std::ostringstream output;
 
 	output << "------ Print Cell ------\n";
 	output << "Id: " << cell_id << "\n";
+	output << "Position [x, y]: " << x << ", " << y << "\n";
 	output << "Density: " << density[cell_id] << "\n";
 	output << "Velocity X: " << velocity_x[cell_id] << "\n";
 	output << "Velocity Y: " << velocity_y[cell_id] << "\n";
@@ -74,11 +80,6 @@ void Grid::print_cell_data(int cell_id)
 	output << "F_in:\n";
 	for (int i = 0; i < direction_num; i++)
 		output << "\t" << i << ": " << f_in[i][cell_id] << "\n";
-
-	// Always zero
-	// output << "F_buffer:\n";
-	// for (int i = 0; i < direction_num; i++)
-		// output << "\t" << i << ": " << f_buffer[i][cell_id] << "\n";
 
 	std::cout << output.str();
 }
