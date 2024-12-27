@@ -42,6 +42,7 @@ private:
 	int grid_height;
 	std::function<void(int, int)> cell_modify_callback;
 	std::function<void(int, int)> cell_follow_callback;
+	std::function<void()> update_buttons_callback;
 
 	// Colours
 	const sf::Color EMPTY_CELL_COLOR = sf::Color(255, 255, 255);
@@ -89,12 +90,15 @@ public:
 	// Callbacks
 	void set_cell_modify_callback(std::function<void(int, int)> callback);
 	void set_cell_follow_callback(std::function<void(int, int)> callback);
+	void set_update_buttons_callback(std::function<void()> callback);
 
 	void set_vx_window_visibility(bool value);
 	void set_vy_window_visibility(bool value);
 
 private:
 	/* Private Methods */
+	void process_main_window();
+	void process_sub_windows();
 	void update_whole_grid(Grid* grid);
 	void update_grid_cells(Grid* grid);
 	void find_grid_dimensions();

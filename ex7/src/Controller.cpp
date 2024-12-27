@@ -21,6 +21,11 @@ Controller::Controller(int window_width, int window_height, int grid_width, int 
 	visualization.set_cell_follow_callback([this](int cell_x, int cell_y)
 		{
 			follow_clicked_cell(cell_x, cell_y);
+		});	
+	
+	visualization.set_update_buttons_callback([this]()
+		{
+			update_sub_window_button_text();
 		});
 }
 
@@ -87,6 +92,22 @@ void Controller::follow_clicked_cell(int cell_x, int cell_y)
 
 	// Log the change
 	automaton.get_grid()->print_cell_data(cell_id);
+}
+
+void Controller::update_sub_window_button_text()
+{
+	auto vx_window_button = ui.get_widget_as<tgui::Button>("vx_window_button");
+	auto vy_window_button = ui.get_widget_as<tgui::Button>("vy_window_button");
+
+	if (visualization.is_vx_visible())
+		vx_window_button->setText("Hide X\nvelocity");
+	else
+		vx_window_button->setText("Show X\nvelocity");
+
+	if (visualization.is_vy_visible())
+		vy_window_button->setText("Hide Y\nvelocity");
+	else
+		vy_window_button->setText("Show Y\nvelocity");
 }
 
 // Private Methods
@@ -300,10 +321,7 @@ void Controller::initialize_ui()
 			print_flag_status("follow_cell", use_gpu);
 		});
 
-	if (visualization.is_vx_visible())
-		vx_window_button->setText("Hide X\nvelocity");
-	else 
-		vx_window_button->setText("Show X\nvelocity");
+	this->update_sub_window_button_text();
 
 	vx_window_button->onPress([this, vx_window_button] 
 		{
@@ -311,24 +329,15 @@ void Controller::initialize_ui()
 			{
 				// Hide the window
 				visualization.set_vx_window_visibility(false);
-
-				// Update the text
-				vx_window_button->setText("Show X\nvelocity");
 			}
 			else
 			{
 				// Show the window
 				visualization.set_vx_window_visibility(true);
-
-				// Update the text
-				vx_window_button->setText("Hide X\nvelocity");
 			}
-		});
 
-	if (visualization.is_vy_visible())
-		vy_window_button->setText("Hide Y\nvelocity");
-	else 
-		vy_window_button->setText("Show Y\nvelocity");
+			update_sub_window_button_text();
+		});
 
 	vy_window_button->onPress([this, vy_window_button] 
 		{
@@ -336,18 +345,14 @@ void Controller::initialize_ui()
 			{
 				// Hide the window
 				visualization.set_vy_window_visibility(false);
-
-				// Update the text
-				vy_window_button->setText("Show Y\nvelocity");
 			}
 			else
 			{
 				// Show the window
 				visualization.set_vy_window_visibility(true);
-
-				// Update the text
-				vy_window_button->setText("Hide Y\nvelocity");
 			}
+
+			update_sub_window_button_text();
 		});
 
 	// State tools

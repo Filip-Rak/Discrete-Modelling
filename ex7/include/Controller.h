@@ -57,6 +57,7 @@ public:
 	void run();
 	void modify_clicked_cell(int cell_x, int cell_y);
 	void follow_clicked_cell(int cell_x, int cell_y);
+	void update_sub_window_button_text();
 
 private:
 	void process_events();

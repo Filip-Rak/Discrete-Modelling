@@ -64,38 +64,11 @@ Visualization::~Visualization()
 /* Public Methods */
 void Visualization::process_window_events() 
 {
-    sf::Event event;
-    while (main_window.pollEvent(event)) 
-    {
-        if (event.type == sf::Event::Closed) 
-        {
-            main_window.close();
-        }
-        if (event.type == sf::Event::Resized)
-        {
-            update_views();
-        }
-        if (event.type == sf::Event::MouseButtonPressed) 
-        {
-            if (event.mouseButton.button == sf::Mouse::Left) 
-            {
-                handle_mouse_click(event.mouseButton.x, event.mouseButton.y, true);
-            }
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
-            {
-                handle_mouse_click(event.mouseButton.x, event.mouseButton.y, false);
-            }
-        }
-        if (event.type == sf::Event::MouseMoved) 
-        {
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) 
-            {
-                handle_mouse_click(event.mouseMove.x, event.mouseMove.y, true);
-            }
-        }
-       
-        gui.handleEvent(event); // Process GUI events
-    }
+    // Process events for the main window
+    this->process_main_window();
+
+    // Process vents for the sub windows
+    this->process_sub_windows();
 }
 
 void Visualization::init_grid()
@@ -174,31 +147,6 @@ void Visualization::manage_grid_update(Grid* grid, bool force_full_update)
         update_grid_cells(grid);
 }
 
-void Visualization::update_whole_grid(Grid* grid)
-{
-    // Update the color of each cell in the vertex array
-    for (int i = 0; i < grid_width; i++) 
-    {
-        for (int j = 0; j < grid_height; j++) 
-        {
-            update_grid_cell(grid, i, j);
-        }
-    }
-
-    first_iteration = false;
-}
-
-void Visualization::update_grid_cells(Grid* grid)
-{
-    for (int i = 0; i < grid_width; i++)
-    {
-        for (int j = 0; j < grid_height; j++)
-        {
-            update_grid_cell(grid, i, j);
-        }
-    }
-}
-
 void Visualization::update_grid_cell(Grid* grid, int cell_x, int cell_y)
 {
     // Check if the cell requires updating
@@ -266,6 +214,7 @@ void Visualization::draw_ui()
 void Visualization::draw_sub_windows()
 {
     // Nothing to draw yet
+    // Remember about ifs
     // sub_window_vx.draw();
     // sub_window_vy.draw();
 }
@@ -340,6 +289,11 @@ void Visualization::set_cell_follow_callback(std::function<void(int, int)> callb
     this->cell_follow_callback = callback;
 }
 
+void Visualization::set_update_buttons_callback(std::function<void()> callback)
+{
+    this->update_buttons_callback = callback;
+}
+
 void Visualization::set_vx_window_visibility(bool value)
 {
     vx_window_visible = value;
@@ -353,6 +307,98 @@ void Visualization::set_vy_window_visibility(bool value)
 }
 
 /* Private Methods */
+void Visualization::process_main_window()
+{
+    sf::Event event;
+    while (main_window.pollEvent(event))
+    {
+        if (event.type == sf::Event::Closed)
+        {
+            main_window.close();
+        }
+        if (event.type == sf::Event::Resized)
+        {
+            update_views();
+        }
+        if (event.type == sf::Event::MouseButtonPressed)
+        {
+            if (event.mouseButton.button == sf::Mouse::Left)
+            {
+                handle_mouse_click(event.mouseButton.x, event.mouseButton.y, true);
+            }
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+            {
+                handle_mouse_click(event.mouseButton.x, event.mouseButton.y, false);
+            }
+        }
+        if (event.type == sf::Event::MouseMoved)
+        {
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+            {
+                handle_mouse_click(event.mouseMove.x, event.mouseMove.y, true);
+            }
+        }
+
+        gui.handleEvent(event); // Process GUI events
+    }
+}
+
+void Visualization::process_sub_windows()
+{
+    sf::Event event;
+
+    /* X-Axis Sub Window */
+    if (vx_window_visible)
+    {
+        while (sub_window_vx.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+            {
+                this->set_vx_window_visibility(false);
+                this->update_buttons_callback();
+            }
+        }
+    }    
+    
+    /* Y-Axis Sub Window */
+    if (vy_window_visible)
+    {
+        while (sub_window_vy.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+            {
+                this->set_vy_window_visibility(false);
+                this->update_buttons_callback();
+            }
+        }
+    }
+}
+
+void Visualization::update_whole_grid(Grid* grid)
+{
+    // Update the color of each cell in the vertex array
+    for (int i = 0; i < grid_width; i++)
+    {
+        for (int j = 0; j < grid_height; j++)
+        {
+            update_grid_cell(grid, i, j);
+        }
+    }
+
+    first_iteration = false;
+}
+
+void Visualization::update_grid_cells(Grid* grid)
+{
+    for (int i = 0; i < grid_width; i++)
+    {
+        for (int j = 0; j < grid_height; j++)
+        {
+            update_grid_cell(grid, i, j);
+        }
+    }
+}
+
 // Estimate cell size based on window size, padding and number of cells
 void Visualization::find_grid_dimensions()
 {
