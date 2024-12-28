@@ -205,3 +205,13 @@ bool Grid::get_cell_is_wall(int cell_id)
 {
 	return is_wall[cell_id];
 }
+
+double Grid::get_velocity_x(int cell_id)
+{
+	return velocity_x[cell_id];
+}
+
+double Grid::get_velocity_y(int cell_id)
+{
+	return velocity_y[cell_id];
+}

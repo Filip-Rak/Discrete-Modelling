@@ -36,6 +36,8 @@ private:
 	// Constants
 	const float UI_VIEW_PORTION = 0.25f;
 	const float GRID_PADDING = 20.f;
+	const float VELOCITY_VIS_MULTIPLIER = 10.f;
+	const float NO_VELOCITY_BOUNDARY = 1e-2f;
 
 	// Settings
 	float main_grid_cell_size;
@@ -51,6 +53,9 @@ private:
 	const sf::Color GAS_CELL_COLOR = sf::Color(0, 0, 255);
 	const sf::Color WALL_CELL_COLOR = sf::Color(255, 92, 0);
 	const sf::Color FOLLOWED_CELL_COLOR = sf::Color(255, 0, 0);
+	const sf::Color POSITIVE_VELOCITY_COLOR = sf::Color(255, 0, 0);
+	const sf::Color NEGATIVE_VELOCITY_COLOR = sf::Color(0, 0, 255);
+	const sf::Color NO_VELOCITY_COLOR = sf::Color(255, 255, 255);
 
 	// Precomputed
 	sf::VertexArray main_grid_vertices;
@@ -111,5 +116,7 @@ private:
 	void find_grid_dimensions();
 	void update_views();
 	void handle_mouse_click(int mouse_x, int mouse_y, bool left_mouse);
-	sf::Color adjust_gas_color(double concentration);
+	sf::Color get_gas_color(double concentration);
+	sf::Color get_velocity_color(double velocity);
+	double clamp(double value, double min, double max);
 };

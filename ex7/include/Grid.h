@@ -70,4 +70,7 @@ public:
 
 	bool get_cell_is_wall(int x, int y);
 	bool get_cell_is_wall(int cell_id);
+
+	double get_velocity_x(int cell_id);
+	double get_velocity_y(int cell_id);
 };

@@ -254,6 +254,8 @@ void Visualization::update_grid_cell(Grid* grid, int cell_x, int cell_y)
 
 void Visualization::update_grid_cell(Grid* grid, int cell_id)
 {
+    /* Main Grid */
+
     // Decide on the colour
     sf::Color cell_color = EMPTY_CELL_COLOR;
 
@@ -264,7 +266,7 @@ void Visualization::update_grid_cell(Grid* grid, int cell_id)
         cell_color = WALL_CELL_COLOR;
 
     else if (grid->get_cell_concetration(cell_id) > 1e-6)
-        cell_color = adjust_gas_color(grid->get_cell_concetration(cell_id));
+        cell_color = get_gas_color(grid->get_cell_concetration(cell_id));
 
     // Apply the colour
     sf::Vertex* quad = &main_grid_vertices[cell_id * 4];
@@ -273,12 +275,30 @@ void Visualization::update_grid_cell(Grid* grid, int cell_id)
     quad[2].color = cell_color;
     quad[3].color = cell_color;
 
+    /* Sub Grid - vx */
+
+    // Decide on the color
+    cell_color = get_velocity_color(grid->get_velocity_x(cell_id));
+
     // Apply the colour
-    sf::Vertex* quad2 = &vx_grid_vertices[cell_id * 4];
-    quad2[0].color = cell_color;
-    quad2[1].color = cell_color;
-    quad2[2].color = cell_color;
-    quad2[3].color = cell_color;
+    quad = &vx_grid_vertices[cell_id * 4];
+    quad[0].color = cell_color;
+    quad[1].color = cell_color;
+    quad[2].color = cell_color;
+    quad[3].color = cell_color;
+
+    /* Sub Grid - vy */
+
+    // Decide on the color
+    cell_color = get_velocity_color(grid->get_velocity_y(cell_id));
+
+    // Apply the colour
+    quad = &vy_grid_vertices[cell_id * 4];
+    quad[0].color = cell_color;
+    quad[1].color = cell_color;
+    quad[2].color = cell_color;
+    quad[3].color = cell_color;
+
 }
 
 void Visualization::draw_grid(bool draw_grid_lines)
@@ -337,10 +357,10 @@ void Visualization::clear()
 
     // Clear the sub windows
     if (vx_window_visible)
-        sub_window_vx.clear(sf::Color::Black);
+        sub_window_vx.clear(sf::Color::White);
 
     if (vy_window_visible)
-        sub_window_vy.clear(sf::Color::Black);
+        sub_window_vy.clear(sf::Color::White);
 }
 
 void Visualization::display()
@@ -528,7 +548,7 @@ void Visualization::handle_mouse_click(int mouse_x, int mouse_y, bool left_butto
     }
 }
 
-sf::Color Visualization::adjust_gas_color(double concentration)
+sf::Color Visualization::get_gas_color(double concentration)
 {
     // Normalize concentration (0 to 1)
     // double normalized_conc = std::min(1.0, concentration / (double)Grid::direction_num);
@@ -541,4 +561,48 @@ sf::Color Visualization::adjust_gas_color(double concentration)
     cell_color.b = static_cast<sf::Uint8>(EMPTY_CELL_COLOR.b + normalized_conc * (GAS_CELL_COLOR.b - EMPTY_CELL_COLOR.b));
 
     return cell_color;
+}
+
+sf::Color Visualization::get_velocity_color(double velocity)
+{
+    // Special coloring for areas with no velocity
+    if (abs(velocity) < NO_VELOCITY_BOUNDARY)
+    {
+        return NO_VELOCITY_COLOR;
+    }
+
+    // Color selection
+    sf::Color color = POSITIVE_VELOCITY_COLOR;
+
+    if (velocity < 0)
+    {
+        // Pick the color
+        color = NEGATIVE_VELOCITY_COLOR;
+
+        // Apply absolute value
+        velocity = -velocity;
+    }
+
+    // Velocity should always be between <0, 1> at this point
+    // But it will rarely reach the max of 1
+    velocity *= VELOCITY_VIS_MULTIPLIER;
+    velocity = clamp(velocity, 0.f, 1.f);
+
+    // Interpolate between NO_VELOCITY_COLOR and the target color
+    sf::Color interpolated_color;
+    interpolated_color.r = static_cast<sf::Uint8>(NO_VELOCITY_COLOR.r + velocity * (color.r - NO_VELOCITY_COLOR.r));
+    interpolated_color.g = static_cast<sf::Uint8>(NO_VELOCITY_COLOR.g + velocity * (color.g - NO_VELOCITY_COLOR.g));
+    interpolated_color.b = static_cast<sf::Uint8>(NO_VELOCITY_COLOR.b + velocity * (color.b - NO_VELOCITY_COLOR.b));
+
+    return interpolated_color;
+}
+
+double Visualization::clamp(double value, double min, double max)
+{
+    if (value > max)
+        return max;
+    else if (value < min)
+        return min;
+
+    return value;
 }
