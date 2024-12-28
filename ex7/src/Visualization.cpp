@@ -138,28 +138,28 @@ void Visualization::init_grid()
     grid_background.setFillColor(sf::Color(173, 216, 230)); // Light blue
 }
 
-void Visualization::manage_grid_update(Grid* grid, bool force_full_update)
+void Visualization::update_grid_cell(Grid* grid, int cell_x, int cell_y)
 {
-    force_full_update = true;   // Overwrite for debugging
-    if (first_iteration || force_full_update)
-        update_whole_grid(grid);
-    else
-        update_grid_cells(grid);
+    // Find the id
+    int cell_id = grid->get_id(cell_x, cell_y);
+
+    // Call the updater
+    update_grid_cell(grid, cell_id);
 }
 
-void Visualization::update_grid_cell(Grid* grid, int cell_x, int cell_y)
+void Visualization::update_grid_cell(Grid* grid, int cell_id)
 {
     // Check if the cell requires updating
     // if
     //  return
 
-    // Find the id
-    int cell_id = grid->get_id(cell_x, cell_y);
-
     // Decide on the colour
     sf::Color cell_color = EMPTY_CELL_COLOR;
 
-    if (grid->get_cell_is_wall(cell_id))
+    if (cell_id == followed_cell)
+        cell_color = FOLLOWED_CELL_COLOR;
+
+    else if (grid->get_cell_is_wall(cell_id))
         cell_color = WALL_CELL_COLOR;
 
     else if (grid->get_cell_concetration(cell_id) > 1e-6)
@@ -306,6 +306,11 @@ void Visualization::set_vy_window_visibility(bool value)
     sub_window_vy.setVisible(vy_window_visible);
 }
 
+void Visualization::set_followed_cell(int id)
+{
+    this->followed_cell = id;
+}
+
 /* Private Methods */
 void Visualization::process_main_window()
 {
@@ -372,6 +377,15 @@ void Visualization::process_sub_windows()
             }
         }
     }
+}
+
+void Visualization::manage_grid_update(Grid* grid, bool force_full_update)
+{
+    force_full_update = true;   // Overwrite for debugging
+    if (first_iteration || force_full_update)
+        update_whole_grid(grid);
+    else
+        update_grid_cells(grid);
 }
 
 void Visualization::update_whole_grid(Grid* grid)

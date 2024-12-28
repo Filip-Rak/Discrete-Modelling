@@ -31,6 +31,7 @@ private:
 	// Flags
 	bool vx_window_visible;
 	bool vy_window_visible;
+	int followed_cell = -1;
 
 	// Constants
 	const float UI_VIEW_PORTION = 0.25f;
@@ -48,6 +49,7 @@ private:
 	const sf::Color EMPTY_CELL_COLOR = sf::Color(255, 255, 255);
 	const sf::Color GAS_CELL_COLOR = sf::Color(0, 0, 255);
 	const sf::Color WALL_CELL_COLOR = sf::Color(255, 92, 0);
+	const sf::Color FOLLOWED_CELL_COLOR = sf::Color(255, 0, 0);
 
 	// Precomputed
 	sf::VertexArray grid_vertices;
@@ -70,6 +72,7 @@ public:
 	void init_grid();
 	void manage_grid_update(Grid* grid, bool force_full_update = false);
 	void update_grid_cell(Grid* grid, int cell_x, int cell_y);
+	void update_grid_cell(Grid* grid, int cell_id);
 	void draw_grid(bool draw_grid_lines);
 	void draw_ui();
 	void draw_sub_windows();
@@ -94,6 +97,7 @@ public:
 
 	void set_vx_window_visibility(bool value);
 	void set_vy_window_visibility(bool value);
+	void set_followed_cell(int id);
 
 private:
 	/* Private Methods */

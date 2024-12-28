@@ -80,8 +80,20 @@ void Controller::modify_clicked_cell(int cell_x, int cell_y)
 
 void Controller::follow_clicked_cell(int cell_x, int cell_y)
 {
-	// Calculate cell's id and save it
+	// Calculate cell's id
 	int cell_id = automaton.get_grid()->get_id(cell_x, cell_y);
+
+	// Let visualization know to mark that cell
+	visualization.set_followed_cell(cell_id);
+	
+	// Disable previous cell in visualization
+	if (followed_cell != -1)
+		visualization.update_grid_cell(automaton.get_grid(), followed_cell);
+
+	// Enable the new cell
+	visualization.update_grid_cell(automaton.get_grid(), cell_id);
+
+	// Save the new cell
 	followed_cell = cell_id;
 
 	// I think it's fine to search and cast it each time because this action won't be common
@@ -309,10 +321,21 @@ void Controller::initialize_ui()
 		});
 
 	cell_log_button->setEnabled(false);
+
 	cell_log_button->onPress([this, cell_log_button]
 		{
+			// Save reference to previous follow
+			int previous_cell = followed_cell;
+
 			// Unlock cell from following
 			followed_cell = -1;
+
+			// Let visualization know
+			visualization.set_followed_cell(followed_cell);
+
+			// Update visualization
+			if (previous_cell != -1)
+				visualization.update_grid_cell(automaton.get_grid(), previous_cell);
 
 			// Disable the button
 			cell_log_button->setEnabled(false);
