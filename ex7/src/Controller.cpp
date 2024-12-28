@@ -103,7 +103,7 @@ void Controller::follow_clicked_cell(int cell_x, int cell_y)
 	cell_log_button->setEnabled(true);
 
 	// Log the change
-	automaton.get_grid()->print_cell_data(cell_id);
+	automaton.get_grid()->print_cell_data(cell_id, iteration_number);
 }
 
 void Controller::update_sub_window_button_text()
@@ -172,10 +172,16 @@ void Controller::update()
 			// Update the visualization after grid changes
 			visualization.manage_grid_update(automaton.get_grid());
 
+			// Increase the iteration number 
+			iteration_number += 1;
+
+			// Update the number in UI
+			ui.set_iteration_label_num(iteration_number);
+
 			// If a cell is followed then log the new state
 			if (followed_cell != -1)
 			{
-				automaton.get_grid()->print_cell_data(this->followed_cell);
+				automaton.get_grid()->print_cell_data(this->followed_cell, this->iteration_number);
 			}
 		}
 
@@ -254,13 +260,16 @@ void Controller::initialize_ui()
 			pause_button->setText("Start");
 			visualization.manage_grid_update(automaton.get_grid(), true);
 
+			iteration_number = 0;
+			ui.set_iteration_label_num(iteration_number);
+
 			// Debug output
 			print_flag_status("paused", paused);
 		});		
 	
 	generate_button->onPress([this, pause_button, probability_text_area]()
 		{
-			// Regenrate cells
+			// Regenerate cells
 			float probability_value = std::stof(probability_text_area->getText().toStdString()) / 100.f;
 			automaton.generate_random(probability_value);
 			visualization.manage_grid_update(automaton.get_grid(), true);
@@ -274,6 +283,10 @@ void Controller::initialize_ui()
 
 			// Debug output
 			print_flag_status("paused", paused);
+
+			// Update the UI
+			iteration_number = 0;
+			ui.set_iteration_label_num(iteration_number);
 		});	
 	
 	slower_button->onPress([this]()

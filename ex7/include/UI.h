@@ -34,7 +34,7 @@ public:
 	}
 
 	/* Setters */
-	void set_speed_label_speed(float speed);
-	
+	void set_speed_label_speed(float speed);	
 	void set_fps_label_fps(int fps);
+	void set_iteration_label_num(int iteration);
 };

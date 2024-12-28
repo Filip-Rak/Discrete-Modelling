@@ -49,6 +49,9 @@ private:
 	// Visuals
 	bool outline_enabled = false;
 
+	// Data
+	int iteration_number = 0;
+
 public:
 	// Constructor
 	Controller(int window_width, int window_height, int grid_width, int grid_height);

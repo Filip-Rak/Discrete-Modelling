@@ -49,7 +49,7 @@ public:
 	~Grid();
 
 	/* Public Methods */
-	void print_cell_data(int cell_id);
+	void print_cell_data(int cell_id, int iteration);
 
 	/* Static Methods */
 	int get_id(int x_pos, int y_pos);

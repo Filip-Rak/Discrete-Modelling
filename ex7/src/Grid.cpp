@@ -60,7 +60,7 @@ Grid::~Grid()
 	}
 }
 
-void Grid::print_cell_data(int cell_id)
+void Grid::print_cell_data(int cell_id, int iteration)
 {
 	// Get x and y positions
 	int x = cell_id % width;
@@ -70,6 +70,7 @@ void Grid::print_cell_data(int cell_id)
 	std::ostringstream output;
 
 	output << "------ Print Cell ------\n";
+	output << "Iteration: " << iteration << "\n";
 	output << "Id: " << cell_id << "\n";
 	output << "Position [x, y]: " << x << ", " << y << "\n";
 	output << "Density: " << density[cell_id] << "\n";

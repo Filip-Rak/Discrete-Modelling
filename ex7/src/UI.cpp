@@ -51,6 +51,7 @@ void UI::initialize(float ui_offset_x, float ui_width, float ctrl_speed, float s
         {"prob_input", "text_area", "not set", small_text_size, half_button_width * 0.8f, 0, true, 0},
         {"generate", "button", "Generate", very_small_text_size, half_button_width * 1.2f, half_button_width * 0.8f + half_button_gap, false, 0},
         {"fps_label", "label", "not set", very_small_text_size, ui_width, -basic_margin, true, -15},
+        {"iter_label", "label", "Iteration: 0", very_small_text_size, ui_width, -basic_margin, true, -40},
         {"speed_label", "label", "not set", very_small_text_size, ui_width, -basic_margin, true, -35},
         {"desc_label", "label", desc_label_text, very_small_text_size, ui_width, -basic_margin, true, -40},
         {"slower", "button", "<", basic_text_size, half_button_width, 0,  true, -30},
@@ -135,4 +136,11 @@ void UI::set_fps_label_fps(int fps)
     auto fps_label = get_widget_as<tgui::Label>("fps_label");
     std::string text = "FPS: " + std::to_string(fps);
     fps_label->setText(text);
+}
+
+void UI::set_iteration_label_num(int iteration)
+{
+    auto iter_label = get_widget_as<tgui::Label>("iter_label");
+    std::string text = "Iteration: " + std::to_string(iteration);
+    iter_label->setText(text);
 }
