@@ -184,12 +184,13 @@ void Controller::update()
 
 void Controller::render()
 {
-	// Clean the window
+	// Clean the windows
 	visualization.clear();
 
 	// Draw elements
 	visualization.draw_grid(outline_enabled);
 	visualization.draw_ui();
+	visualization.draw_sub_windows();
 
 	// Display drawn elements
 	visualization.display();

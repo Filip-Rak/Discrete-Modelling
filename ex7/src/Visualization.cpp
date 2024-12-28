@@ -3,10 +3,8 @@
 /* Constructor */
 Visualization::Visualization(int window_width, int window_height, int grid_width, int grid_height):
 	main_window(sf::VideoMode(window_width, window_height), "LBM", sf::Style::Close),
-    sub_window_vx(sf::VideoMode(1, 1), "Velocity X-Axis", sf::Style::Close),
-    sub_window_vy(sf::VideoMode(1, 1), "Velocity Y-Axis", sf::Style::Close),
 	gui(main_window),
-    cell_size(1),
+    main_grid_cell_size(1),
     grid_width(grid_width),
     grid_height(grid_height)
 {
@@ -37,16 +35,33 @@ Visualization::Visualization(int window_width, int window_height, int grid_width
     init_ui();
 
     /* Sub Windows */
+    
+    // Create
+    sub_window_vx.create(sf::VideoMode(grid_width * sub_grid_cell_size, grid_height * sub_grid_cell_size), "Velocity X-Axis", sf::Style::Close);
+    sub_window_vy.create(sf::VideoMode(grid_width * sub_grid_cell_size, grid_height * sub_grid_cell_size), "Velocity Y-Axis", sf::Style::Close);
+
     // Set Attributes
     vx_window_visible = false;
     vy_window_visible = false;
 
+    sf::View vx_view(sf::FloatRect(
+        0.0f,
+        0.0f,
+        grid_width * sub_grid_cell_size,
+        grid_height * sub_grid_cell_size
+    ));
+    sub_window_vx.setView(vx_view);
+
+    sf::View vy_view(sf::FloatRect(
+        0.0f,
+        0.0f,
+        grid_width * sub_grid_cell_size,
+        grid_height * sub_grid_cell_size
+    ));
+    sub_window_vy.setView(vy_view);
+
     sub_window_vx.setVisible(vx_window_visible);
     sub_window_vy.setVisible(vy_window_visible);
-
-    sf::Vector2u size(grid_width * cell_size * 0.5f, grid_height * cell_size * 0.5f);
-    sub_window_vx.setSize(size);
-    sub_window_vy.setSize(size);
 
     /* Misc */
 
@@ -73,31 +88,85 @@ void Visualization::process_window_events()
 
 void Visualization::init_grid()
 {
-    // Initialize the vertex array for the grid
-    grid_vertices.setPrimitiveType(sf::Quads);
-    grid_vertices.resize(grid_width * grid_height * 4); // 4 vertices per cell
+    /* Initialize The Vertex Array */
 
-    for (int i = 0; i < grid_width; i++) {
-        for (int j = 0; j < grid_height; j++) {
+    // For the main grid
+    main_grid_vertices.setPrimitiveType(sf::Quads);
+    main_grid_vertices.resize(grid_width * grid_height * 4); // 4 vertices per cell
+
+    // For the sub grids
+    vx_grid_vertices.setPrimitiveType(sf::Quads);
+    vx_grid_vertices.resize(grid_width * grid_height * 4); // 4 vertices per cell    
+    
+    vy_grid_vertices.setPrimitiveType(sf::Quads);
+    vy_grid_vertices.resize(grid_width * grid_height * 4); // 4 vertices per cell
+
+    /* Compute Corners For Each Cell */
+    for (int i = 0; i < grid_width; i++) 
+    {
+        for (int j = 0; j < grid_height; j++) 
+        {
             int cell_id = j * grid_width + i;
 
-            // Compute the four corners of the cell
-            float x = GRID_PADDING + i * cell_size;
-            float y = GRID_PADDING + j * cell_size;
+            /* Main Grid */
 
-            sf::Vertex* quad = &grid_vertices[cell_id * 4];
+            // Compute four corners
+            float x = GRID_PADDING + i * main_grid_cell_size;
+            float y = GRID_PADDING + j * main_grid_cell_size;
 
-            quad[0].position = sf::Vector2f(x, y);
-            quad[1].position = sf::Vector2f(x + cell_size, y);
-            quad[2].position = sf::Vector2f(x + cell_size, y + cell_size);
-            quad[3].position = sf::Vector2f(x, y + cell_size);
+            sf::Vertex* main_grid_quad = &main_grid_vertices[cell_id * 4];
 
-            // Initial color
+            main_grid_quad[0].position = sf::Vector2f(x, y);
+            main_grid_quad[1].position = sf::Vector2f(x + main_grid_cell_size, y);
+            main_grid_quad[2].position = sf::Vector2f(x + main_grid_cell_size, y + main_grid_cell_size);
+            main_grid_quad[3].position = sf::Vector2f(x, y + main_grid_cell_size);
+
+            // Set initial color
             sf::Color initial_color = EMPTY_CELL_COLOR;
-            quad[0].color = initial_color;
-            quad[1].color = initial_color;
-            quad[2].color = initial_color;
-            quad[3].color = initial_color;
+            main_grid_quad[0].color = initial_color;
+            main_grid_quad[1].color = initial_color;
+            main_grid_quad[2].color = initial_color;
+            main_grid_quad[3].color = initial_color;
+
+            /* Sub Grids - vx */
+
+            // Compute four corners
+            x = i * sub_grid_cell_size;
+            y = j * sub_grid_cell_size;
+
+            sf::Vertex* vx_grid_quad = &vx_grid_vertices[cell_id * 4];
+
+            vx_grid_quad[0].position = sf::Vector2f(x, y);
+            vx_grid_quad[1].position = sf::Vector2f(x + sub_grid_cell_size, y);
+            vx_grid_quad[2].position = sf::Vector2f(x + sub_grid_cell_size, y + sub_grid_cell_size);
+            vx_grid_quad[3].position = sf::Vector2f(x, y + sub_grid_cell_size);
+
+            // Set initial color
+            initial_color = sf::Color::Red;
+            vx_grid_quad[0].color = initial_color;
+            vx_grid_quad[1].color = initial_color;
+            vx_grid_quad[2].color = initial_color;
+            vx_grid_quad[3].color = initial_color;            
+            
+            /* Sub Grids - vy */
+
+            // Compute four corners
+            x = i * sub_grid_cell_size;
+            y = j * sub_grid_cell_size;
+
+            sf::Vertex* vy_grid_quad = &vy_grid_vertices[cell_id * 4];
+
+            vy_grid_quad[0].position = sf::Vector2f(x, y);
+            vy_grid_quad[1].position = sf::Vector2f(x + sub_grid_cell_size, y);
+            vy_grid_quad[2].position = sf::Vector2f(x + sub_grid_cell_size, y + sub_grid_cell_size);
+            vy_grid_quad[3].position = sf::Vector2f(x, y + sub_grid_cell_size);
+
+            // Set initial color
+            initial_color = sf::Color::Green;
+            vy_grid_quad[0].color = initial_color;
+            vy_grid_quad[1].color = initial_color;
+            vy_grid_quad[2].color = initial_color;
+            vy_grid_quad[3].color = initial_color;
         }
     }
 
@@ -108,27 +177,29 @@ void Visualization::init_grid()
     int idx = 0;
 
     // Horizontal lines
-    for (int j = 0; j <= grid_height; j++) {
-        float y = GRID_PADDING + j * cell_size;
+    for (int j = 0; j <= grid_height; j++) 
+    {
+        float y = GRID_PADDING + j * main_grid_cell_size;
 
         grid_lines[idx].position = sf::Vector2f(GRID_PADDING, y);
         grid_lines[idx].color = sf::Color::Black;
         idx++;
 
-        grid_lines[idx].position = sf::Vector2f(GRID_PADDING + grid_width * cell_size, y);
+        grid_lines[idx].position = sf::Vector2f(GRID_PADDING + grid_width * main_grid_cell_size, y);
         grid_lines[idx].color = sf::Color::Black;
         idx++;
     }
 
     // Vertical lines
-    for (int i = 0; i <= grid_width; i++) {
-        float x = GRID_PADDING + i * cell_size;
+    for (int i = 0; i <= grid_width; i++) 
+    {
+        float x = GRID_PADDING + i * main_grid_cell_size;
 
         grid_lines[idx].position = sf::Vector2f(x, GRID_PADDING);
         grid_lines[idx].color = sf::Color::Black;
         idx++;
 
-        grid_lines[idx].position = sf::Vector2f(x, GRID_PADDING + grid_height * cell_size);
+        grid_lines[idx].position = sf::Vector2f(x, GRID_PADDING + grid_height * main_grid_cell_size);
         grid_lines[idx].color = sf::Color::Black;
         idx++;
     }
@@ -136,6 +207,40 @@ void Visualization::init_grid()
     // Initialize grid background
     grid_background.setSize(sf::Vector2f(grid_view.getSize().x, grid_view.getSize().y));
     grid_background.setFillColor(sf::Color(173, 216, 230)); // Light blue
+}
+
+void Visualization::manage_grid_update(Grid* grid, bool force_full_update)
+{
+    force_full_update = true;   // Overwrite for debugging
+    if (first_iteration || force_full_update)
+        update_whole_grid(grid);
+    else
+        update_grid_cells(grid);
+}
+
+void Visualization::update_whole_grid(Grid* grid)
+{
+    // Update the color of each cell in the vertex array
+    for (int i = 0; i < grid_width; i++)
+    {
+        for (int j = 0; j < grid_height; j++)
+        {
+            update_grid_cell(grid, i, j);
+        }
+    }
+
+    first_iteration = false;
+}
+
+void Visualization::update_grid_cells(Grid* grid)
+{
+    for (int i = 0; i < grid_width; i++)
+    {
+        for (int j = 0; j < grid_height; j++)
+        {
+            update_grid_cell(grid, i, j);
+        }
+    }
 }
 
 void Visualization::update_grid_cell(Grid* grid, int cell_x, int cell_y)
@@ -149,10 +254,6 @@ void Visualization::update_grid_cell(Grid* grid, int cell_x, int cell_y)
 
 void Visualization::update_grid_cell(Grid* grid, int cell_id)
 {
-    // Check if the cell requires updating
-    // if
-    //  return
-
     // Decide on the colour
     sf::Color cell_color = EMPTY_CELL_COLOR;
 
@@ -166,14 +267,18 @@ void Visualization::update_grid_cell(Grid* grid, int cell_id)
         cell_color = adjust_gas_color(grid->get_cell_concetration(cell_id));
 
     // Apply the colour
-    sf::Vertex* quad = &grid_vertices[cell_id * 4];
+    sf::Vertex* quad = &main_grid_vertices[cell_id * 4];
     quad[0].color = cell_color;
     quad[1].color = cell_color;
     quad[2].color = cell_color;
     quad[3].color = cell_color;
 
-    // Mark the cell as recently updated
-    // (...)
+    // Apply the colour
+    sf::Vertex* quad2 = &vx_grid_vertices[cell_id * 4];
+    quad2[0].color = cell_color;
+    quad2[1].color = cell_color;
+    quad2[2].color = cell_color;
+    quad2[3].color = cell_color;
 }
 
 void Visualization::draw_grid(bool draw_grid_lines)
@@ -185,7 +290,7 @@ void Visualization::draw_grid(bool draw_grid_lines)
     main_window.draw(grid_background);
 
     // Draw the grid cells
-    main_window.draw(grid_vertices);
+    main_window.draw(main_grid_vertices);
 
     // Draw grid lines
     if(draw_grid_lines)
@@ -213,10 +318,16 @@ void Visualization::draw_ui()
 
 void Visualization::draw_sub_windows()
 {
-    // Nothing to draw yet
-    // Remember about ifs
-    // sub_window_vx.draw();
-    // sub_window_vy.draw();
+    if (vx_window_visible)
+    {
+        sub_window_vx.draw(vx_grid_vertices);
+    }
+    
+    if (vy_window_visible)
+    {
+        sub_window_vy.draw(vy_grid_vertices);
+    }
+
 }
 
 void Visualization::clear()
@@ -229,7 +340,7 @@ void Visualization::clear()
         sub_window_vx.clear(sf::Color::Black);
 
     if (vy_window_visible)
-        sub_window_vy.clear(sf::Color::Blue);
+        sub_window_vy.clear(sf::Color::Black);
 }
 
 void Visualization::display()
@@ -379,40 +490,6 @@ void Visualization::process_sub_windows()
     }
 }
 
-void Visualization::manage_grid_update(Grid* grid, bool force_full_update)
-{
-    force_full_update = true;   // Overwrite for debugging
-    if (first_iteration || force_full_update)
-        update_whole_grid(grid);
-    else
-        update_grid_cells(grid);
-}
-
-void Visualization::update_whole_grid(Grid* grid)
-{
-    // Update the color of each cell in the vertex array
-    for (int i = 0; i < grid_width; i++)
-    {
-        for (int j = 0; j < grid_height; j++)
-        {
-            update_grid_cell(grid, i, j);
-        }
-    }
-
-    first_iteration = false;
-}
-
-void Visualization::update_grid_cells(Grid* grid)
-{
-    for (int i = 0; i < grid_width; i++)
-    {
-        for (int j = 0; j < grid_height; j++)
-        {
-            update_grid_cell(grid, i, j);
-        }
-    }
-}
-
 // Estimate cell size based on window size, padding and number of cells
 void Visualization::find_grid_dimensions()
 {
@@ -423,7 +500,8 @@ void Visualization::find_grid_dimensions()
     float available_height = grid_view.getSize().y - 2 * GRID_PADDING;
 
     // Minimal size of a cell
-    cell_size = std::min(available_width / grid_width, available_height / grid_height);
+    main_grid_cell_size = std::min(available_width / grid_width, available_height / grid_height);
+    sub_grid_cell_size = main_grid_cell_size * 0.5f;
 }
 
 void Visualization::update_views()
@@ -437,8 +515,8 @@ void Visualization::handle_mouse_click(int mouse_x, int mouse_y, bool left_butto
     sf::Vector2f world_coords = main_window.mapPixelToCoords(sf::Vector2i(mouse_x, mouse_y), grid_view);
 
     // Find the index of the cell
-    int cell_x = (world_coords.x - GRID_PADDING) / cell_size;
-    int cell_y = (world_coords.y - GRID_PADDING) / cell_size;
+    int cell_x = (world_coords.x - GRID_PADDING) / main_grid_cell_size;
+    int cell_y = (world_coords.y - GRID_PADDING) / main_grid_cell_size;
 
     // Check if the click happened inside the grid
     if (cell_x >= 0 && cell_x < grid_width && cell_y >= 0 && cell_y < grid_height)

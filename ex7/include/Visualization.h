@@ -38,7 +38,8 @@ private:
 	const float GRID_PADDING = 20.f;
 
 	// Settings
-	float cell_size;
+	float main_grid_cell_size;
+	float sub_grid_cell_size;
 	int grid_width;
 	int grid_height;
 	std::function<void(int, int)> cell_modify_callback;
@@ -52,7 +53,9 @@ private:
 	const sf::Color FOLLOWED_CELL_COLOR = sf::Color(255, 0, 0);
 
 	// Precomputed
-	sf::VertexArray grid_vertices;
+	sf::VertexArray main_grid_vertices;
+	sf::VertexArray vx_grid_vertices;
+	sf::VertexArray vy_grid_vertices;
 	sf::VertexArray grid_lines;
 	sf::RectangleShape cell_shape;
 	sf::RectangleShape grid_background;
