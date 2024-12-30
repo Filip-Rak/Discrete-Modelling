@@ -585,8 +585,7 @@ sf::Color Visualization::get_velocity_color(double velocity)
 
 	// Velocity should always be between <0, 1> at this point
 	// But it will rarely reach the max of 1
-	velocity *= VELOCITY_VIS_MULTIPLIER;
-	velocity = clamp(velocity, 0.f, 1.f);
+	velocity = clamp(velocity / VELOCITY_MAX, 0.f, 1.f);
 
 	// Interpolate between NO_VELOCITY_COLOR and the target color
 	sf::Color interpolated_color;

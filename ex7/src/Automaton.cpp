@@ -15,6 +15,11 @@ void Automaton::generate_random(double probability)
 	int wall_start = wall_position;     // Start of wall region
 	int wall_end = wall_start + 1;      // End of wall region (1-cell wide)
 
+	// Overwrite for now
+	wall_start = -1;
+	wall_end = -1;
+	gas_end = this->width;
+
 	for (int y = 0; y < this->height; ++y)
 	{
 		for (int x = 0; x < this->width; ++x)
@@ -41,6 +46,19 @@ void Automaton::generate_random(double probability)
 				grid.set_cell_as_inactive(x, y);
 			}
 
+		}
+	}
+
+	// Overwrite boundries
+	for (int x = 0; x < width; x++)
+	{
+		for (int y = 0; y < height; y++)
+		{
+			if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
+			{
+				// grid.set_cell_as_inactive(x, y); // ??????
+				boundary_condition_function(x, y);
+			}
 		}
 	}
 
@@ -152,6 +170,13 @@ void Automaton::update_cpu()
 	// Swap the buffer with f_in
 	std::swap(grid.f_in, grid.f_buffer);
 
+	// Apply boundry conditions
+	for (int x = 0; x < width; x++)
+	{
+		for (int y = 0; y < height; y++)
+			boundary_condition_function(x, y);
+	}
+
 	// Update prperties of each cell and zero the buffer
 	for (int i = 0; i < width * height; i++)
 	{
@@ -197,6 +222,61 @@ void Automaton::update_cpu()
 			grid.velocity_x[i] = 0.f;
 			grid.velocity_y[i] = 0.f;
 		}
+	}
+}
+
+void Automaton::apply_bc1(int x, int y)
+{
+	bool top = (y == 0);
+	bool bottom = (y == height - 1);
+	bool left = (x == 0);
+	bool right = (x == width - 1);
+
+	// Avoid inner cells
+	if (!top && !bottom && !left && !right)
+	{
+		return;
+	}
+
+	int cell_id = grid.get_id(x, y);
+
+	/* Apply to every boundry */
+
+	// 1. Zero Y-axis velocity
+	grid.velocity_y[cell_id] = 0.f;
+
+	double max = 0.2f;
+	double min = 0.f;
+
+	if (top)
+	{
+		grid.velocity_x[cell_id] = max;
+	}
+
+	else if (bottom)
+	{
+		grid.velocity_x[cell_id] = min;
+	}
+
+	else if (left || right)
+	{
+		double multi = (double)y / (double)(grid.height - 1);
+		multi = 1 - multi;
+
+		grid.velocity_x[cell_id] = min + (max - min) * multi;
+	}
+
+	// Update input functions
+	double u_square = grid.velocity_x[cell_id] * grid.velocity_x[cell_id] +
+		grid.velocity_y[cell_id] * grid.velocity_y[cell_id];
+
+	for (int direction = 0; direction < Grid::direction_num; direction++)
+	{
+		double ci_dot_u = grid.directions_x[direction] * grid.velocity_x[cell_id] +
+			grid.directions_y[direction] * grid.velocity_y[cell_id];
+
+		grid.f_in[direction][cell_id] = grid.weights[direction] * grid.density[cell_id] *
+			(1.0 + 3.0 * ci_dot_u + 4.5 * ci_dot_u * ci_dot_u - 1.5 * u_square);
 	}
 }
 

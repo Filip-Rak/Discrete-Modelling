@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
+#include <functional>
 
 #include "AutomatonCUDA.h"
 #include "cuda_runtime.h"
@@ -20,6 +21,9 @@ private:
 	Grid grid;
 	Grid grid_fallback;
 
+	std::function<void(int, int)> boundary_condition_function = [this](int x, int y) { this->apply_bc1(x, y); };
+	// std::function<void(int, int)> boundary_condition_function = [](int x, int y) { return; };
+
 public:
 	/* Constructor & Destructor */
 	Automaton(int width, int height);
@@ -33,6 +37,7 @@ public:
 private:
 	/* Private Methods */
 	void update_cpu();
+	void apply_bc1(int x, int y);
 	void update_gpu();
 
 public:
