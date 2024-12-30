@@ -56,7 +56,6 @@ void Automaton::generate_random(double probability)
 		{
 			if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
 			{
-				// grid.set_cell_as_inactive(x, y); // ??????
 				boundary_condition_function(x, y);
 			}
 		}
@@ -245,7 +244,8 @@ void Automaton::apply_bc1(int x, int y)
 	// 1. Zero Y-axis velocity
 	grid.velocity_y[cell_id] = 0.f;
 
-	double max = 0.2f;
+	/* Apply to specific boundry */
+	double max = 0.02f;
 	double min = 0.f;
 
 	if (top)
@@ -279,6 +279,36 @@ void Automaton::apply_bc1(int x, int y)
 			(1.0 + 3.0 * ci_dot_u + 4.5 * ci_dot_u * ci_dot_u - 1.5 * u_square);
 	}
 }
+
+void Automaton::apply_bc2(int x, int y)
+{
+	int cell_id = grid.get_id(x, y);
+
+	// Right boundry - open, apply density
+	if (x == width - 1)
+	{
+		grid.density[cell_id] = 1.0;
+		double numerator = grid.f_in[0][cell_id] + grid.f_in[3][cell_id] + grid.f_in[4][cell_id]
+			+ 2.f * (grid.f_in[1][cell_id] + grid.f_in[5][cell_id] + grid.f_in[8][cell_id]);
+		double u_x = numerator / grid.density[cell_id];
+
+
+		grid.velocity_x[cell_id] = u_x;
+		// grid.velocity_y[cell_id] = 0.f;	// No mention
+	}
+
+	// Update input functions
+	double u_square = grid.velocity_x[cell_id] * grid.velocity_x[cell_id] + grid.velocity_y[cell_id] * grid.velocity_y[cell_id];
+	for (int direction = 0; direction < Grid::direction_num; direction++)
+	{
+		double ci_dot_u = grid.directions_x[direction] * grid.velocity_x[cell_id] +
+			grid.directions_y[direction] * grid.velocity_y[cell_id];
+
+		grid.f_in[direction][cell_id] = grid.weights[direction] * grid.density[cell_id] *
+			(1.0 + 3.0 * ci_dot_u + 4.5 * ci_dot_u * ci_dot_u - 1.5 * u_square);
+	}
+}
+
 
 void Automaton::update_gpu()
 {

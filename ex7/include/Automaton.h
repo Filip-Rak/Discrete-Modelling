@@ -38,6 +38,7 @@ private:
 	/* Private Methods */
 	void update_cpu();
 	void apply_bc1(int x, int y);
+	void apply_bc2(int x, int y);
 	void update_gpu();
 
 public:
