@@ -282,33 +282,131 @@ void Automaton::apply_bc1(int x, int y)
 
 void Automaton::apply_bc2(int x, int y)
 {
+	// Sprawd?, czy to nie jest komórka wewn?trzna:
+	if (x > 0 && x < width - 1 && y > 0 && y < height - 1)
+	{
+		return; // Wewn?trz domeny nic nie robimy
+	}
+
 	int cell_id = grid.get_id(x, y);
 
-	// Right boundry - open, apply density
+	// --- DOLNA GRANICA (bounce-back) ---
+	if (y == height - 1)
+	{
+		// Je?li preferujesz odbicie "r?czne":
+		// for (int d = 0; d < Grid::direction_num; d++)
+		// {
+		//     int opp = grid.opposite_directions[d];
+		//     grid.f_in[opp][cell_id] = grid.f_in[d][cell_id];
+		// }
+		//
+		// Ale je?li ju? w update_cpu() masz bounce-back
+		// (gdy is_wall[...] = true albo out of bounds),
+		// to wystarczy tu nic nie robi?:
+		return;
+	}
+
+	// --- GÓRNA GRANICA (symetryczny) ---
+	// Zasada: f_in[d] = f_in[opp], ale z zachowaniem pr?dko?ci stycznej
+	// Tu uproszczone: "idealna symetria" = klonujemy warto?? z kierunku przeciwnego
+	// np. f_in[S ]= f_in[N ], f_in[SW]= f_in[NE], f_in[SE]= f_in[NW]
+	if (y == 0)
+	{
+		// R?czne odbicie "symetryczne" sk?adowych rozk?adu:
+		//  - N i S s? sobie przeciwne
+		//  - NW i SE
+		//  - NE i SW
+		// UWAGA: w D2Q9 standard:
+		//   2=N, 4=S, 5=NE, 6=NW, 7=SW, 8=SE
+		grid.f_in[4][cell_id] = grid.f_in[2][cell_id];  // S <- N
+		grid.f_in[7][cell_id] = grid.f_in[5][cell_id];  // SW <- NE
+		grid.f_in[8][cell_id] = grid.f_in[6][cell_id];  // SE <- NW
+
+		// (Mo?na te? pr?dko?? pionow? v_y ustawi? na 0)
+		// grid.velocity_y[cell_id] = 0.0;
+		return;
+	}
+
+	// --- LEWA GRANICA (otwarta z zadan? pr?dko?ci?) ---
+	if (x == 0)
+	{
+		// Liniowa zmiana pr?dko?ci w pionie: 0.0 (na dole) -> 0.02 (na górze)
+		double normalized = (double)y / (double)(height - 1);
+		normalized = 1.0 - normalized;
+
+		double Ux = 0.02 * normalized;
+		double Uy = 0.0;
+		double rho = 1.0;  // Cz?sto zak?adamy g?sto?? 1.0 na wlocie
+
+		grid.density[cell_id] = rho;
+		grid.velocity_x[cell_id] = Ux;
+		grid.velocity_y[cell_id] = Uy;
+
+		// Przelicz f_in w stanie równowagi:
+		double u_sq = Ux * Ux + Uy * Uy;
+		for (int d = 0; d < Grid::direction_num; d++)
+		{
+			double cix = grid.directions_x[d]; // np. 1, 0, -1 ...
+			double ciy = grid.directions_y[d]; // np. 0, 1, -1 ...
+			double ci_dot_u = cix * Ux + ciy * Uy;
+
+			grid.f_in[d][cell_id] =
+				grid.weights[d] * rho *
+				(1.0
+					+ 3.0 * ci_dot_u
+					+ 4.5 * ci_dot_u * ci_dot_u
+					- 1.5 * u_sq);
+		}
+		return;
+	}
+
+	// --- PRAWA GRANICA (otwarta z zadan? g?sto?ci? = 1.0) ---
 	if (x == width - 1)
 	{
-		grid.density[cell_id] = 1.0;
-		double numerator = grid.f_in[0][cell_id] + grid.f_in[3][cell_id] + grid.f_in[4][cell_id]
-			+ 2.f * (grid.f_in[1][cell_id] + grid.f_in[5][cell_id] + grid.f_in[8][cell_id]);
-		double u_x = numerator / grid.density[cell_id];
+		double rhoExit = 1.0;
+		grid.density[cell_id] = rhoExit;
 
+		// Policz Ux na podstawie "open(rho)" (o ile trzymamy si? standardu D2Q9):
+		//   Ux = (f0 + fN + fS + 2*(fE + fNE + fSE))/rhoExit - 1
+		// UWAGA: dopasuj indeksy do Twojej numeracji
+		double f0 = grid.f_in[0][cell_id]; // C
+		double fE = grid.f_in[1][cell_id];
+		double fN = grid.f_in[2][cell_id];
+		double fS = grid.f_in[4][cell_id];
+		double fNE = grid.f_in[5][cell_id];
+		double fSE = grid.f_in[8][cell_id];
 
-		grid.velocity_x[cell_id] = u_x;
-		// grid.velocity_y[cell_id] = 0.f;	// No mention
-	}
+		// Uwaga: "f_in[3]" (W) czy "f_in[6]"(NW), "f_in[7]"(SW) raczej nie liczymy do wylotu
+		// bo to "przychodz?ce" z zewn?trz (od zachodu).
+		double numerator = f0 + fS + fN + 2.0 * (fE + fNE + fSE);
 
-	// Update input functions
-	double u_square = grid.velocity_x[cell_id] * grid.velocity_x[cell_id] + grid.velocity_y[cell_id] * grid.velocity_y[cell_id];
-	for (int direction = 0; direction < Grid::direction_num; direction++)
-	{
-		double ci_dot_u = grid.directions_x[direction] * grid.velocity_x[cell_id] +
-			grid.directions_y[direction] * grid.velocity_y[cell_id];
+		double Ux = numerator / rhoExit - 1.0;
+		// Dla prostego przep?ywu mo?emy wymusi? Uy=0
+		// b?d? obliczy? go wzorem:
+		//   Uy = 6*(fN - fS + fNE - fSE) / rhoExit / (5 - 3*Ux)
+		double Uy = 0.0;
 
-		grid.f_in[direction][cell_id] = grid.weights[direction] * grid.density[cell_id] *
-			(1.0 + 3.0 * ci_dot_u + 4.5 * ci_dot_u * ci_dot_u - 1.5 * u_square);
+		grid.velocity_x[cell_id] = Ux;
+		grid.velocity_y[cell_id] = Uy;
+
+		// Przelicz f_in w stanie równowagi:
+		double u_sq = Ux * Ux + Uy * Uy;
+		for (int d = 0; d < Grid::direction_num; d++)
+		{
+			double cix = grid.directions_x[d];
+			double ciy = grid.directions_y[d];
+			double ci_dot_u = cix * Ux + ciy * Uy;
+
+			grid.f_in[d][cell_id] =
+				grid.weights[d] * rhoExit *
+				(1.0
+					+ 3.0 * ci_dot_u
+					+ 4.5 * ci_dot_u * ci_dot_u
+					- 1.5 * u_sq);
+		}
+		return;
 	}
 }
-
 
 void Automaton::update_gpu()
 {

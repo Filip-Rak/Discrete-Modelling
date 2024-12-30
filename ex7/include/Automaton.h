@@ -21,7 +21,7 @@ private:
 	Grid grid;
 	Grid grid_fallback;
 
-	std::function<void(int, int)> boundary_condition_function = [this](int x, int y) { this->apply_bc1(x, y); };
+	std::function<void(int, int)> boundary_condition_function = [this](int x, int y) { this->apply_bc2(x, y); };
 	// std::function<void(int, int)> boundary_condition_function = [](int x, int y) { return; };
 
 public:
