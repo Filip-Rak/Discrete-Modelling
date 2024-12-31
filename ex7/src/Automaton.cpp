@@ -1,4 +1,4 @@
-#include "Automaton.h"
+ï»¿#include "Automaton.h"
 
 /* Constructor & Destructor */
 Automaton::Automaton(int width, int height) : 
@@ -56,7 +56,7 @@ void Automaton::generate_random(double probability)
 		{
 			if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
 			{
-				boundary_condition_function(x, y);
+				apply_boundry_condition(x, y);
 			}
 		}
 	}
@@ -173,7 +173,7 @@ void Automaton::update_cpu()
 	for (int x = 0; x < width; x++)
 	{
 		for (int y = 0; y < height; y++)
-			boundary_condition_function(x, y);
+			apply_boundry_condition(x, y);
 	}
 
 	// Update prperties of each cell and zero the buffer
@@ -282,129 +282,86 @@ void Automaton::apply_bc1(int x, int y)
 
 void Automaton::apply_bc2(int x, int y)
 {
-	// Sprawd?, czy to nie jest komórka wewn?trzna:
-	if (x > 0 && x < width - 1 && y > 0 && y < height - 1)
+	bool top = (y == 0);
+	bool bottom = (y == height - 1);
+	bool left = (x == 0);
+	bool right = (x == width - 1);
+
+	// Return for inner cells
+	if (!top && !bottom && !left && !right)
 	{
-		return; // Wewn?trz domeny nic nie robimy
+		return;
 	}
 
 	int cell_id = grid.get_id(x, y);
 
-	// --- DOLNA GRANICA (bounce-back) ---
-	if (y == height - 1)
+	/* Bottom Boundary - Bounce Back */
+	if (bottom)
 	{
-		// Je?li preferujesz odbicie "r?czne":
-		// for (int d = 0; d < Grid::direction_num; d++)
-		// {
-		//     int opp = grid.opposite_directions[d];
-		//     grid.f_in[opp][cell_id] = grid.f_in[d][cell_id];
-		// }
-		//
-		// Ale je?li ju? w update_cpu() masz bounce-back
-		// (gdy is_wall[...] = true albo out of bounds),
-		// to wystarczy tu nic nie robi?:
-		return;
+		for (int dir = 0; dir < Grid::direction_num; dir++)
+		{
+			int opp = grid.opposite_directions[dir];
+			grid.f_in[opp][cell_id] = grid.f_in[dir][cell_id];
+		}
 	}
 
-	// --- GÓRNA GRANICA (symetryczny) ---
-	// Zasada: f_in[d] = f_in[opp], ale z zachowaniem pr?dko?ci stycznej
-	// Tu uproszczone: "idealna symetria" = klonujemy warto?? z kierunku przeciwnego
-	// np. f_in[S ]= f_in[N ], f_in[SW]= f_in[NE], f_in[SE]= f_in[NW]
-	if (y == 0)
+	/* Left Boundary - Open with Applied Speed */
+	else if (left)
 	{
-		// R?czne odbicie "symetryczne" sk?adowych rozk?adu:
-		//  - N i S s? sobie przeciwne
-		//  - NW i SE
-		//  - NE i SW
-		// UWAGA: w D2Q9 standard:
-		//   2=N, 4=S, 5=NE, 6=NW, 7=SW, 8=SE
-		grid.f_in[4][cell_id] = grid.f_in[2][cell_id];  // S <- N
-		grid.f_in[7][cell_id] = grid.f_in[5][cell_id];  // SW <- NE
-		grid.f_in[8][cell_id] = grid.f_in[6][cell_id];  // SE <- NW
+		// Linear speed change on Vertical Axis from top (y = 0) to bottom (y = height - 1)
 
-		// (Mo?na te? pr?dko?? pionow? v_y ustawi? na 0)
-		// grid.velocity_y[cell_id] = 0.0;
-		return;
-	}
-
-	// --- LEWA GRANICA (otwarta z zadan? pr?dko?ci?) ---
-	if (x == 0)
-	{
-		// Liniowa zmiana pr?dko?ci w pionie: 0.0 (na dole) -> 0.02 (na górze)
+		// Normalize
 		double normalized = (double)y / (double)(height - 1);
 		normalized = 1.0 - normalized;
 
-		double Ux = 0.02 * normalized;
-		double Uy = 0.0;
-		double rho = 1.0;  // Cz?sto zak?adamy g?sto?? 1.0 na wlocie
-
+		// Values to apply
+		double Ux = 0.02f * normalized;
+		double Uy = 0.f;
+		double rho = 1.f;  // Assume density of 1 at the inflow
+		
+		// Apply
 		grid.density[cell_id] = rho;
 		grid.velocity_x[cell_id] = Ux;
 		grid.velocity_y[cell_id] = Uy;
-
-		// Przelicz f_in w stanie równowagi:
-		double u_sq = Ux * Ux + Uy * Uy;
-		for (int d = 0; d < Grid::direction_num; d++)
-		{
-			double cix = grid.directions_x[d]; // np. 1, 0, -1 ...
-			double ciy = grid.directions_y[d]; // np. 0, 1, -1 ...
-			double ci_dot_u = cix * Ux + ciy * Uy;
-
-			grid.f_in[d][cell_id] =
-				grid.weights[d] * rho *
-				(1.0
-					+ 3.0 * ci_dot_u
-					+ 4.5 * ci_dot_u * ci_dot_u
-					- 1.5 * u_sq);
-		}
-		return;
 	}
 
-	// --- PRAWA GRANICA (otwarta z zadan? g?sto?ci? = 1.0) ---
-	if (x == width - 1)
+	/* Top Boundary - Symmetric */
+	else if (top)
 	{
-		double rhoExit = 1.0;
-		grid.density[cell_id] = rhoExit;
+		grid.f_in[4][cell_id] = grid.f_in[3][cell_id];	// 4a
+		grid.f_in[8][cell_id] = grid.f_in[5][cell_id];	// 5a
+		grid.f_in[7][cell_id] = grid.f_in[6][cell_id];	// 6a
 
-		// Policz Ux na podstawie "open(rho)" (o ile trzymamy si? standardu D2Q9):
-		//   Ux = (f0 + fN + fS + 2*(fE + fNE + fSE))/rhoExit - 1
-		// UWAGA: dopasuj indeksy do Twojej numeracji
-		double f0 = grid.f_in[0][cell_id]; // C
-		double fE = grid.f_in[1][cell_id];
-		double fN = grid.f_in[2][cell_id];
-		double fS = grid.f_in[4][cell_id];
-		double fNE = grid.f_in[5][cell_id];
-		double fSE = grid.f_in[8][cell_id];
+		// grid.velocity_y[cell_id] = 0.0;
+	}
 
-		// Uwaga: "f_in[3]" (W) czy "f_in[6]"(NW), "f_in[7]"(SW) raczej nie liczymy do wylotu
-		// bo to "przychodz?ce" z zewn?trz (od zachodu).
-		double numerator = f0 + fS + fN + 2.0 * (fE + fNE + fSE);
+	/* Right Boundry - Open with Applied Density = 1.0 */
+	else if (right)
+	{
+		// Apply density
+		grid.density[cell_id] = 1.0;
 
-		double Ux = numerator / rhoExit - 1.0;
-		// Dla prostego przep?ywu mo?emy wymusi? Uy=0
-		// b?d? obliczy? go wzorem:
-		//   Uy = 6*(fN - fS + fNE - fSE) / rhoExit / (5 - 3*Ux)
-		double Uy = 0.0;
+		// 12a (modified)
+		double u_x = (grid.f_in[0][cell_id] + grid.f_in[3][cell_id] + grid.f_in[4][cell_id] 
+			+ 2 * (grid.f_in[1][cell_id] + grid.f_in[5][cell_id] + grid.f_in[8][cell_id]));
+		u_x /= grid.density[cell_id];
+		u_x -= 1;
 
-		grid.velocity_x[cell_id] = Ux;
-		grid.velocity_y[cell_id] = Uy;
+		grid.velocity_x[cell_id] = u_x;
+		grid.velocity_y[cell_id] = 0.f;
+	}
 
-		// Przelicz f_in w stanie równowagi:
-		double u_sq = Ux * Ux + Uy * Uy;
-		for (int d = 0; d < Grid::direction_num; d++)
-		{
-			double cix = grid.directions_x[d];
-			double ciy = grid.directions_y[d];
-			double ci_dot_u = cix * Ux + ciy * Uy;
+	/* Update Input Functions */
+	double u_square = grid.velocity_x[cell_id] * grid.velocity_x[cell_id] +
+		grid.velocity_y[cell_id] * grid.velocity_y[cell_id];
 
-			grid.f_in[d][cell_id] =
-				grid.weights[d] * rhoExit *
-				(1.0
-					+ 3.0 * ci_dot_u
-					+ 4.5 * ci_dot_u * ci_dot_u
-					- 1.5 * u_sq);
-		}
-		return;
+	for (int direction = 0; direction < Grid::direction_num; direction++)
+	{
+		double ci_dot_u = grid.directions_x[direction] * grid.velocity_x[cell_id] +
+			grid.directions_y[direction] * grid.velocity_y[cell_id];
+
+		grid.f_in[direction][cell_id] = grid.weights[direction] * grid.density[cell_id] *
+			(1.0 + 3.0 * ci_dot_u + 4.5 * ci_dot_u * ci_dot_u - 1.5 * u_square);
 	}
 }
 
