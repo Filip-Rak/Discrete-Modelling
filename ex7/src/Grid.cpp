@@ -93,7 +93,7 @@ int Grid::get_id(int x_pos, int y_pos)
 }
 
 /* Setters */
-void Grid::set_cell_as_active(int x, int y)
+void Grid::set_cell_as_active(int x, int y, double density)
 {
 	// Get the cell's index
 	int cell_id = get_id(x, y);
@@ -102,14 +102,14 @@ void Grid::set_cell_as_active(int x, int y)
 	set_cell_as_active(cell_id);
 }
 
-void Grid::set_cell_as_active(int cell_id) 
+void Grid::set_cell_as_active(int cell_id, double density_param)
 {
 	// Sett cell's properties
 	velocity_x[cell_id] = 0.f;
 	velocity_y[cell_id] = 0.f;
 	is_wall[cell_id] = false;
 
-	density[cell_id] = 1.f;
+	density[cell_id] = density_param;
 
 	// Intialize f_in as equlibrium function
 	for (int j = 0; j < direction_num; j++) 

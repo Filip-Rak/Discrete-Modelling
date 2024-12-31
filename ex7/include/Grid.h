@@ -55,8 +55,8 @@ public:
 	int get_id(int x_pos, int y_pos);
 
 	/* Setters */
-	void set_cell_as_active(int x, int y);
-	void set_cell_as_active(int cell_id);
+	void set_cell_as_active(int x, int y, double density = 1);
+	void set_cell_as_active(int cell_id, double density = 1);
 
 	void set_cell_as_inactive(int x, int y);
 	void set_cell_as_inactive(int cell_id);

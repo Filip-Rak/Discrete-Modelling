@@ -122,7 +122,7 @@ void Automaton::update_cpu()
 					grid.velocity_y[cell_id] * grid.velocity_y[cell_id];
 
 				// Limit the speed to avoid numerical errors
-				if (u_square > 0.1f) 
+				if (u_square > 0.1f && false) 
 				{
 					double scale = 0.1 / sqrt(u_square);
 					grid.velocity_x[cell_id] *= scale;
@@ -332,7 +332,7 @@ void Automaton::apply_bc2(int x, int y)
 		grid.f_in[8][cell_id] = grid.f_in[5][cell_id];	// 5a
 		grid.f_in[7][cell_id] = grid.f_in[6][cell_id];	// 6a
 
-		// grid.velocity_y[cell_id] = 0.0;
+		grid.velocity_y[cell_id] = 0.0;
 	}
 
 	/* Right Boundry - Open with Applied Density = 1.0 */
