@@ -303,6 +303,8 @@ void Automaton::apply_bc2(int x, int y)
 			int opp = grid.opposite_directions[dir];
 			grid.f_in[opp][cell_id] = grid.f_in[dir][cell_id];
 		}
+
+		return;
 	}
 
 	/* Left Boundary - Open with Applied Speed */
@@ -333,6 +335,8 @@ void Automaton::apply_bc2(int x, int y)
 		grid.f_in[7][cell_id] = grid.f_in[6][cell_id];	// 6a
 
 		grid.velocity_y[cell_id] = 0.0;
+
+		return;
 	}
 
 	/* Right Boundry - Open with Applied Density = 1.0 */
@@ -352,16 +356,20 @@ void Automaton::apply_bc2(int x, int y)
 	}
 
 	/* Update Input Functions */
-	double u_square = grid.velocity_x[cell_id] * grid.velocity_x[cell_id] +
-		grid.velocity_y[cell_id] * grid.velocity_y[cell_id];
-
-	for (int direction = 0; direction < Grid::direction_num; direction++)
+	for (int j = 0; j < grid.direction_num; j++)
 	{
-		double ci_dot_u = grid.directions_x[direction] * grid.velocity_x[cell_id] +
-			grid.directions_y[direction] * grid.velocity_y[cell_id];
+		double ci_dot_u = grid.directions_x[j] * grid.velocity_x[cell_id] +
+			grid.directions_y[j] * grid.velocity_y[cell_id];
 
-		grid.f_in[direction][cell_id] = grid.weights[direction] * grid.density[cell_id] *
+		double u_square = grid.velocity_x[cell_id] * grid.velocity_x[cell_id] +
+			grid.velocity_y[cell_id] * grid.velocity_y[cell_id];
+
+		// Equlibrium function
+		double f_eq = grid.weights[j] * grid.density[cell_id] *
 			(1.0 + 3.0 * ci_dot_u + 4.5 * ci_dot_u * ci_dot_u - 1.5 * u_square);
+
+		// Initialize f_in as equlibrium function
+		grid.f_in[j][cell_id] = f_eq;
 	}
 }
 
