@@ -18,6 +18,8 @@ private:
 	bool use_gpu = false;
 	bool paused = true;
 	bool text_input_in_use = false;
+	bool outline_enabled = false;
+	bool streamlines_enabled = false;
 	int followed_cell = -1;
 	Visualization::CellVisualState selected_cell_state = Visualization::FLUID;
 
@@ -45,9 +47,6 @@ private:
 	float MAX_PROBABILITY = 1.f;
 	float probability = MAX_PROBABILITY;
 	// float probability = (MIN_PROBABILITY + MAX_PROBABILITY) / 2.f;
-
-	// Visuals
-	bool outline_enabled = false;
 
 	// Data
 	int iteration_number = 0;

@@ -194,7 +194,7 @@ void Controller::render()
 	visualization.clear();
 
 	// Draw elements
-	visualization.draw_grid(automaton.get_grid(), outline_enabled, true);
+	visualization.draw_grid(automaton.get_grid(), outline_enabled, streamlines_enabled);
 	visualization.draw_ui();
 	visualization.draw_sub_windows();
 
@@ -221,6 +221,7 @@ void Controller::initialize_ui()
 	auto slower_button = ui.get_widget_as<tgui::Button>("slower");
 	auto faster_button = ui.get_widget_as<tgui::Button>("faster");
 	auto outline_button = ui.get_widget_as<tgui::Button>("outline");
+	auto streamline_button = ui.get_widget_as<tgui::Button>("streamline_button");
 	auto toggle_pu = ui.get_widget_as<tgui::Button>("toggle_pu");
 	auto cell_log_button = ui.get_widget_as<tgui::Button>("cell_log_button");
 	auto vx_window_button = ui.get_widget_as<tgui::Button>("vx_window_button");
@@ -306,14 +307,31 @@ void Controller::initialize_ui()
 			outline_enabled = !outline_enabled;
 
 			if (!outline_enabled)
-				outline_button->setText("Grid: Off");
+				outline_button->setText("Grid: OFF");
 			else
-				outline_button->setText("Grid: On");
+				outline_button->setText("Grid: ON");
 
 			// Debug output
 			print_flag_status("outline_enabled", outline_enabled);
 		});
 	
+	if (streamlines_enabled)
+		streamline_button->setText("Streamlines:\nON");
+	else 
+		streamline_button->setText("Streamlines:\nOFF");
+
+	streamline_button->onPress([this, streamline_button]()
+		{
+			// Toggle the state of the flag
+			this->streamlines_enabled = !this->streamlines_enabled;
+
+			// Update the button
+			if (streamlines_enabled)
+				streamline_button->setText("Streamlines:\nON");
+			else
+				streamline_button->setText("Streamlines:\nOFF");
+		});
+
 	if (use_gpu)
 		toggle_pu->setText("GPU");
 	else
