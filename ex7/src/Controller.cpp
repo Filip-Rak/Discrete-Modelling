@@ -227,6 +227,8 @@ void Controller::initialize_ui()
 	auto vx_window_button = ui.get_widget_as<tgui::Button>("vx_window_button");
 	auto vy_window_button = ui.get_widget_as<tgui::Button>("vy_window_button");
 	auto save_img_button = ui.get_widget_as<tgui::Button>("save_as_img_button");
+	auto save_automaton_button = ui.get_widget_as<tgui::Button>("save_automaton_button");
+	auto load_automaton_button = ui.get_widget_as<tgui::Button>("load_automaton_button");
 
 	auto air_button = ui.get_widget_as<tgui::Button>("air_button");
 	auto gas_button = ui.get_widget_as<tgui::Button>("gas_button");
@@ -351,6 +353,25 @@ void Controller::initialize_ui()
 
 			// Debug output
 			print_flag_status("use_gpu", use_gpu);
+		});
+
+	save_automaton_button->onPress([this]
+		{
+			automaton.save_to_file(AUTOMATON_OUT_PATH, iteration_number);
+		});
+
+	load_automaton_button->onPress([this, pause_button]
+		{
+			// Load the automaton
+			iteration_number =  automaton.load_from_file(AUTOMATON_OUT_PATH);
+
+			// Update the grid and iteration label
+			visualization.manage_grid_update(automaton.get_grid(), true);
+			ui.set_iteration_label_num(iteration_number);
+
+			// Pause and update the pause buttnon
+			paused = true;
+			pause_button->setText("Resume");
 		});
 
 	cell_log_button->setEnabled(false);

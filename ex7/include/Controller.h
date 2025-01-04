@@ -17,6 +17,7 @@ private:
 	// Paths
 	const std::string OUTPUT_PATH = "output/";
 	const std::string IMG_OUT_PATH = OUTPUT_PATH + "img/";
+	const std::string AUTOMATON_OUT_PATH = OUTPUT_PATH + "state/";
 
 	// Flags
 	bool use_gpu = false;

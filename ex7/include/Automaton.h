@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 #include <functional>
 
 #include "AutomatonCUDA.h"
@@ -33,6 +34,8 @@ public:
 	void generate_random(double probability = 1.f);
 	void reset();
 	void update(bool use_gpu);
+	void save_to_file(std::string path, int iteration);
+	int load_from_file(std::string path);
 
 private:
 	/* Private Methods */

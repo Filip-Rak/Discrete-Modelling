@@ -93,6 +93,96 @@ void Automaton::update(bool use_gpu)
 		update_cpu();
 }
 
+void Automaton::save_to_file(std::string path, int iteration)
+{
+	// Open file
+	std::string filename = path + "automaton.csv";
+	std::ofstream output_file(filename);
+	std::string property_delimiter = " ";
+	std::string cell_delimiter = "\n";
+
+	if (!output_file.good())
+	{
+		std::cout << "Failed to open output file\n";
+		return;
+	}
+
+	// Save metadata
+	output_file << grid.width << property_delimiter;
+	output_file << grid.height << property_delimiter;
+	output_file << grid.tau << property_delimiter;
+	output_file << iteration;
+
+	// Save cell data
+	int cell_num = grid.width * grid.height;
+	for (int i = 0; i < cell_num; i++)
+	{
+		// New cell
+		output_file << cell_delimiter;
+
+		// Properties
+		output_file << grid.density[i] << property_delimiter;
+		output_file << grid.velocity_x[i] << property_delimiter;
+		output_file << grid.velocity_y[i] << property_delimiter;
+		output_file << grid.is_wall[i];
+
+		// Input functions
+		for (int dir = 0; dir < grid.direction_num; dir++)
+		{
+			output_file << property_delimiter << grid.f_in[dir][i];
+		}
+	}
+
+	// File closure
+	output_file.close();
+
+	// Console debug
+	std::cout << "Saving to file at: " << filename << "\n";
+}
+
+int Automaton::load_from_file(std::string path)
+{
+	// Open file
+	std::string filename = path + "automaton.csv";
+	std::ifstream input_file(filename);
+
+	// Check metadata
+	int width, height, iteration;
+	float tau;
+	input_file >> width >> height >> tau >> iteration;
+
+	// Verify compatibility
+	if (width != grid.width || height != grid.height)
+	{
+		std::cout << "Failed to load. Incompatible dimensions: " << width << "x" << height << "\n";
+		return -1;
+	}
+
+	// Load metadata
+	grid.tau = tau;
+
+	// Load cell data
+	int cell_number = grid.width * grid.height;
+	for (int cell_id = 0; cell_id < cell_number; cell_id++)
+	{
+		// Load properties
+		input_file >> grid.density[cell_id];
+		input_file >> grid.velocity_x[cell_id];
+		input_file >> grid.velocity_y[cell_id];
+		input_file >> grid.is_wall[cell_id];
+
+		// Load input functions
+		for (int dir = 0; dir < grid.direction_num; dir += 1)
+		{
+			input_file >> grid.f_in[dir][cell_id];
+		}
+	}
+
+	std::cout << "Loaded state\n";
+
+	return iteration;
+}
+
 /* Private Methods */
 void Automaton::update_cpu()
 {

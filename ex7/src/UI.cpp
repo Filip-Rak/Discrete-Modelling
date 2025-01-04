@@ -62,6 +62,8 @@ void UI::initialize(float ui_offset_x, float ui_width, float ctrl_speed, float s
         {"vy_window_button", "button", "Show Y\nvelocity", tinier_text_size, half_button_width, half_button_width + half_button_gap, false, 0},
         {"toggle_pu", "button", "not set", tiny_text_size,  half_button_width, 0, true , 0},
         {"save_as_img_button", "button", "Save Img", tiny_text_size, half_button_width, half_button_width + half_button_gap, false, 0},
+        {"save_automaton_button", "button", "Save", very_small_text_size, half_button_width, 0, true, 0},
+        {"load_automaton_button", "button", "Load", very_small_text_size, half_button_width, half_button_width + half_button_gap, false, 0},
         {"air_button", "button", "Air", very_small_text_size, half_button_width, 0, true, 15},
         {"gas_button", "button", "Fluid", very_small_text_size, half_button_width, half_button_width + half_button_gap, false, 0},
         {"wall_button", "button", "Wall", very_small_text_size, half_button_width, 0, true, 0},
