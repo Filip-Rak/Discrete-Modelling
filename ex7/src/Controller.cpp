@@ -194,7 +194,7 @@ void Controller::render()
 	visualization.clear();
 
 	// Draw elements
-	visualization.draw_grid(outline_enabled);
+	visualization.draw_grid(automaton.get_grid(), outline_enabled, true);
 	visualization.draw_ui();
 	visualization.draw_sub_windows();
 

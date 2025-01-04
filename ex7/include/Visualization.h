@@ -38,6 +38,9 @@ private:
 	const float GRID_PADDING = 20.f;
 	const float VELOCITY_MAX = 0.02f;	// 0.02f for BC1 
 	const float NO_VELOCITY_BOUNDARY = 1e-8f;	// Use higher 1e-6 for V1 BCs
+	const float STREAMLINE_THICKNESS = 1.5f;
+	const float STREAMLINE_SPACING = 10.f;
+	const float STREAMLINE_SCALE = 100.f;
 
 	// Settings
 	float main_grid_cell_size;
@@ -56,6 +59,7 @@ private:
 	const sf::Color POSITIVE_VELOCITY_COLOR = sf::Color(255, 0, 0);
 	const sf::Color NEGATIVE_VELOCITY_COLOR = sf::Color(0, 0, 255);
 	const sf::Color NO_VELOCITY_COLOR = sf::Color(255, 255, 255);
+	const sf::Color STREAMLINE_COLOR = sf::Color(0, 0, 0);
 
 	// Precomputed
 	sf::VertexArray main_grid_vertices;
@@ -81,7 +85,7 @@ public:
 	void manage_grid_update(Grid* grid, bool force_full_update = false);
 	void update_grid_cell(Grid* grid, int cell_x, int cell_y);
 	void update_grid_cell(Grid* grid, int cell_id);
-	void draw_grid(bool draw_grid_lines);
+	void draw_grid(Grid* grid, bool draw_grid_lines, bool draw_streamlines);
 	void draw_ui();
 	void draw_sub_windows();
 	void init_ui();
@@ -113,6 +117,7 @@ private:
 	void process_sub_windows();
 	void update_whole_grid(Grid* grid);
 	void update_grid_cells(Grid* grid);
+	void compute_and_draw_stream_lines(Grid* grid, int spacing, float scale);
 	void find_grid_dimensions();
 	void update_views();
 	void handle_mouse_click(int mouse_x, int mouse_y, bool left_mouse);

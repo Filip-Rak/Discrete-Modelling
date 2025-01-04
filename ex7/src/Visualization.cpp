@@ -243,6 +243,72 @@ void Visualization::update_grid_cells(Grid* grid)
 	}
 }
 
+void Visualization::compute_and_draw_stream_lines(Grid* grid, int spacing, float scale)
+{
+	// Iterate through the grid with given spacing
+	for (int x = spacing; x < grid_width; x += spacing)
+	{
+		for (int y = spacing; y < grid_height; y += spacing)
+		{
+			/* Calculate start and end of the line */
+			// Get velocity
+			int cell_id = grid->get_id(x, y);
+			float vx = grid->get_velocity_x(cell_id);
+			float vy = grid->get_velocity_y(cell_id);
+
+			// Compute the scaled end position of the line
+			float start_x = GRID_PADDING + x * this->main_grid_cell_size;
+			float start_y = GRID_PADDING + y * this->main_grid_cell_size;
+
+			float end_x = start_x + scale * vx;
+			float end_y = start_y + scale * vy;
+
+			/* Ensure the line is within boundries of the grid */
+			if (start_x < GRID_PADDING || start_x > GRID_PADDING + grid_width * this->main_grid_cell_size ||
+				start_y < GRID_PADDING || start_y > GRID_PADDING + grid_height * this->main_grid_cell_size)
+			{
+				continue; // Skip drawing this line if the start is outside the grid
+			}
+
+			// Adjust end points if they are outside the grid
+			if (end_x < GRID_PADDING)
+			{
+				end_x = GRID_PADDING;
+			}
+			else if (end_x > GRID_PADDING + grid_width * this->main_grid_cell_size)
+			{
+				end_x = GRID_PADDING + grid_width * this->main_grid_cell_size;
+			}
+
+			if (end_y < GRID_PADDING)
+			{
+				end_y = GRID_PADDING;
+			}
+			else if (end_y > GRID_PADDING + grid_height * this->main_grid_cell_size)
+			{
+				end_y = GRID_PADDING + grid_height * this->main_grid_cell_size;
+			}
+
+			/* Draw The Line */
+			// Use rectangle shape for thcness
+			sf::RectangleShape line;
+			float length = sqrt((end_x - start_x) * (end_x - start_x) + (end_y - start_y) * (end_y - start_y));
+			line.setSize(sf::Vector2f(length, this->STREAMLINE_THICKNESS));
+			line.setFillColor(this->STREAMLINE_COLOR);
+
+			// Rotate the line to align with the velocity direction
+			float angle = atan2(end_y - start_y, end_x - start_x) * 180.f / 3.14f;
+			line.setRotation(angle);
+
+			// Position the line at the start point
+			line.setPosition(sf::Vector2f(start_x, start_y));
+
+			// Draw the line
+			main_window.draw(line);
+		}
+	}
+}
+
 void Visualization::update_grid_cell(Grid* grid, int cell_x, int cell_y)
 {
 	// Find the id
@@ -301,7 +367,7 @@ void Visualization::update_grid_cell(Grid* grid, int cell_id)
 
 }
 
-void Visualization::draw_grid(bool draw_grid_lines)
+void Visualization::draw_grid(Grid* grid, bool draw_grid_lines, bool draw_stream_lines)
 {
 	// Change rendering view to the grid
 	main_window.setView(grid_view);
@@ -315,6 +381,10 @@ void Visualization::draw_grid(bool draw_grid_lines)
 	// Draw grid lines
 	if(draw_grid_lines)
 		main_window.draw(grid_lines);
+
+	// Draw streamlines
+	if (draw_stream_lines)
+		compute_and_draw_stream_lines(grid, STREAMLINE_SPACING, STREAMLINE_SCALE);
 }
 
 void Visualization::init_ui()

@@ -16,9 +16,9 @@ void Automaton::generate_random(double probability)
 	int wall_end = wall_start + 1;      // End of wall region (1-cell wide)
 
 	// Overwrite for now
-	wall_start = -1;
-	wall_end = -1;
-	gas_end = this->width;
+	// wall_start = -1;
+	// wall_end = -1;
+	// gas_end = this->width;
 
 	for (int y = 0; y < this->height; ++y)
 	{
@@ -122,7 +122,7 @@ void Automaton::update_cpu()
 					grid.velocity_y[cell_id] * grid.velocity_y[cell_id];
 
 				// Limit the speed to avoid numerical errors
-				if (u_square > 0.1f && false) 
+				if (u_square > 0.1f) 
 				{
 					double scale = 0.1 / sqrt(u_square);
 					grid.velocity_x[cell_id] *= scale;
