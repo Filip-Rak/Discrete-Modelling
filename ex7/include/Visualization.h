@@ -86,6 +86,7 @@ public:
 	void update_grid_cell(Grid* grid, int cell_x, int cell_y);
 	void update_grid_cell(Grid* grid, int cell_id);
 	void draw_grid(Grid* grid, bool draw_grid_lines, bool draw_streamlines);
+	void draw_particles(Grid::Particle* particles, int num);
 	void draw_ui();
 	void draw_sub_windows();
 	void init_ui();
@@ -100,6 +101,7 @@ public:
 	bool is_vx_visible();
 	bool is_vy_visible();
 	tgui::Gui& get_gui();
+	double get_cell_size();
 
 	/* Setters */
 

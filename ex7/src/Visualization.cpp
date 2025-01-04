@@ -387,6 +387,22 @@ void Visualization::draw_grid(Grid* grid, bool draw_grid_lines, bool draw_stream
 		compute_and_draw_stream_lines(grid, STREAMLINE_SPACING, STREAMLINE_SCALE);
 }
 
+void Visualization::draw_particles(Grid::Particle* particles, int num)
+{
+	sf::CircleShape circle;
+
+	for (int i = 0; i < num; i++)
+	{
+		// Set properties
+		circle.setRadius(3.f);
+		circle.setFillColor(particles[i].color);
+		circle.setPosition(particles[i].x + GRID_PADDING, particles[i].y + GRID_PADDING);
+
+		// Draw
+		main_window.draw(circle);
+	}
+}
+
 void Visualization::init_ui()
 {
 	// Initialize UI background
@@ -475,6 +491,11 @@ bool Visualization::is_vy_visible()
 tgui::Gui& Visualization::get_gui()
 {
 	return gui;
+}
+
+double Visualization::get_cell_size()
+{
+	return main_grid_cell_size;
 }
 
 /* Setters */

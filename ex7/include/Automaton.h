@@ -22,8 +22,8 @@ private:
 	Grid grid;
 	Grid grid_fallback;
 
-	// std::function<void(int, int)> apply_boundry_condition = [this](int x, int y) { this->apply_bc2(x, y); };
-	std::function<void(int, int)> apply_boundry_condition = [](int x, int y) { return; };
+	std::function<void(int, int)> apply_boundry_condition = [this](int x, int y) { this->apply_bc2(x, y); };
+	// std::function<void(int, int)> apply_boundry_condition = [](int x, int y) { return; };
 
 public:
 	/* Constructor & Destructor */
@@ -34,6 +34,7 @@ public:
 	void generate_random(double probability = 1.f);
 	void reset();
 	void update(bool use_gpu);
+	void update_particles(double cell_size);
 	void save_to_file(std::string path, int iteration);
 	int load_from_file(std::string path);
 

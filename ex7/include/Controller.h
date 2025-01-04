@@ -3,6 +3,7 @@
 #include "Visualization.h"
 #include "Automaton.h"
 #include "UI.h"
+#include "Grid.h"
 
 #include <iostream>
 

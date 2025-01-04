@@ -15,10 +15,10 @@ void Automaton::generate_random(double probability)
 	int wall_start = wall_position;     // Start of wall region
 	int wall_end = wall_start + 1;      // End of wall region (1-cell wide)
 
-	// Overwrite for now
-	// wall_start = -1;
-	// wall_end = -1;
-	// gas_end = this->width;
+	// Overwrite for bcs
+	wall_start = -1;
+	wall_end = -1;
+	gas_end = this->width;
 
 	for (int y = 0; y < this->height; ++y)
 	{
@@ -91,6 +91,41 @@ void Automaton::update(bool use_gpu)
 		update_gpu();
 	else
 		update_cpu();
+}
+
+void Automaton::update_particles(double cell_size)
+{
+	Grid::Particle* particles = grid.get_particles();
+	for (int i = 0; i < grid.get_particle_num(); i += 1)
+	{
+		// Find the index of the cell
+		int cell_x = particles[i].x / cell_size;
+		int cell_y = particles[i].y / cell_size;
+
+		// Clamp
+		if (cell_x < 0) cell_x = 0;
+		if (cell_x > grid.width) cell_x = width;		
+		if (cell_y < 0) cell_y = 0;
+		if (cell_y > grid.width) cell_y = height;
+
+		int cell_id = grid.get_id(cell_x, cell_y);
+
+		double m = particles[i].mass;
+		double pvx = particles[i].velocity_x;
+		double pvy = particles[i].velocity_y;
+		double g = grid.particle_g;
+
+		double x = particles[i].x;
+		double y = particles[i].y;
+
+		// Set velcoity
+		particles[i].velocity_x = m * pvx + (1 - m) * grid.velocity_x[cell_id];
+		particles[i].velocity_y = m * pvy + (1 - m) * grid.velocity_y[cell_id] - g;
+
+		// Set position
+		particles[i].x = x + (particles[i].velocity_x + pvx) / 2;
+		particles[i].y = y + (particles[i].velocity_y + pvy) / 2;
+	}
 }
 
 void Automaton::save_to_file(std::string path, int iteration)

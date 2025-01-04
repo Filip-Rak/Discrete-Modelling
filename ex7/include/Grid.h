@@ -4,10 +4,24 @@
 #include <iostream>
 #include <sstream>
 
+#include <SFML/Graphics/Color.hpp>
+
 /* Structs */
 class Grid
 {
 public:
+	/* Structs */
+	struct Particle
+	{
+		double x, y;
+		double velocity_x, velocity_y;
+		double mass;
+		sf::Color color;
+
+		Particle(double x, double y, double mass, sf::Color color) :
+			x(x), y(y), mass(mass), color(color), velocity_x(0.f), velocity_y(0.f) {}
+	};
+
 	/* Statics & Constants */
     static constexpr int direction_num = 9; // D2Q9 model
     static constexpr int directions_x[direction_num] = { 0, 1, -1, 0, 0, 1, -1, -1, 1 };
@@ -34,6 +48,16 @@ private:
 	// Indexing: [direction][cell_num]
 	double* f_in[direction_num];	// Input functions
 	double* f_buffer[direction_num];	// Buffer for temporary functions
+	
+	const static int particle_num = 4;
+	Particle particles[particle_num] = {
+		Particle(30, 0, 0.1, sf::Color::Yellow),
+		Particle(100, 10, 0.1, sf::Color::Green),
+		Particle(200, 40, 0.1, sf::Color::Cyan),
+		Particle(20, 0, 0.1, sf::Color::Magenta),
+	};
+
+	double particle_g = -0.02f;
 
 public:
 	/* Frenship Declaration */
@@ -73,4 +97,11 @@ public:
 
 	double get_velocity_x(int cell_id);
 	double get_velocity_y(int cell_id);
+
+	Particle* Grid::get_particles()
+	{
+		return particles;
+	}
+
+	int get_particle_num();
 };

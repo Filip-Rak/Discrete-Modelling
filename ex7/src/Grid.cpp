@@ -216,3 +216,8 @@ double Grid::get_velocity_y(int cell_id)
 {
 	return velocity_y[cell_id];
 }
+
+int Grid::get_particle_num()
+{
+	return particle_num;
+}
