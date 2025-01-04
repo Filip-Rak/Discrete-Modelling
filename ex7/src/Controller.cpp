@@ -226,6 +226,7 @@ void Controller::initialize_ui()
 	auto cell_log_button = ui.get_widget_as<tgui::Button>("cell_log_button");
 	auto vx_window_button = ui.get_widget_as<tgui::Button>("vx_window_button");
 	auto vy_window_button = ui.get_widget_as<tgui::Button>("vy_window_button");
+	auto save_img_button = ui.get_widget_as<tgui::Button>("save_as_img_button");
 
 	auto air_button = ui.get_widget_as<tgui::Button>("air_button");
 	auto gas_button = ui.get_widget_as<tgui::Button>("gas_button");
@@ -408,6 +409,11 @@ void Controller::initialize_ui()
 			}
 
 			update_sub_window_button_text();
+		});
+
+	save_img_button->onPress([this]
+		{
+			visualization.save_grid_as_image(IMG_OUT_PATH, iteration_number);
 		});
 
 	// State tools

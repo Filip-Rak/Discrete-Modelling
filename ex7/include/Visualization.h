@@ -91,6 +91,7 @@ public:
 	void init_ui();
 	void clear();
 	void display();
+	void save_grid_as_image(std::string path, int iteration);
 
 	/* Getters */
 	bool is_window_open() const;

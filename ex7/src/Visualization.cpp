@@ -618,6 +618,69 @@ void Visualization::handle_mouse_click(int mouse_x, int mouse_y, bool left_butto
 	}
 }
 
+void Visualization::save_grid_as_image(std::string path, int iteration)
+{
+	// Create render textures
+	sf::RenderTexture main_grid_tex;
+	sf::RenderTexture vx_tex;
+	sf::RenderTexture vy_tex;
+
+	main_grid_tex.create(grid_width * main_grid_cell_size, grid_height * main_grid_cell_size);
+	vx_tex.create(grid_width * sub_grid_cell_size, grid_height * sub_grid_cell_size);
+	vy_tex.create(grid_width * sub_grid_cell_size, grid_height * sub_grid_cell_size);
+
+	// Clear render texutures
+	main_grid_tex.clear();
+	vx_tex.clear();
+	vy_tex.clear();
+
+	// Draw vertices onto the texture
+	
+	// Copy main grid verts with offset
+	sf::VertexArray main_grid_copy(sf::Quads);
+	int vertices = grid_width * grid_height * 4;
+	main_grid_copy.resize(vertices);
+
+	for (int i = 0; i < vertices; i++)
+	{
+		// Copy vert
+		main_grid_copy[i] = main_grid_vertices[i];
+
+		// Offset copy
+		main_grid_copy[i].position.x -= GRID_PADDING;
+		main_grid_copy[i].position.y -= GRID_PADDING;
+	}
+
+	main_grid_tex.draw(main_grid_copy);
+	vx_tex.draw(vx_grid_vertices);
+	vy_tex.draw(vy_grid_vertices);
+
+	// Display vertices on the texture
+	main_grid_tex.display();
+	vx_tex.display();
+	vy_tex.display();
+
+	// Create images based on textures
+	sf::Image main_grid_img = main_grid_tex.getTexture().copyToImage();
+	sf::Image vx_img = vx_tex.getTexture().copyToImage();
+	sf::Image vy_img = vy_tex.getTexture().copyToImage();
+
+	// Save images to files
+	std::string filename = path + "i=" + std::to_string(iteration) + "-";
+	std::string extension = ".png";
+
+	bool main_grid_success = main_grid_img.saveToFile(filename + "a_main_grid" + extension);
+	bool vx_success = vx_img.saveToFile(filename + "b_vx" + extension);
+	bool vy_success = vy_img.saveToFile(filename + "c_vy" + extension);
+
+	if (main_grid_success && vx_success && vy_success)
+	{
+		std::cout << "Saved as set of images at: " + filename << "\n";
+	}
+
+	// Else not needed saveToFile prints to console
+}
+
 sf::Color Visualization::get_gas_color(double concentration)
 {
 	// Normalize concentration (0 to 1)

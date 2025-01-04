@@ -14,6 +14,10 @@ private:
 	UI ui;
 	Automaton automaton;
 
+	// Paths
+	const std::string OUTPUT_PATH = "output/";
+	const std::string IMG_OUT_PATH = OUTPUT_PATH + "img/";
+
 	// Flags
 	bool use_gpu = false;
 	bool paused = true;
