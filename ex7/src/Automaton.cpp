@@ -16,9 +16,9 @@ void Automaton::generate_random(double probability)
 	int wall_end = wall_start + 1;      // End of wall region (1-cell wide)
 
 	// Overwrite for bcs
-	wall_start = -1;
-	wall_end = -1;
-	gas_end = this->width;
+	// wall_start = -1;
+	// wall_end = -1;
+	// gas_end = this->width;
 
 	for (int y = 0; y < this->height; ++y)
 	{

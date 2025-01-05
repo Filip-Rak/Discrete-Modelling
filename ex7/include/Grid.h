@@ -60,12 +60,23 @@ private:
 	double* f_in[direction_num];	// Input functions
 	double* f_buffer[direction_num];	// Buffer for temporary functions
 	
-	const static int particle_num = 4;
+	const static int particle_num = 12;
 	Particle particles[particle_num] = {
 		Particle(0, 0, 0.f, sf::Color::Yellow),
 		Particle(0, 0, 0.2f, sf::Color::Green),
-		Particle(0, 0, 0.6f, sf::Color::Cyan),
-		Particle(0, 0, 0.8f, sf::Color::Magenta),
+		Particle(0, 0, 0.6f, sf::Color::Cyan),		
+		
+		Particle(0, 200, 0.f, sf::Color::Yellow),
+		Particle(0, 200, 0.2f, sf::Color::Green),
+		Particle(0, 200, 0.6f, sf::Color::Cyan),
+		
+		Particle(0, 400, 0.f, sf::Color::Yellow),
+		Particle(0, 400, 0.2f, sf::Color::Green),
+		Particle(0, 400, 0.6f, sf::Color::Cyan),
+		
+		Particle(0, 600, 0.f, sf::Color::Yellow),
+		Particle(0, 600, 0.2f, sf::Color::Green),
+		Particle(0, 600, 0.6f, sf::Color::Cyan),
 	};
 
 	double particle_g = -0.005f;

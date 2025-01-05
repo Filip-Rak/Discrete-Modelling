@@ -170,7 +170,7 @@ void Controller::update()
 			automaton.update(use_gpu);
 
 			// Update particles
-			// automaton.update_particles(visualization.get_cell_size());
+			automaton.update_particles(visualization.get_cell_size());
 
 			// Update the visualization after grid changes
 			visualization.manage_grid_update(automaton.get_grid());
@@ -198,8 +198,8 @@ void Controller::render()
 
 	// Draw elements
 	visualization.draw_grid(automaton.get_grid(), outline_enabled, streamlines_enabled);
-	// Grid::Particle* particles = automaton.get_grid()->get_particles();
-	// visualization.draw_particles(particles, automaton.get_grid()->get_particle_num());
+	Grid::Particle* particles = automaton.get_grid()->get_particles();
+	visualization.draw_particles(particles, automaton.get_grid()->get_particle_num());
 
 	visualization.draw_ui();
 	visualization.draw_sub_windows();
