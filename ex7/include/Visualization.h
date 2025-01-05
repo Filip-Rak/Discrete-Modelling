@@ -36,7 +36,7 @@ private:
 	// Constants
 	const float UI_VIEW_PORTION = 0.25f;
 	const float GRID_PADDING = 20.f;
-	const float VELOCITY_MAX = 0.02f;	// 0.02f for BC1 
+	const float VELOCITY_MAX = 0.04f;	// 0.02f for BC1 
 	const float NO_VELOCITY_BOUNDARY = 1e-8f;	// Use higher 1e-6 for V1 BCs
 	const float STREAMLINE_THICKNESS = 1.5f;
 	const float STREAMLINE_SPACING = 10.f;

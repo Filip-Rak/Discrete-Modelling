@@ -17,7 +17,7 @@ private:
 	/* Attributes */
 	int width, height;
 
-	// Components
+	// ComponentsS
 	AutomatonCUDA cuda_helper;
 	Grid grid;
 	Grid grid_fallback;
@@ -44,6 +44,7 @@ private:
 	void apply_bc1(int x, int y);
 	void apply_bc2(int x, int y);
 	void update_gpu();
+	double clamp(double val, double min, double max);
 
 public:
 	/* Getters */

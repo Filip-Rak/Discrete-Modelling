@@ -393,6 +393,26 @@ void Visualization::draw_particles(Grid::Particle* particles, int num)
 
 	for (int i = 0; i < num; i++)
 	{
+		/* Draw Trajectory */
+		if (particles[i].trajectory.size() > 1)
+		{
+			// Create a line from points
+			sf::VertexArray line(sf::LinesStrip, particles[i].trajectory.size());
+			for (int j = 0; j < particles[i].trajectory.size(); j += 1)
+			{
+				line[j].position = sf::Vector2f(
+					particles[i].trajectory[j].x + GRID_PADDING,
+					particles[i].trajectory[j].y + GRID_PADDING
+				);
+
+				// Use the particle's color
+				line[j].color = particles[i].color;
+			}
+
+			// Draw the line
+			main_window.draw(line);
+		}
+
 		// Set properties
 		circle.setRadius(3.f);
 		circle.setFillColor(particles[i].color);

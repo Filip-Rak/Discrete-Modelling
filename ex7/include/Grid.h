@@ -3,8 +3,10 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/System/Vector2.hpp>
 
 /* Structs */
 class Grid
@@ -17,9 +19,18 @@ public:
 		double velocity_x, velocity_y;
 		double mass;
 		sf::Color color;
+		std::vector<sf::Vector2f> trajectory;
 
 		Particle(double x, double y, double mass, sf::Color color) :
-			x(x), y(y), mass(mass), color(color), velocity_x(0.f), velocity_y(0.f) {}
+			x(x), y(y), mass(mass), color(color), velocity_x(0.f), velocity_y(0.f) 
+		{
+			trajectory.push_back(sf::Vector2f(x, y));
+		}
+
+		void update_trajcetory()
+		{
+			trajectory.push_back(sf::Vector2f(x, y));
+		}
 	};
 
 	/* Statics & Constants */
@@ -51,13 +62,13 @@ private:
 	
 	const static int particle_num = 4;
 	Particle particles[particle_num] = {
-		Particle(30, 0, 0.1, sf::Color::Yellow),
-		Particle(100, 10, 0.1, sf::Color::Green),
-		Particle(200, 40, 0.1, sf::Color::Cyan),
-		Particle(20, 0, 0.1, sf::Color::Magenta),
+		Particle(0, 0, 0.f, sf::Color::Yellow),
+		Particle(0, 0, 0.2f, sf::Color::Green),
+		Particle(0, 0, 0.6f, sf::Color::Cyan),
+		Particle(0, 0, 0.8f, sf::Color::Magenta),
 	};
 
-	double particle_g = -0.02f;
+	double particle_g = -0.005f;
 
 public:
 	/* Frenship Declaration */

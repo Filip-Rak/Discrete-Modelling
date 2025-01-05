@@ -99,7 +99,7 @@ void Grid::set_cell_as_active(int x, int y, double density)
 	int cell_id = get_id(x, y);
 
 	// Call the setter
-	set_cell_as_active(cell_id);
+	set_cell_as_active(cell_id, density);
 }
 
 void Grid::set_cell_as_active(int cell_id, double density_param)

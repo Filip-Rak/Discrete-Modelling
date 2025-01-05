@@ -43,6 +43,7 @@ void Automaton::generate_random(double probability)
 			}
 			else // Empty region
 			{
+				// grid.set_cell_as_active(x, y, 0.2f);
 				grid.set_cell_as_inactive(x, y);
 			}
 
@@ -98,18 +99,20 @@ void Automaton::update_particles(double cell_size)
 	Grid::Particle* particles = grid.get_particles();
 	for (int i = 0; i < grid.get_particle_num(); i += 1)
 	{
-		// Find the index of the cell
+		/* Set Up Before Calculation */
+
+		// Get position of the cell
 		int cell_x = particles[i].x / cell_size;
 		int cell_y = particles[i].y / cell_size;
 
-		// Clamp
-		if (cell_x < 0) cell_x = 0;
-		if (cell_x > grid.width) cell_x = width;		
-		if (cell_y < 0) cell_y = 0;
-		if (cell_y > grid.width) cell_y = height;
+		// Clamp cell indecies
+		cell_x = clamp(cell_x, 0, width - 1);
+		cell_y = clamp(cell_y, 0, height - 1);
 
+		// Get id of the cell
 		int cell_id = grid.get_id(cell_x, cell_y);
 
+		/* Calculation */
 		double m = particles[i].mass;
 		double pvx = particles[i].velocity_x;
 		double pvy = particles[i].velocity_y;
@@ -125,6 +128,13 @@ void Automaton::update_particles(double cell_size)
 		// Set position
 		particles[i].x = x + (particles[i].velocity_x + pvx) / 2;
 		particles[i].y = y + (particles[i].velocity_y + pvy) / 2;
+
+		/* Keep Inside Boundries */
+		particles[i].x = clamp(particles[i].x, 0.f, ((double)width - 1) * cell_size);
+		particles[i].y = clamp(particles[i].y, 0.f, ((double)height - 1) * cell_size);
+
+		/* Add Position to Trajectory */
+		particles[i].update_trajcetory();
 	}
 }
 
@@ -442,7 +452,9 @@ void Automaton::apply_bc2(int x, int y)
 		normalized = 1.0 - normalized;
 
 		// Values to apply
-		double Ux = 0.02f * normalized;
+		// double Ux = 0.02f * normalized;
+		// Overwrite
+		double Ux = 0.04f * normalized;
 		double Uy = 0.f;
 		double rho = 1.f;  // Assume density of 1 at the inflow
 		
@@ -501,6 +513,16 @@ void Automaton::apply_bc2(int x, int y)
 void Automaton::update_gpu()
 {
 	
+}
+
+double Automaton::clamp(double val, double min, double max)
+{
+	if (val > max)
+		return max;
+	if (val < min)
+		return min;
+
+	return val;
 }
 
 /* Getters */
