@@ -71,7 +71,7 @@ Elementary cellular automaton in Python with usage of NumPy and Matplotlib libra
 - **Border Handling**: Management of edge cases in automaton evolution.
 - **Seed Generation**: Initialization of starting patterns.
 - **Rule Application**: Implementing of rule sets for evolution.
-- **Binary Rule Encoding** – Storing rules efficiently.
+- **Binary Rule Encoding** – Each rule  is represented as an 8-bit binary number, where each bit corresponds to the output state.
 - **Progress Visualization** - Matplotlib graph visulizing the progress of automaton.
 - **Output to File** - Progress of the automaton is saved to .csv file.
 
@@ -82,9 +82,31 @@ Elementary cellular automaton in Python with usage of NumPy and Matplotlib libra
 ### Directory Structure
 ```
 ex3/  
-│── Output/				# Stores automaton progress in .csv format
-│── elementaryCa.py		# Python source code with automaton functions
-│── main.py				# Entry point for the program and tasks within this exercise
+│── Output/             # Stores automaton progress in .csv format
+│── elementaryCa.py     # Python source code with automaton functions
+│── main.py             # Entry point for the program and tasks within this exercise
+```
+
+## Exercise 4
+Implementation of Conway's Game of Life in Python including:
+- **Definition of various patterns**.
+- **Rule Application** with accordance to Game of Life.
+- **Hadnling of boundary conditions**.
+- **Grid-based simulation** of cell evolution.
+- **Export of results as gifs** for visualization.
+
+![Gif visualizing the progress of 2D automaton with random seed](Media/ex4_automaton.gif)
+
+*Gif visualizing the progress of 2D automaton with random seed*
+
+### Directory Structure
+```
+ex4/  
+│── Output/				# Results of various tasks saved as gifs
+│   │── good rands/		# Handpicked interesting random results
+│
+│── GameOfLife.py		# Python source code with automaton functions
+│── Main.py				# Entry point for the program and tasks within this exercise
 ```
 
 
