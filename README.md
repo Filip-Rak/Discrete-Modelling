@@ -1,9 +1,9 @@
 # Overview
 This repository contains solutions to various exercises for the **Discrete Modelling** course during the fifth semester at **AGH University of Krakow**. The exercises involve implementing different computational models and simulations in **Python** and **C++**, covering topics such as **image processing**, **cellular automata**, and **fluid simulations**.
 
-![Forest Fire Simulation](Media/ex5_forest_fire.gif)
+![Forest Fire Simulation](Media/eye_catch.gif)
 
-*Forest fire simulation*
+*Forest fire simulation with changing wind*
 
 ---
 
@@ -25,6 +25,7 @@ Discrete-Modelling/
 
 # Exercises
 ## Exercise 1: Image Processing
+### Overview
 Basic image manipulation in Python with the usage of Pillow library:
 - **Brightness adjustment**: Modifying image brightness levels.
 - **Binarization**: Converting images to black and white based on a threshold.
@@ -46,6 +47,7 @@ ex1/
 ```
 
 ## Exercise 2: Morphological Transformations
+### Overview
 Further image processing making use of previous functionality and NumPy library:
 - **Morphological Transformations**: Applying opening and closing operations to clean up images.
 - **Convolution**: Applying kernels for effects like blurring and edge detection.
@@ -67,6 +69,7 @@ ex2/
 ```
 
 ## Exercise 3: Elementary Cellular Automaton
+### Overview
 1D automaton in Python with usage of NumPy and Matplotlib libraries:
 - **Border Handling**: Management of edge cases in automaton evolution.
 - **Seed Generation**: Initialization of starting patterns.
@@ -88,6 +91,7 @@ ex3/
 ```
 
 ## Exercise 4: Conway's Game of Life
+### Overview
 Implementation of Conway's Game of Life in Python including:
 - **Definition of various patterns**.
 - **Rule Application** with accordance to Game of Life.
@@ -110,11 +114,12 @@ ex5/
 ```
 
 ## Exercise 5: Forest Fire Simulation
+### Overview
 A 2D cellular automaton simulating forest fire dynamics in Python with usage of Numpy, Pillow and PyGame libraries including:
 - **Image-based map loading**: Real photos and images will be interpreted by the code and used to create the simulation environment.
 - **Seven total cell states**: Dirt, forest, overgrown forest, fire, burned, water, flood.
 - **Cell state changes overtime**: Forest will grow larger, floods will disappear overtime, fire will spread out and burn for a limited time, burned cells will transition into dirt after a while.
-- **Real-time environment manipulation**: User can change each and every cell to any type.
+- **Real-time environment manipulation**: User can change each and every cell to any type while the simulation is running or paused.
 - **Wind in fire simulation**: The behavior of fire changes drastically based on the wind, which can lead it towards 8 different directions or disabled.
 - **Water fighting fire**: For the fire to have a natural and interesting counter, the water will flood the fire chasing it's till it's extinguished.
 - **Simulation speed controls**: The simulation can be paused, sped up, slowed down or reset. 
@@ -122,7 +127,7 @@ A 2D cellular automaton simulating forest fire dynamics in Python with usage of 
 
 ![Gif showcasing the usage of the program](Media/ex5_forest_fire.gif)
 
-*Gif showcasing the usage of the program*
+*Gif showcasing the progress of a fire with changing wind*
 
 ### Directory Structure
 ```
@@ -131,4 +136,37 @@ ex5/
 │── Automaton.py       # Python source code handling the various aspects of automaton simulation.  
 │── Visualization.py   # Python source code responsible for visualization and control of the automaton.  
 │── Main.py            # Entry point for the program, handles the interpretation of an image into a map and creation of both the automaton and visualization.  
+```
+
+## Exercise 6: LGA Automaton
+### Overview
+A complex 2D Lattice Gas Automaton in C++ using SFML and TGUI libraries as well as CUDA framework with the following features:
+- **Three cell states**: Air, Gas, Wall.
+- **Random seed generation**: Probability of cell being of Gas type inputted by the user.
+- **Real time grid manipulation**: User can modify any cell to be of any type while the simulation is running or paused.
+- **Simulation controls**: The simulation can be paused, sped up, slowed down, reset or regenerated.
+- **Option to display or hide the grid**.
+- **Ability to change the processing unit from CPU to GPU in real time**: Regrettably GPU update method doesn't do anything anymore in the final version. Reason for this is that every next project required significant changes to the automaton's rule application which in turn meant that both CPU and GPU automaton update codes had to be rewritten each and every time.
+
+
+![LGA simulation](Media/ex6_LGA.gif)
+
+*LGA simulation*
+
+### Project Structure
+- **Controller**: A class that manages the operation of the entire program, coordinating interactions between other components.
+- **Visualization**: Responsible for visualizing the LGA automaton process using the SFML library.
+- **UI**: Handles the positioning of the graphical user interface (GUI) using the TGUI library.
+- **Automaton**: Implements the sequential model of the LGA cellular automaton.
+- **AutomatonCUDA**: Implements the LGA automaton model using the GPU on the CUDA platform.
+
+### Directory Structure
+```
+ex6/  
+│── include/              # Header files (.h) for class and method declarations
+│── src/                  # Source files (.cpp), including the main entry point (main.cpp)
+│── LGA.sln               # Visual Studio solution file (open this to load the project)
+│── LGA.vcxproj           # Visual Studio project file (contains project settings)
+│── LGA.vcxproj.filters   # Visual Studio project filters file (organizes files in Solution Explorer)
+│── dependencies.zip      # External dependencies (extract here to ensure proper functionality)
 ```
