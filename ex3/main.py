@@ -9,15 +9,15 @@ import numpy
 # Constants
 
 # Automaton
-DEFAULT_WIDTH = 30
+DEFAULT_WIDTH = 11
 DEFAULT_HEIGHT = 20
-DEFAULT_ITERATIONS = 10000
-DEFAULT_RULE = 52
+DEFAULT_ITERATIONS = 20
+DEFAULT_RULE = 150
 DEFAULT_STATE = 0
-DEFAULT_SEED = numpy.array([1, 0, 1, 1, 1, 0, 0, 1, 0, 0])
+DEFAULT_SEED = numpy.array([0, 0, 0, 0, 0, 1, 0, 0, 0, 0])
 
 # Paths
-OUTPUT_PATH = "../Output/"
+OUTPUT_PATH = "Output/"
 
 # --------------------
 # Main Functions
@@ -34,14 +34,14 @@ def main():
         width = seed_array.shape[0]
 
     # Apply the rule
-    result_matrix = apply_rule(rule, seed_array, height, iterations, BorderHandling.PERIODIC)
+    result_matrix = apply_rule(rule, seed_array, height, iterations, BorderHandling.ZERO_PADDING)
     print(result_matrix)
 
     # Make a graph
     visualize_matrix(result_matrix)
 
     # Save the matrix as CSV
-    save_matrix(result_matrix, OUTPUT_PATH + "result_matrix.csv", 3)
+    save_matrix(result_matrix, OUTPUT_PATH + "result_matrix.csv")
 
 def gather_basic_input() -> Tuple[int, int, int, int]:
     # Gather inputs
