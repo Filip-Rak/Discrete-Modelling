@@ -5,6 +5,9 @@ ex6/*
 
 !ex6/include/
 !ex6/include/**
+!ex6/dependencies.zip
+!ex6/LGA.vcxproj
+!ex6/LGA.vcxproj.filters
 
 ex7/*
 
