@@ -119,15 +119,15 @@ A 2D cellular automaton simulating forest fire dynamics in Python with usage of 
 - **Image-based map loading**: Real photos and images will be interpreted by the code and used to create the simulation environment.
 - **Seven cell states in total**: Dirt, forest, overgrown forest, fire, burned, water, flood.
 - **Cell state changes over time**: Forest will grow larger, floods will disappear over time, fire will spread out and burn for a limited time, burned cells will transition into dirt after a while.
-- **Real-time environment manipulation**: User can change each and every cell to any type while the simulation is running or paused.
+- **Real-time environment manipulation**: User can change any cell to any type while the simulation is running or paused.
 - **Wind in fire simulation**: The behavior of fire changes drastically based on the wind, which can lead it towards 8 different directions or disabled.
 - **Water fighting fire**: For the fire to have a natural and interesting counter, the water will flood the fire, chasing it until it's extinguished.
 - **Simulation speed control**: The simulation can be paused, sped up, slowed down or reset. 
 
 
-![Gif showcasing the usage of the program](Media/ex5_forest_fire.gif)
+![GIF showcasing the usage of the program](Media/ex5_forest_fire.gif)
 
-*Gif showcasing the progress of a fire with changing wind*
+*GIF showcasing the progress of a fire with changing wind*
 
 ### Directory Structure
 ```
@@ -143,10 +143,10 @@ ex5/
 A complex 2D Lattice Gas Automaton in C++ using SFML and TGUI libraries as well as CUDA framework with the following features:
 - **Three cell states**: Air, Gas, Wall.
 - **Random seed generation**: Probability of cell being of Gas type inputted by the user.
-- **Real time grid manipulation**: User can modify any cell to be of any type while the simulation is running or paused.
+- **Real-time grid manipulation**: User can modify any cell to be of any type while the simulation is running or paused.
 - **Simulation controls**: The simulation can be paused, sped up, slowed down, reset or regenerated.
 - **Option to display or hide the grid**.
-- **Ability to change the processing unit from CPU to GPU in real-time**: Regrettably GPU update method doesn't do anything anymore in the final version. The reason for this is that every subsequent project required significant changes to the automaton's rule application, which in turn meant that both the CPU and GPU automaton update codes had to be rewritten each time.
+- **Ability to change the processing unit from CPU to GPU in real-time**: Regrettably, the GPU update method is non-functional in the final version. The reason for this is that every subsequent project required significant changes to the automaton's rule application, which in turn meant that both the CPU and GPU automaton update codes had to be rewritten each time.
 
 
 ![LGA simulation](Media/ex6_LGA.gif)
@@ -177,11 +177,11 @@ A complex 2D fluid simulation based on Lattice Boltzmann Method in C++ using SFM
 - **Three cell states**: Air, Fluid, Wall.
 - **Simulation of particles**: Positions of particles as well as their trajectories are calculated based on the fluid flow and visualized. 
 - **Random seed generation**: Probability of cell being of Fluid type inputted by the user.
-- **Real time grid manipulation**: User can modify any cell to be of any type while the simulation is running or paused.
+- **Real-time grid manipulation**: User can modify any cell to be of any type while the simulation is running or paused.
 - **Simulation controls**: The simulation can be paused, sped up, slowed down, reset or regenerated.
 - **Visual grid options**: Toggleable buttons allow for display of streamlines, grid lines and trajectory of particles.
 - **Visualization of velocity**: Additional windows for displaying the velocity on X and Y axes.
-- **Ability to change the processing unit from CPU to GPU in real-time**: Regrettably GPU update method doesn't do anything anymore in the final version. The reason for this is that every subsequent project required significant changes to the automaton's rule application, which in turn meant that both the CPU and GPU automaton update codes had to be rewritten each time.
+- **Ability to change the processing unit from CPU to GPU in real-time**: Regrettably, the GPU update method is non-functional in the final version. The reason for this is that every subsequent project required significant changes to the automaton's rule application, which in turn meant that both the CPU and GPU automaton update codes had to be rewritten each time.
 - **Following a specified cell**: Ability to debug information about mouse selected cell each frame in the console for debugging.
 - **Exporting as image**: The state of the automaton can be saved as a set of 3 images: main grid, X-axis velocity and Y-axis velocity.
 - **Saving / Loading of the progress**: The progress of the automaton can be saved into a .csv file. The same file can be loaded to continue the computations in a different session
@@ -193,7 +193,7 @@ A complex 2D fluid simulation based on Lattice Boltzmann Method in C++ using SFM
 
 ### Project Structure
 - **Controller**: A class that manages the operation of the entire program, coordinating interactions between other components.
-- **Visualization**: Responsible for visualizing the LGA automaton process using the SFML library.
+- **Visualization**: Responsible for visualizing the LBM automaton process using the SFML library.
 - **UI**: Handles the positioning of the graphical user interface (GUI) using the TGUI library.
 - **Automaton**: Implements the sequential model of the LBM cellular automaton.
 - **AutomatonCUDA**: Implements the LBM automaton model using the GPU on the CUDA platform.
@@ -214,7 +214,7 @@ ex7/
 - For Python projects only source code and file structures are provided. Libraries are not included.
 - Both C++ projects can be easily opened through Visual Studio's 'Clone Repository' feature.
   - Paste the following link as location: https://github.com/Filip-Rak/Discrete-Modelling.
-  - Clone project.
+  - Clone the project..
   - Find the exercise in the directories of the project and unpack `dependencies.zip` file in its exact location. 
   - Navigate through the file structure to a `.sln` file and open it.
   - Now you can run the code from within Visual Studio.
