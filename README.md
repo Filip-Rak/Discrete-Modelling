@@ -3,7 +3,7 @@ This repository contains solutions to various exercises for the **Discrete Model
 
 ![Forest Fire Simulation](Media/ex5_forest_fire.gif)
 
-*Showcase of forest fire simulation*
+*Forest fire simulation*
 
 ---
 
@@ -58,11 +58,11 @@ Further image processing making use of previous functionality and NumPy library:
 ```
 ex2/  
 │── Images/
-│   │── Input/			# Initial images
-│   └── Output/			# Results
+│   │── Input/          # Initial images
+│   └── Output/         # Results
 │
-│── Masks/				# Text files defining kernels for image processing
-│── imgManip.py			# Python source code with image manipulation
-│── main.py				# Entry point for the program and tasks within this exercise
+│── Masks/              # Text files defining kernels for image processing
+│── imgManip.py         # Python source code with image manipulation
+│── main.py             # Entry point for the program and tasks within this exercise
 ```
 
