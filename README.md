@@ -24,7 +24,7 @@ Discrete-Modelling/
 ---
 
 # Exercises
-## Exercise 1
+## Exercise 1: Image Processing
 Basic image manipulation in Python with the usage of Pillow library:
 - **Brightness adjustment**: Modifying image brightness levels.
 - **Binarization**: Converting images to black and white based on a threshold.
@@ -45,7 +45,7 @@ ex1/
 │── main.py             # Entry point for the program and tasks within this exercise
 ```
 
-## Exercise 2
+## Exercise 2: Morphological Transformations
 Further image processing making use of previous functionality and NumPy library:
 - **Morphological Transformations**: Applying opening and closing operations to clean up images.
 - **Convolution**: Applying kernels for effects like blurring and edge detection.
@@ -66,8 +66,8 @@ ex2/
 │── main.py             # Entry point for the program and tasks within this exercise
 ```
 
-## Exercise 3
-Elementary cellular automaton in Python with usage of NumPy and Matplotlib libraries:
+## Exercise 3: Elementary Cellular Automaton
+1D automaton in Python with usage of NumPy and Matplotlib libraries:
 - **Border Handling**: Management of edge cases in automaton evolution.
 - **Seed Generation**: Initialization of starting patterns.
 - **Rule Application**: Implementing of rule sets for evolution.
@@ -87,7 +87,7 @@ ex3/
 │── main.py             # Entry point for the program and tasks within this exercise
 ```
 
-## Exercise 4
+## Exercise 4: Conway's Game of Life
 Implementation of Conway's Game of Life in Python including:
 - **Definition of various patterns**.
 - **Rule Application** with accordance to Game of Life.
@@ -109,4 +109,25 @@ ex4/
 │── Main.py				# Entry point for the program and tasks within this exercise
 ```
 
+## Exercise 5: Forest Fire Simulation
+A 2D cellular automaton simulating forest fire dynamics in Python with usage of Numpy, Pillow and PyGame libraries.
+- **Image-based map loading**: Real photos and images will be interpreted by the code and used to create the simulation environment.
+- **Seven total cell states**: Dirt, forest, overgrown forest, fire, burned, water, flood.
+- **Cell state changes overtime**: Forest will grow larger, floods will disappear overtime, fire will spread out and burn for a limited time, burned cells will transition into dirt after a while.
+- **Real-time environment manipulation**: User can change each and every cell to any type.
+- **Wind in fire simulation**: The behavior of fire changes drastically based on the wind, which can lead it towards 8 different directions or disabled.
+- **Simulation speed controls**: The simulation can be paused, sped up, slowed down or reset. 
 
+
+![Gif showcasing the usage of the program](Media/ex5_forest_fire.gif)
+
+*Gif showcasing the usage of the program*
+
+### Directory Structure
+```
+ex5/  
+│── Input/				    # Various images interpreted as maps / enviroments by the code.
+│── Automaton.py	    # Python source code handling the various aspect of automaton simulation.
+│── Visualization.py	# Python source code responsible for visualization and control of the automaton.
+│── Main.py				    # Entry point for the program, handles the interpretation of an image into a map and creation of both the automaton and visualization.
+```
