@@ -73,7 +73,7 @@ ex2/
 - **Rule Application**: Implementing of rule sets for evolution.
 - **Binary Rule Encoding** – Each rule  is represented as an 8-bit binary number, where each bit corresponds to the output state.
 - **Progress Visualization** - Matplotlib graph visulizing the progress of automaton.
-- **Output to File** - Progress of the automaton is saved to .csv file.
+- **Output to File** - Progress of the automaton is saved to a .csv file.
 
 ![Graph visualizing the progress of the automaton with random seed and rule](Media/ex3_graph.png)
 
@@ -101,21 +101,22 @@ Implementation of Conway's Game of Life in Python including:
 
 ### Directory Structure
 ```
-ex4/  
-│── Output/				# Results of various tasks saved as gifs
-│   │── good rands/		# Handpicked interesting random results
+ex5/  
+│── Output/             # Results of various tasks saved as gifs
+│   │── good_rands/     # Handpicked interesting random results
 │
-│── GameOfLife.py		# Python source code with automaton functions
-│── Main.py				# Entry point for the program and tasks within this exercise
+│── GameOfLife.py       # Python source code with automaton functions
+│── Main.py             # Entry point for the program and tasks within this exercise
 ```
 
 ## Exercise 5: Forest Fire Simulation
-A 2D cellular automaton simulating forest fire dynamics in Python with usage of Numpy, Pillow and PyGame libraries.
+A 2D cellular automaton simulating forest fire dynamics in Python with usage of Numpy, Pillow and PyGame libraries including:
 - **Image-based map loading**: Real photos and images will be interpreted by the code and used to create the simulation environment.
 - **Seven total cell states**: Dirt, forest, overgrown forest, fire, burned, water, flood.
 - **Cell state changes overtime**: Forest will grow larger, floods will disappear overtime, fire will spread out and burn for a limited time, burned cells will transition into dirt after a while.
 - **Real-time environment manipulation**: User can change each and every cell to any type.
 - **Wind in fire simulation**: The behavior of fire changes drastically based on the wind, which can lead it towards 8 different directions or disabled.
+- **Water fighting fire**: For the fire to have a natural and interesting counter, the water will flood the fire chasing it's till it's extinguished.
 - **Simulation speed controls**: The simulation can be paused, sped up, slowed down or reset. 
 
 
@@ -126,8 +127,8 @@ A 2D cellular automaton simulating forest fire dynamics in Python with usage of 
 ### Directory Structure
 ```
 ex5/  
-│── Input/				    # Various images interpreted as maps / enviroments by the code.
-│── Automaton.py	    # Python source code handling the various aspect of automaton simulation.
-│── Visualization.py	# Python source code responsible for visualization and control of the automaton.
-│── Main.py				    # Entry point for the program, handles the interpretation of an image into a map and creation of both the automaton and visualization.
+│── Input/             # Various images interpreted as maps / environments by the code.  
+│── Automaton.py       # Python source code handling the various aspects of automaton simulation.  
+│── Visualization.py   # Python source code responsible for visualization and control of the automaton.  
+│── Main.py            # Entry point for the program, handles the interpretation of an image into a map and creation of both the automaton and visualization.  
 ```
