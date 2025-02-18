@@ -170,3 +170,42 @@ ex6/
 │── LGA.vcxproj.filters   # Visual Studio project filters file (organizes files in Solution Explorer)
 │── dependencies.zip      # External dependencies (extract here to ensure proper functionality)
 ```
+
+## Exercise 7: LBM Automaton
+### Overview
+A complex 2D fluid simulation based on Lattice Boltzmann Method in C++ using SFML and TGUI libraries as well as CUDA framework with the following features:
+- **Three cell states**: Air, Fluid, Wall.
+- **Simulation of particles**: Positions of particles as well as their trajectories are calculated based on the fluid flow and visualized. 
+- **Random seed generation**: Probability of cell being of Fluid type inputted by the user.
+- **Real time grid manipulation**: User can modify any cell to be of any type while the simulation is running or paused.
+- **Simulation controls**: The simulation can be paused, sped up, slowed down, reset or regenerated.
+- **Visual options of the grid**: Toggleable buttons allow for display of streamlines, grid lines and trajectory of particles.
+- **Visualization of velocity**: Additional windows for displaying the velocity on X and Y axises.
+- **Ability to change the processing unit from CPU to GPU in real time**: Regrettably GPU update method doesn't do anything anymore in the final version. Reason for this is that every next project required significant changes to the automaton's rule application which in turn meant that both CPU and GPU automaton update codes had to be rewritten each and every time.
+- **Following a specified cell**: Ability to debug information about mouse selected cell each frame in the console for debugging.
+- **Exporting as image**: The state of the automaton can be saved as a set of 3 images: main grid, X-axis velocity and Y-axis velocity.
+- **Saving / Loading of the progress**: The progress of the automaton can be saved into a .csv file. The same file can be loaded to continue the computations in a different session
+
+
+![LBM simulation](Media/ex7_LBM.gif)
+
+*LBM simulation*
+
+### Project Structure
+- **Controller**: A class that manages the operation of the entire program, coordinating interactions between other components.
+- **Visualization**: Responsible for visualizing the LGA automaton process using the SFML library.
+- **UI**: Handles the positioning of the graphical user interface (GUI) using the TGUI library.
+- **Automaton**: Implements the sequential model of the LBM cellular automaton.
+- **AutomatonCUDA**: Implements the LBM automaton model using the GPU on the CUDA platform.
+
+### Directory Structure
+```
+ex7/  
+│── include/              # Header files (.h) for class and method declarations
+│── output/               # Simulation outputs (save states in .csv and images in .png)
+│── src/                  # Source files (.cpp), including the main entry point (main.cpp)
+│── LBM.sln               # Visual Studio solution file (open this to load the project)
+│── LBM.vcxproj           # Visual Studio project file (contains project settings)
+│── LBM.vcxproj.filters   # Visual Studio project filters file (organizes files in Solution Explorer)
+│── dependencies.zip      # External dependencies (extract here to ensure proper functionality)
+```
