@@ -7,6 +7,7 @@ ex6/*
 !ex6/dependencies.zip
 !ex6/LGA.vcxproj
 !ex6/LGA.vcxproj.filters
+!ex6/LGA.sln
 
 ex7/*
 
@@ -17,3 +18,4 @@ ex7/*
 !ex7/dependencies.zip
 !ex7/LBM.vcxproj
 !ex7/LBM.vcxproj.filters
+!ex7/LBM.sln
