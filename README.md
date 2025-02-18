@@ -73,10 +73,10 @@ ex2/
 1D automaton in Python with usage of NumPy and Matplotlib libraries:
 - **Border Handling**: Management of edge cases in automaton evolution.
 - **Seed Generation**: Initialization of starting patterns.
-- **Rule Application**: Implementing of rule sets for evolution.
+- **Rule Application**: Implementation of rule sets for evolution.
 - **Binary Rule Encoding** – Each rule  is represented as an 8-bit binary number, where each bit corresponds to the output state.
-- **Progress Visualization** - Matplotlib graph visulizing the progress of automaton.
-- **Output to File** - Progress of the automaton is saved to a .csv file.
+- **Progress Visualization** - Matplotlib graph visualizing the progress of automaton.
+- **Output to File** - The progress of the automaton is saved to a .csv file.
 
 ![Graph visualizing the progress of the automaton with random seed and rule](Media/ex3_graph.png)
 
@@ -95,18 +95,18 @@ ex3/
 Implementation of Conway's Game of Life in Python including:
 - **Definition of various patterns**.
 - **Rule Application** with accordance to Game of Life.
-- **Hadnling of boundary conditions**.
+- **Handling of boundary conditions**.
 - **Grid-based simulation** of cell evolution.
-- **Export of results as gifs** for visualization.
+- **Export of results as GIFs** for visualization.
 
-![Gif visualizing the progress of 2D automaton with random seed](Media/ex4_automaton.gif)
+![GIF visualizing the progress of 2D automaton with random seed](Media/ex4_automaton.gif)
 
-*Gif visualizing the progress of 2D automaton with random seed*
+*GIF visualizing the progress of 2D automaton with random seed*
 
 ### Directory Structure
 ```
-ex5/  
-│── Output/             # Results of various tasks saved as gifs
+ex4/  
+│── Output/             # Results of various tasks saved as GIFs
 │   │── good_rands/     # Handpicked interesting random results
 │
 │── GameOfLife.py       # Python source code with automaton functions
@@ -117,12 +117,12 @@ ex5/
 ### Overview
 A 2D cellular automaton simulating forest fire dynamics in Python with usage of Numpy, Pillow and PyGame libraries including:
 - **Image-based map loading**: Real photos and images will be interpreted by the code and used to create the simulation environment.
-- **Seven total cell states**: Dirt, forest, overgrown forest, fire, burned, water, flood.
-- **Cell state changes overtime**: Forest will grow larger, floods will disappear overtime, fire will spread out and burn for a limited time, burned cells will transition into dirt after a while.
+- **Seven cell states in total**: Dirt, forest, overgrown forest, fire, burned, water, flood.
+- **Cell state changes over time**: Forest will grow larger, floods will disappear over time, fire will spread out and burn for a limited time, burned cells will transition into dirt after a while.
 - **Real-time environment manipulation**: User can change each and every cell to any type while the simulation is running or paused.
 - **Wind in fire simulation**: The behavior of fire changes drastically based on the wind, which can lead it towards 8 different directions or disabled.
-- **Water fighting fire**: For the fire to have a natural and interesting counter, the water will flood the fire chasing it's till it's extinguished.
-- **Simulation speed controls**: The simulation can be paused, sped up, slowed down or reset. 
+- **Water fighting fire**: For the fire to have a natural and interesting counter, the water will flood the fire, chasing it until it's extinguished.
+- **Simulation speed control**: The simulation can be paused, sped up, slowed down or reset. 
 
 
 ![Gif showcasing the usage of the program](Media/ex5_forest_fire.gif)
@@ -146,7 +146,7 @@ A complex 2D Lattice Gas Automaton in C++ using SFML and TGUI libraries as well 
 - **Real time grid manipulation**: User can modify any cell to be of any type while the simulation is running or paused.
 - **Simulation controls**: The simulation can be paused, sped up, slowed down, reset or regenerated.
 - **Option to display or hide the grid**.
-- **Ability to change the processing unit from CPU to GPU in real time**: Regrettably GPU update method doesn't do anything anymore in the final version. Reason for this is that every next project required significant changes to the automaton's rule application which in turn meant that both CPU and GPU automaton update codes had to be rewritten each and every time.
+- **Ability to change the processing unit from CPU to GPU in real-time**: Regrettably GPU update method doesn't do anything anymore in the final version. The reason for this is that every subsequent project required significant changes to the automaton's rule application, which in turn meant that both the CPU and GPU automaton update codes had to be rewritten each time.
 
 
 ![LGA simulation](Media/ex6_LGA.gif)
@@ -179,9 +179,9 @@ A complex 2D fluid simulation based on Lattice Boltzmann Method in C++ using SFM
 - **Random seed generation**: Probability of cell being of Fluid type inputted by the user.
 - **Real time grid manipulation**: User can modify any cell to be of any type while the simulation is running or paused.
 - **Simulation controls**: The simulation can be paused, sped up, slowed down, reset or regenerated.
-- **Visual options of the grid**: Toggleable buttons allow for display of streamlines, grid lines and trajectory of particles.
-- **Visualization of velocity**: Additional windows for displaying the velocity on X and Y axises.
-- **Ability to change the processing unit from CPU to GPU in real time**: Regrettably GPU update method doesn't do anything anymore in the final version. Reason for this is that every next project required significant changes to the automaton's rule application which in turn meant that both CPU and GPU automaton update codes had to be rewritten each and every time.
+- **Visual grid options**: Toggleable buttons allow for display of streamlines, grid lines and trajectory of particles.
+- **Visualization of velocity**: Additional windows for displaying the velocity on X and Y axes.
+- **Ability to change the processing unit from CPU to GPU in real-time**: Regrettably GPU update method doesn't do anything anymore in the final version. The reason for this is that every subsequent project required significant changes to the automaton's rule application, which in turn meant that both the CPU and GPU automaton update codes had to be rewritten each time.
 - **Following a specified cell**: Ability to debug information about mouse selected cell each frame in the console for debugging.
 - **Exporting as image**: The state of the automaton can be saved as a set of 3 images: main grid, X-axis velocity and Y-axis velocity.
 - **Saving / Loading of the progress**: The progress of the automaton can be saved into a .csv file. The same file can be loaded to continue the computations in a different session
@@ -209,3 +209,12 @@ ex7/
 │── LBM.vcxproj.filters   # Visual Studio project filters file (organizes files in Solution Explorer)
 │── dependencies.zip      # External dependencies (extract here to ensure proper functionality)
 ```
+
+## Installation
+- For Python projects only source code and file structures are provided. Libraries are not included.
+- Both C++ projects can be easily opened through Visual Studio's 'Clone Repository' feature.
+  - Paste the following link as location: https://github.com/Filip-Rak/Discrete-Modelling.
+  - Clone project.
+  - Find the exercise in the directories of the project and unpack `dependencies.zip` file in its exact location. 
+  - Navigate through the file structure to a `.sln` file and open it.
+  - Now you can run the code from within Visual Studio.
