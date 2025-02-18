@@ -62,7 +62,29 @@ ex2/
 │   └── Output/         # Results
 │
 │── Masks/              # Text files defining kernels for image processing
-│── imgManip.py         # Python source code with image manipulation
+│── imgManip.py         # Python source code with image manipulation functions
 │── main.py             # Entry point for the program and tasks within this exercise
 ```
+
+## Exercise 3
+Elementary cellular automaton in Python with usage of NumPy and Matplotlib libraries:
+- **Border Handling**: Management of edge cases in automaton evolution.
+- **Seed Generation**: Initialization of starting patterns.
+- **Rule Application**: Implementing of rule sets for evolution.
+- **Binary Rule Encoding** – Storing rules efficiently.
+- **Progress Visualization** - Matplotlib graph visulizing the progress of automaton.
+- **Output to File** - Progress of the automaton is saved to .csv file.
+
+![Graph visualizing the progress of the automaton with random seed and rule](Media/ex3_graph.png)
+
+*Graph visualizing the progress of the automaton with random seed and rule*
+
+### Directory Structure
+```
+ex3/  
+│── Output/				# Stores automaton progress in .csv format
+│── elementaryCa.py		# Python source code with automaton functions
+│── main.py				# Entry point for the program and tasks within this exercise
+```
+
 
