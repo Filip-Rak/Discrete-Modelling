@@ -116,7 +116,7 @@ ex4/
 ## Exercise 5: Forest Fire Simulation
 ### Overview
 A 2D cellular automaton simulating forest fire dynamics in Python with usage of Numpy, Pillow and PyGame libraries including:
-- **Image-based map loading**: Real photos and images will be interpreted by the code and used to create the simulation environment.
+- **Image-based map loading**: Real-world images are parsed to initialize the simulation environment.
 - **Seven cell states in total**: Dirt, forest, overgrown forest, fire, burned, water, flood.
 - **Cell state changes over time**: Forest will grow larger, floods will disappear over time, fire will spread out and burn for a limited time, burned cells will transition into dirt after a while.
 - **Real-time environment manipulation**: User can change any cell to any type while the simulation is running or paused.
@@ -176,14 +176,14 @@ ex6/
 A complex 2D fluid simulation based on Lattice Boltzmann Method in C++ using SFML and TGUI libraries as well as CUDA framework with the following features:
 - **Three cell states**: Air, Fluid, Wall.
 - **Simulation of particles**: Positions of particles as well as their trajectories are calculated based on the fluid flow and visualized. 
-- **Random seed generation**: Probability of cell being of Fluid type inputted by the user.
+- **Random seed generation**: Probability of cell being of Fluid type entered by the user.
 - **Real-time grid manipulation**: User can modify any cell to be of any type while the simulation is running or paused.
 - **Simulation controls**: The simulation can be paused, sped up, slowed down, reset or regenerated.
 - **Visual grid options**: Toggleable buttons allow for display of streamlines, grid lines and trajectory of particles.
 - **Visualization of velocity**: Additional windows for displaying the velocity on X and Y axes.
-- **Ability to change the processing unit from CPU to GPU in real-time**: Regrettably, the GPU update method is non-functional in the final version. The reason for this is that every subsequent project required significant changes to the automaton's rule application, which in turn meant that both the CPU and GPU automaton update codes had to be rewritten each time.
-- **Following a specified cell**: Ability to debug information about mouse selected cell each frame in the console for debugging.
-- **Exporting as image**: The state of the automaton can be saved as a set of 3 images: main grid, X-axis velocity and Y-axis velocity.
+- **Ability to change the processing unit from CPU to GPU in real-time**: *Note: GPU functionality was deprecated in later projects due to iterative rule changes*.
+- **Cell Debugging**: Inspect real-time data for any cell selected with the mouse, logged to the console each frame.
+- **Exporting as images**: The state of the automaton can be saved as a set of 3 images: main grid, X-axis velocity and Y-axis velocity.
 - **Saving / Loading of the progress**: The progress of the automaton can be saved into a .csv file. The same file can be loaded to continue the computations in a different session
 
 
@@ -214,7 +214,8 @@ ex7/
 - For Python projects only source code and file structures are provided. Libraries are not included.
 - Both C++ projects can be easily opened through Visual Studio's 'Clone Repository' feature.
   - Paste the following link as location: https://github.com/Filip-Rak/Discrete-Modelling.
-  - Clone the project..
-  - Find the exercise in the directories of the project and unpack `dependencies.zip` file in its exact location. 
+  - Clone the project.
+  - Navigate to the desired exercise directory within the project.
+  - `dependencies.zip` file **must** be extracted in its exact location in order to avoid build errors. 
   - Navigate through the file structure to a `.sln` file and open it.
   - Now you can run the code from within Visual Studio.
