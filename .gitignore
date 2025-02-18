@@ -15,7 +15,10 @@ ex7/*
 !ex7/src/**
 !ex7/include/
 !ex7/include/**
+!ex7/output/
 !ex7/dependencies.zip
 !ex7/LBM.vcxproj
 !ex7/LBM.vcxproj.filters
 !ex7/LBM.sln
+
+ex7/output/img/*.png
