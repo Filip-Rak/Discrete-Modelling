@@ -210,7 +210,7 @@ ex7/
 │── dependencies.zip      # External dependencies (extract here to ensure proper functionality)
 ```
 
-## Installation
+# Installation
 - For Python projects only source code and file structures are provided. Libraries are not included.
 - Both C++ projects can be easily opened through Visual Studio's 'Clone Repository' feature.
   - Paste the following link as location: https://github.com/Filip-Rak/Discrete-Modelling.
