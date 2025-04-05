@@ -213,7 +213,7 @@ ex7/
 # Installation
 - For Python projects only source code and file structures are provided. Libraries are not included.
 - Both C++ projects can be easily opened through Visual Studio's 'Clone Repository' feature.
-  - Paste the following link as location: https://github.com/Filip-Rak/Discrete-Modelling.
+  - Paste the following link as location: https://github.com/Filip-Rak/Discrete-Modelling.git
   - Clone the project.
   - Navigate to the desired exercise directory within the project.
   - `dependencies.zip` file **must** be extracted in its exact location in order to avoid build errors. 
