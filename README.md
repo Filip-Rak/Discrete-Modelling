@@ -7,6 +7,19 @@ This repository showcases a series of independently developed simulations and co
 *Forest fire simulation with changing wind*
 
 ---
+# Table of Contents
+
+| Title | Language(s) | Tools & Libraries       | Description |
+|-------|-------------|--------------------------|-------------|
+| [Image Processing](#exercise-1-image-processing) | Python      | Pillow                    | Basic image manipulation tasks |
+| [Morphological Transformations](#exercise-2-morphological-transformations) | Python      | NumPy, Pillow             | Convolution, dilation, erosion |
+| [Elementary Cellular Automaton](#exercise-3-elementary-cellular-automaton) | Python      | NumPy, Matplotlib         | Rule-based 1D CA visualization |
+| [Conway's Game of Life](#exercise-4-conways-game-of-life) | Python      | Pillow, Matplotlib        | Classic 2D automaton simulation |
+| [Forest Fire Simulation](#exercise-5-forest-fire-simulation) | Python      | PyGame, Pillow            | Real-time fire dynamics with wind |
+| [LGA Automaton](#exercise-6-lga-automaton) | C++         | SFML, TGUI, CUDA          | 2D Interactive lattice gas simulation |
+| [LBM Fluid Simulation](#exercise-7-lbm-automaton) | C++         | SFML, TGUI, CUDA          | 2D real-time fluid dynamics |
+---
+
 
 # Main Repository Structure
 ```
