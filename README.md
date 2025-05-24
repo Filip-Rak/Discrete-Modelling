@@ -1,5 +1,6 @@
 # Overview
-This repository contains solutions to various exercises for the **Discrete Modelling** course during the fifth semester at **AGH University of Krakow**. The exercises involve implementing different computational models and simulations in **Python** and **C++**, covering topics such as **image processing**, **cellular automata**, and **fluid simulations**.
+This repository showcases a series of independently developed simulations and computational models created during the **Discrete Modelling** course at **AGH University of Krakow**. While subject suggestions were provided, all project scopes, implementations, and language/tool choices were made individually. The simulations were built in **C++** and **Python**, covering topics such as **cellular automata**, **image processing**, and **fluid dynamics**, with a strong emphasis on real-time interaction, visualization, and algorithmic design.
+
 
 ![Forest Fire Simulation](Media/eye_catch.gif)
 
